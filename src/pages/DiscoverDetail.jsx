@@ -38,7 +38,7 @@ function PlaceTabs({ cat }) {
   const [i, setI] = useState(0)
   const tab = cat.tabs[i]
   const isCulture = tab.source === 'culture'
-  const places = useAsync(() => (isCulture ? fetchCulture() : fetchPlaces(tab.keyword, tab.type)), [tab.keyword, tab.type, isCulture])
+  const places = useAsync(() => (isCulture ? fetchCulture() : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12)), [tab.keyword, tab.type, tab.rows, isCulture])
   const dot = (d) => (d && d.length === 8 ? `${d.slice(0, 4)}.${d.slice(4, 6)}.${d.slice(6)}` : d)
 
   return (
