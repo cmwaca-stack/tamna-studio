@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LazyScene from '../components/LazyScene'
 import RegionWeather from '../components/RegionWeather'
 import WeatherChip from '../components/WeatherChip'
-import { ping } from '../api/client'
 import { THEMES, spotSetsOf, themeOf } from '../data/themes'
 import { YOUTH } from '../data/youth'
 import { useThemePins } from '../hooks/useThemePins'
 import { useWeather } from '../hooks/useWeather'
 import { sceneWeather } from '../lib/sceneWeather'
-import { checkSupabase, diagnoseSupabase } from '../lib/supabase'
 import { useAppStore } from '../store/useAppStore'
 
 // 메뉴 순서를 여기서 정해요. 3D 지도 위에 핀을 보여 주는 것은 theme, 다른 화면으로 가는 것은 to
@@ -26,19 +23,8 @@ const MENU = [
   { id: 'policy', to: '/discover/policy', label: Y('policy').title, icon: Y('policy').icon, color: Y('policy').color },
 ]
 
-function Check({ title, state, msg, children }) {
-  const icon = { ok: 'check-circle-fill', fail: 'x-circle-fill', wait: 'hourglass-split' }[state]
-  return (
-    <div className={`check ${state}`}>
-      <div className="check-title"><i className={`bi bi-${icon}`} />{title}</div>
-      <div className="muted">{msg}</div>
-      {children}
-    </div>
-  )
-}
-
 export default function Home() {
-  const { themeKey, setThemeKey, nickname, setNickname } = useAppStore()
+  const { themeKey, setThemeKey } = useAppStore()
   const theme = themeOf(themeKey)
   const navigate = useNavigate()
   // 핀을 누르면 그 장소의 소개 화면으로 이동 (고정 핀은 id 로, 공공 API 핀은 pin 정보를 같이 넘김)
@@ -46,24 +32,6 @@ export default function Home() {
   const { pins, routes, loading } = useThemePins(theme)
   // 실시간 예보(제주시)로 3D 날씨를 정함. 주소 끝에 ?w=rain|snow|sleet|shower|wind|cloudy|clear 를 붙이면 효과를 미리 볼 수 있어요
   const wx = sceneWeather(useWeather('제주시').slots[0], new URLSearchParams(window.location.search).get('w'))
-
-  const [db, setDb] = useState({ state: 'wait', msg: '확인 중…' })
-  const [diag, setDiag] = useState(null) // null = 아직 안 돌림, [] = 진단 중
-  async function runDiagnosis() {
-    setDiag([])
-    const steps = await diagnoseSupabase()
-    setDiag(steps)
-    setDb(steps.every((x) => x.ok)
-      ? { state: 'ok', msg: '연결 OK · 읽기·쓰기·삭제 모두 통과' }
-      : { state: 'fail', msg: steps.find((x) => !x.ok).msg })
-  }
-  const [api, setApi] = useState({ state: 'wait', msg: '확인 중…' })
-  useEffect(() => {
-    checkSupabase().then((r) => setDb({ state: r.ok ? 'ok' : 'fail', msg: r.msg }))
-    ping()
-      .then((d) => setApi({ state: 'ok', msg: `OK · 공공데이터 키 ${d.hasDataKey ? '있음' : '없음'} · Claude 키 ${d.hasClaudeKey ? '있음' : '없음'}` }))
-      .catch(() => setApi({ state: 'fail', msg: 'npm run dev 로 실행했는지, 서버를 껐다 켰는지 확인하세요' }))
-  }, [])
 
   return (
     <>
@@ -104,37 +72,6 @@ export default function Home() {
           <span className="pill">{loading ? <><span className="spinner" />핀 꽂는 중</> : <><i className="bi bi-geo-alt-fill" />핀 {pins.length}개</>}</span>
           <span className="pill legend">{spotSetsOf(theme).map((s) => <span key={s.key}><i className="dot" style={{ background: s.color }} />{s.label} </span>)}{!theme.spotsOnly && <><i className="dot tour" />장소 {!theme.noHeritage && <><i className="dot heritage" />유산</>}</>}</span>
           <span className="pill"><i className="bi bi-wind" />제주 하늘 · {wx.label}</span>
-        </div>
-      </section>
-
-      <section className="page">
-        <div className="two-col">
-          <div>
-            <h2 className="section-title">작업실 이름표</h2>
-            <p className="muted">닉네임을 정하면 내 소재 노트가 이 이름으로 Supabase 에 저장돼요.</p>
-            <input className="input" placeholder="닉네임" maxLength={20} value={nickname} onChange={(e) => setNickname(e.target.value)} />
-          </div>
-          <div>
-            <h2 className="section-title">동작 체크</h2>
-            <div className="checks">
-              <Check title="React · 라우터" state="ok" msg="이 화면이 보이면 OK" />
-              <Check title="Supabase" {...db}>
-                <button type="button" className="btn btn-ghost btn-sm" onClick={runDiagnosis} disabled={diag?.length === 0}>
-                  <i className="bi bi-activity" />{diag?.length === 0 ? '진단 중…' : '연결 진단'}
-                </button>
-                {diag?.length > 0 && (
-                  <ul className="diag">
-                    {diag.map((x) => (
-                      <li key={x.name} className={x.ok ? 'ok' : 'fail'}>
-                        <i className={`bi bi-${x.ok ? 'check-circle-fill' : 'x-circle-fill'}`} /><strong>{x.name}</strong> {x.msg}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </Check>
-              <Check title="서버 함수 /api" {...api} />
-            </div>
-          </div>
         </div>
       </section>
     </>
