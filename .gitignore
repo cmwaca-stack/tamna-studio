@@ -1,0 +1,12 @@
+node_modules
+dist
+.vercel
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+
+# 중복 폴더·메모 파일
+/tamna-studio/
+npm install.txt
