@@ -7,7 +7,7 @@ export default function Chips({ value, onChange, children }) {
     <div className="chips" role="tablist" aria-label="소재 테마">
       {THEMES.filter((t) => !t.hidden).map((t) => {
         const body = <><i className={`bi bi-${t.icon}`} />{t.label}</>
-        if (t.href) return <Link key={t.key} to={t.href} className="chip on-hover" style={{ '--c': t.color }}>{body}</Link>
+        if (t.href) return <Link key={t.key} to={t.href} className={`chip${value === t.key ? ' on' : ' on-hover'}`} style={{ '--c': t.color }}>{body}</Link>
         return (
           <button
             key={t.key} type="button" role="tab" aria-selected={value === t.key}

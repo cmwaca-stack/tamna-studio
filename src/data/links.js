@@ -1,0 +1,68 @@
+// 제주 언론사·커뮤니티·공공기관 바로가기. 주소가 바뀌면 여기만 고치면 돼요.
+const q = (t) => encodeURIComponent(t)
+
+export const LINKPAGES = {
+  press: {
+    title: '제주언론사', icon: 'newspaper', color: '#c92a2a',
+    desc: '제주 소식을 전하는 지역 신문·방송을 한곳에 모았어요. 눌러서 공식 사이트로 이동합니다.',
+    groups: [
+      { name: '신문·인터넷 언론', items: [
+        { name: '제주일보', url: 'https://www.jejunews.com', note: '제주 종합일간지' },
+        { name: '한라일보', url: 'https://www.ihalla.com', note: '제주 종합일간지' },
+        { name: '제민일보', url: 'https://www.jemin.com', note: '제주 종합일간지' },
+        { name: '제주의소리', url: 'https://www.jejusori.net', note: '인터넷 언론' },
+        { name: '헤드라인제주', url: 'https://www.headlinejeju.co.kr', note: '인터넷 언론' },
+        { name: '뉴제주일보', url: 'https://www.newsjeju.net', note: '지역 일간지' },
+      ] },
+      { name: '방송', items: [
+        { name: 'KBS 제주', url: 'https://news.kbs.co.kr/news/pc/local/main.do?ncd=jeju', note: '제주 지역 뉴스' },
+        { name: '제주 MBC', url: 'https://www.jejumbc.com', note: '제주 지역 방송' },
+        { name: 'JIBS 제주방송', url: 'https://www.jibs.co.kr', note: '제주 지역 방송' },
+      ] },
+    ],
+  },
+  community: {
+    title: '제주커뮤니티', icon: 'people', color: '#e8590c',
+    desc: '제주살이 이야기, 이사·정착 정보, 중고 거래를 나누는 곳으로 바로 연결해요. 검색 링크는 해당 서비스의 검색 결과로 이동합니다.',
+    groups: [
+      { name: '이야기·정보 찾기', items: [
+        { name: '픽제주', url: 'https://www.picjeju.com/', note: '제주 소식·정보 사이트' },
+        { name: '플레이제주', url: 'https://playjeju.co.kr/', note: '제주 소식·정보 사이트' },
+        { name: '잇지제주', url: `https://www.google.com/search?q=${q('잇지제주')}`, note: '구글 검색 결과로 연결돼요' },
+        { name: '탐라오', url: 'https://tamraoo.com/', note: '제주 정보 사이트' },
+        { name: '제주청년', url: 'https://jejuyouth.com/index.php', note: '제주 청년 정보 사이트' },
+        { name: '네이버 카페 · 제주 이주/정착', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 이주 정착')}`, note: '이주·정착 후기와 질문' },
+        { name: '네이버 카페 · 제주 청년', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 청년')}`, note: '청년 모임·정보' },
+        { name: '네이버 블로그 · 제주살이', url: `https://section.blog.naver.com/Search/Post.naver?keyword=${q('제주살이')}`, note: '한 달 살기·집 구하기 후기' },
+        { name: '다음 카페 · 제주', url: `https://search.daum.net/search?w=cafe&q=${q('제주도 정착')}`, note: '지역 카페 검색' },
+      ] },
+      { name: '우리 동네 생활', items: [
+        { name: '당근 · 제주', url: `https://www.daangn.com/kr/search/${q('제주')}`, note: '중고 거래·동네 모임' },
+        { name: '제주 일자리 · 알바', url: `https://www.albamon.com/search/total?keyword=${q('제주')}`, note: '알바·단기 일자리' },
+      ] },
+    ],
+  },
+  public: {
+    title: '공공기관', icon: 'bank', color: '#1971c2',
+    desc: '제주살이에 자주 쓰는 도·시 기관 공식 사이트예요. 민원·공고·지원 사업을 확인할 때 이용하세요.',
+    groups: [
+      { name: '도·시 행정', items: [
+        { name: '제주특별자치도', url: 'https://www.jeju.go.kr', note: '도청 공고·민원' },
+        { name: '제주시', url: 'https://www.jejusi.go.kr', note: '제주시 행정 안내' },
+        { name: '서귀포시', url: 'https://www.seogwipo.go.kr', note: '서귀포시 행정 안내' },
+        { name: '제주도의회', url: 'https://www.council.jeju.kr', note: '의정 소식' },
+        { name: '제주도교육청', url: 'https://www.jje.go.kr', note: '교육 정책·공고' },
+      ] },
+      { name: '공공기관 모아보기', items: [
+        { name: '제주도 공공기관 목록 (제주도로지스)', url: 'http://www.jejudologis.com/jejupol.php?page=1&gubun=%EA%B3%B5%EA%B3%B5%EA%B8%B0%EA%B4%80&keyword=', note: '제주 지역 공공기관을 한눈에 찾아봐요' },
+      ] },
+      { name: '지원·생활 기관', items: [
+        { name: '정부24', url: 'https://www.gov.kr', note: '전입신고·증명서 등 민원' },
+        { name: '온통청년', url: 'https://www.youthcenter.go.kr', note: '청년정책 통합 검색' },
+        { name: '제주관광공사', url: 'https://ijto.or.kr', note: '관광·여행 정보' },
+        { name: '제주지방기상청', url: 'https://www.kma.go.kr/jeju/index.jsp', note: '제주 날씨·특보' },
+        { name: '제주경찰청', url: 'https://www.jeju.police.go.kr', note: '치안·민원 안내' },
+      ] },
+    ],
+  },
+}

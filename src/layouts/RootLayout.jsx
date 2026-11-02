@@ -21,7 +21,7 @@ export default function RootLayout() {
         </button>
         <nav className={`navlinks${open ? ' open' : ''}`}>
           {NAV_ITEMS.map((n) => (
-            <NavLink key={n.to} to={n.to} end={n.to === '/'} className={({ isActive }) => `navlink${isActive ? ' on' : ''}`}>
+            <NavLink key={n.to} to={n.to} end={n.to === '/'} className={({ isActive }) => `navlink${isActive || n.also?.includes(pathname) ? ' on' : ''}`}>
               <i className={`bi bi-${n.icon}`} />{n.label}
             </NavLink>
           ))}

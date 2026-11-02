@@ -1,14 +1,14 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import RootLayout from './layouts/RootLayout'
 import Home from './pages/Home'
 import Explore from './pages/Explore'
-import Discover from './pages/Discover'
 import DiscoverDetail from './pages/DiscoverDetail'
 import PlaceInfo from './pages/PlaceInfo'
 import Jejueo from './pages/Jejueo'
 import Kit from './pages/Kit'
 import Guide from './pages/Guide'
 import Notes from './pages/Notes'
+import LinkPage from './pages/LinkPage'
 import NotFound from './pages/NotFound'
 
 export const router = createBrowserRouter([
@@ -18,7 +18,7 @@ export const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'discover', element: <Discover /> },
+      { path: 'discover', element: <Navigate to="/" replace /> },
       { path: 'discover/:slug', element: <DiscoverDetail /> },
       { path: 'explore', element: <Explore /> },
       { path: 'place/:id', element: <PlaceInfo /> },
@@ -26,6 +26,7 @@ export const router = createBrowserRouter([
       { path: 'kit', element: <Kit /> },
       { path: 'guide', element: <Guide /> },
       { path: 'notes', element: <Notes /> },
+      { path: 'links/:kind', element: <LinkPage /> },
       { path: '*', element: <NotFound /> },
     ],
   },

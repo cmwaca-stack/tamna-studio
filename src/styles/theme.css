@@ -329,3 +329,16 @@ code { background: rgba(15,50,70,0.04); padding: 1px 6px; border-radius: 6px; fo
 .flight .fm{display:flex;flex-direction:column}
 .flight .fs{font-weight:700;font-size:.9rem;text-align:right}
 .flight.cancel .fs{color:#e03131}.flight.late .fs{color:#d9480f}
+
+/* 메뉴판 접기/펼치기 */
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: .6rem; }
+.panel-head h1 { margin: 0; }
+.fold-btn { flex: none; display: inline-flex; align-items: center; gap: .3rem; border: 1px solid var(--line); background: rgba(255,255,255,.7); color: var(--sea); border-radius: 999px; padding: .35rem .75rem; font-size: .85rem; font-weight: 600; cursor: pointer; }
+.fold-btn:hover { background: #fff; }
+.stage-panel.folded { padding-top: .8rem; padding-bottom: .8rem; }
+
+/* 청년정책 목록 */
+.policies { display: grid; gap: .6rem; margin-top: .6rem; }
+.policy { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+.policy-head { width: 100%; display: grid; gap: .2rem; text-align: left; padding: .8rem 1rem; background: none; border: 0; cursor: pointer; font: inherit; color: inherit; }
+.policy-body { padding: 0 1rem .9rem; display: grid; gap: .5rem; font-size: .92rem; white-space: pre-line; }

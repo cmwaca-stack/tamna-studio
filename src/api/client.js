@@ -13,7 +13,6 @@ export const get = async (path) => readJson(await fetch(path))
 export const post = async (path, body) =>
   readJson(await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }))
 
-export const ping = () => get('/api/hello')
 export const fetchPlaces = (keyword = '', type = '12', rows = 12) => get(`/api/tour?keyword=${encodeURIComponent(keyword)}&type=${type}&rows=${rows}`) // ① 한국관광공사
 export const fetchWeather = (place = '제주시') => get(`/api/weather?place=${encodeURIComponent(place)}`) //                      ② 기상청
 export const fetchWeatherAll = () => get('/api/weather?place=all') //                                                             ② 기상청 (제주 전 지역)
@@ -26,3 +25,4 @@ export const fetchOlle = () => get('/api/olle') //                              
 export const fetchCulture = () => get('/api/culture') //                                                                          ⑦ 한국문화정보원 전시·공연
 export const fetchSnowCctv = () => get('/api/snowcctv') //                                                                       ⑧ 제주시 적설 감시 CCTV
 export const fetchFlights = (dir = 'depart') => get(`/api/flight?dir=${dir}`) // ⑨ 제주공항 항공편
+export const fetchPolicies = (scope = 'jeju') => get(`/api/youth?scope=${scope}`) // ⑩ 온통청년 청년정책

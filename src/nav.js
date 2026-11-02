@@ -2,10 +2,9 @@
 // 아이콘 이름: https://icons.getbootstrap.com
 export const NAV_ITEMS = [
   { to: '/', label: '스튜디오', icon: 'house-heart' },
-  { to: '/discover', label: '청년 탐색', icon: 'balloon-heart' },
-  { to: '/explore', label: '3D 탐색', icon: 'badge-3d' },
-  { to: '/jejueo', label: '제주어', icon: 'chat-quote' },
-  { to: '/kit', label: '주제별 정보', icon: 'box2-heart' },
+  { to: '/kit', label: '주제별 검색', icon: 'search', also: ['/jejueo'] },
   { to: '/guide', label: 'AI 가이드', icon: 'stars' },
-  { to: '/notes', label: '내 노트', icon: 'journal-bookmark-fill' },
+  { to: '/links/press', label: '제주언론사', icon: 'newspaper' },
+  { to: '/links/community', label: '제주커뮤니티', icon: 'people' },
+  { to: '/links/public', label: '공공기관', icon: 'bank' },
 ]

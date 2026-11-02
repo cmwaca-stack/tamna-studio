@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LazyScene from '../components/LazyScene'
 import RegionWeather from '../components/RegionWeather'
@@ -25,6 +26,7 @@ const MENU = [
 
 export default function Home() {
   const { themeKey, setThemeKey } = useAppStore()
+  const [open, setOpen] = useState(true) // 메뉴판 접기/펼치기
   const theme = themeOf(themeKey)
   const navigate = useNavigate()
   // 핀을 누르면 그 장소의 소개 화면으로 이동 (고정 핀은 id 로, 공공 API 핀은 pin 정보를 같이 넘김)
@@ -39,9 +41,14 @@ export default function Home() {
         <div className="stage-canvas"><LazyScene items={pins} routes={routes} weather={wx} autoRotate onPick={openPin} /><div className="jeju-hand" aria-hidden="true">JEJU ISLAND</div></div>
         <RegionWeather />
 
-        <div className="stage-panel glass">
-          <span className="eyebrow">제주 IP × 공공데이터 × AI 에이전트</span>
-          <h1>알뜰정보 제주살이</h1>
+        <div className={`stage-panel glass${open ? '' : ' folded'}`}>
+          <div className="panel-head">
+            <h1>알뜰정보 제주살이</h1>
+            <button type="button" className="fold-btn" aria-expanded={open} aria-label={open ? '메뉴판 접기' : '메뉴판 펼치기'} onClick={() => setOpen((v) => !v)}>
+              <i className={`bi bi-chevron-${open ? 'up' : 'down'}`} />{open ? '접기' : '펼치기'}
+            </button>
+          </div>
+          {open && <>
           <p className="lead">제주살이를 꿈꾸거나 지금 제주에 살고 있다면, 장소·날씨·생활 정보와 AI 가이드로 알뜰하게 도와드려요.</p>
           {/* 메뉴 줄: 오름·신화·4·3·제주역사·올레길·전시축제행사·교통정보·제주어·청년정책 (한 줄로 이어서) */}
           <div className="chips" role="tablist" aria-label="메뉴">
@@ -65,6 +72,7 @@ export default function Home() {
             <Link to="/kit" className="btn btn-primary"><i className="bi bi-box2-heart" />주제별 정보 보기</Link>
             <Link to="/guide" className="btn btn-ghost"><i className="bi bi-stars" />AI 가이드에게 묻기</Link>
           </div>
+          </>}
         </div>
 
         <div className="stage-hud">

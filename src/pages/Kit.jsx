@@ -3,6 +3,7 @@ import Chips from '../components/Chips'
 import ItemCard from '../components/ItemCard'
 import { ApiError, Empty, Loading } from '../components/Status'
 import { fetchHeritage, fetchPlaces } from '../api/client'
+import { SPOTS } from '../data/spots'
 import { PLACE_TYPES, themeOf } from '../data/themes'
 import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
@@ -14,11 +15,16 @@ import { useAppStore } from '../store/useAppStore'
 export default function Kit() {
   const { themeKey, setThemeKey, addNote } = useAppStore()
   const theme = themeOf(themeKey)
-  const [type, setType] = useState('14')
+  const [type, setType] = useState('12')
   const [place, setPlace] = useState('서귀포시')
 
-  const heritage = useAsync(() => fetchHeritage(theme.heritageKeyword), [theme.heritageKeyword])
-  const places = useAsync(() => fetchPlaces(theme.keyword, type), [theme.keyword, type])
+  // 주제마다 어울리는 검색어를 따로 씁니다 (kitKeyword / kitHeritage). kitHeritage 가 false 면 국가유산 칸을 숨겨요.
+  const heritageWord = theme.kitHeritage === undefined ? theme.heritageKeyword : theme.kitHeritage
+  const showHeritage = heritageWord !== false && !theme.noHeritage
+  const placeWord = theme.kitKeyword ?? theme.keyword
+  const spots = SPOTS[theme.spots] ?? []
+  const heritage = useAsync(() => (showHeritage ? fetchHeritage(heritageWord || '') : Promise.resolve([])), [showHeritage, heritageWord])
+  const places = useAsync(() => fetchPlaces(placeWord, type, 24), [placeWord, type])
   const weather = useWeather(place)
   const verdict = fieldVerdict(weather.slots)
 
@@ -41,6 +47,18 @@ export default function Kit() {
           <ul className="ideas">{theme.ideas.map((t) => <li key={t}><i className="bi bi-lightbulb" />{t}</li>)}</ul>
         </div>
       </section>
+
+      {spots.length > 0 && (
+        <section className="kit-block">
+          <div className="block-head"><h2><i className={`bi bi-${theme.icon}`} />대표 {theme.spotLabel ?? theme.label} <small className="muted">{spots.length}곳</small></h2></div>
+          <div className="cards">
+            {spots.map((s) => (
+              <ItemCard key={s.id} title={s.title} subtitle={s.sub} badge={theme.spotLabel ?? theme.label}
+                onSave={() => addNote({ source: 'tour', id: s.id, title: s.title })} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="kit-block">
         <div className="block-head">
@@ -70,13 +88,13 @@ export default function Kit() {
         )}
       </section>
 
-      <section className="kit-block">
+      {showHeritage && <section className="kit-block">
         <div className="block-head">
-          <h2><i className="bi bi-bank2" />소재의 뿌리 · 국가유산</h2>
+          <h2><i className="bi bi-bank2" />{theme.label}와 이어진 국가유산</h2>
         </div>
         <ApiError error={heritage.error} onRetry={heritage.reload} />
         {heritage.loading || heritage.error ? (heritage.loading ? <Loading /> : null) : !heritage.data?.length ? (
-          <Empty text={`‘${theme.heritageKeyword || theme.label}’ 관련 국가유산 검색 결과가 없어요.`} />
+          <Empty text={`‘${theme.label}’ 관련 국가유산 검색 결과가 없어요.`} />
         ) : (
           <div className="cards">
             {heritage.data.map((h) => (
@@ -85,11 +103,11 @@ export default function Kit() {
             ))}
           </div>
         )}
-      </section>
+      </section>}
 
       <section className="kit-block">
         <div className="block-head">
-          <h2><i className="bi bi-geo-alt" />직접 보러 갈 곳</h2>
+          <h2><i className="bi bi-geo-alt" />{theme.label} 관련 가볼 곳</h2>
           <div className="seg">
             {Object.entries(PLACE_TYPES).map(([v, label]) => (
               <button key={v} type="button" className={type === v ? 'on' : ''} onClick={() => setType(v)}>{label}</button>
@@ -98,7 +116,7 @@ export default function Kit() {
         </div>
         <ApiError error={places.error} onRetry={places.reload} />
         {places.loading || places.error ? (places.loading ? <Loading /> : null) : !places.data?.length ? (
-          <Empty text={`‘${theme.keyword || '제주'}’ ${PLACE_TYPES[type]} 검색 결과가 없어요. 다른 분류를 눌러 보세요.`} />
+          <Empty text={`‘${theme.label}’ ${PLACE_TYPES[type]} 검색 결과가 없어요. 다른 분류를 눌러 보세요.`} />
         ) : (
           <div className="cards">
             {places.data.map((p) => (

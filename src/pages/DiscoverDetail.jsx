@@ -4,7 +4,7 @@ import CctvPlayer from '../components/CctvPlayer'
 import ItemCard from '../components/ItemCard'
 import WeatherChip from '../components/WeatherChip'
 import { ApiError, Empty, Loading } from '../components/Status'
-import { fetchCulture, fetchFlights, fetchPlaces, fetchSnowCctv } from '../api/client'
+import { fetchCulture, fetchFlights, fetchPlaces, fetchPolicies, fetchSnowCctv } from '../api/client'
 import { TYPE_LABEL, youthOf } from '../data/youth'
 import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
@@ -14,7 +14,7 @@ import { useAppStore } from '../store/useAppStore'
 function Head({ cat }) {
   return (
     <header className="page-head" style={{ '--c': cat.color }}>
-      <Link to="/discover" className="back"><i className="bi bi-arrow-left" />청년 탐색</Link>
+      <Link to="/" className="back"><i className="bi bi-arrow-left" />스튜디오</Link>
       <h1><i className={`bi bi-${cat.icon}`} style={{ color: cat.color }} />{cat.title}</h1>
       <p className="muted">{cat.desc}</p>
     </header>
@@ -210,10 +210,58 @@ function FlightGuide({ cat }) {
 }
 
 // 청년정책: 공식 사이트로 연결하는 안내 화면
+function PolicyList() {
+  const [scope, setScope] = useState('jeju')
+  const [q, setQ] = useState('')
+  const [kind, setKind] = useState('전체')
+  const [open, setOpen] = useState('')
+  const st = useAsync(() => fetchPolicies(scope), [scope])
+  const all = st.data ?? []
+  const kinds = ['전체', ...new Set(all.map((p) => p.kind.split(',')[0]).filter(Boolean))]
+  const rows = all.filter((p) => (kind === '전체' || p.kind.includes(kind)) && (!q || `${p.title}${p.keywords}${p.desc}`.includes(q)))
+  return (
+    <section className="kit-block">
+      <h2><i className="bi bi-list-stars" /> 지금 받을 수 있는 정책</h2>
+      <div className="tabs">
+        <button type="button" className={scope === 'jeju' ? 'on' : ''} onClick={() => { setScope('jeju'); setKind('전체') }}>제주 지역</button>
+        <button type="button" className={scope === 'all' ? 'on' : ''} onClick={() => { setScope('all'); setKind('전체') }}>전국 공통</button>
+      </div>
+      <input className="input" placeholder="정책 검색 (예: 월세, 취업, 교통)" value={q} onChange={(e) => setQ(e.target.value)} />
+      <div className="chips">
+        {kinds.map((k) => <button key={k} type="button" className={`chip${kind === k ? ' on' : ''}`} onClick={() => setKind(k)}>{k}</button>)}
+      </div>
+      {st.loading && <Loading />}
+      {st.error && <ApiError error={st.error} onRetry={st.reload} />}
+      {st.data && (rows.length === 0 ? <Empty text="조건에 맞는 정책이 없어요." /> : (
+        <div className="policies">
+          {rows.map((p) => (
+            <article key={p.id} className="policy">
+              <button type="button" className="policy-head" onClick={() => setOpen(open === p.id ? '' : p.id)}>
+                <strong>{p.title}</strong>
+                <span className="muted small">{[p.kind, p.org, p.ageMin || p.ageMax ? `만 ${p.ageMin || '?'}~${p.ageMax || '?'}세` : ''].filter(Boolean).join(' · ')}</span>
+                {p.period && <span className="small">신청 {p.period}</span>}
+              </button>
+              {open === p.id && (
+                <div className="policy-body">
+                  {p.desc && <p>{p.desc}</p>}
+                  {p.support && <p><b>지원 내용</b><br />{p.support}</p>}
+                  {p.how && <p><b>신청 방법</b><br />{p.how}</p>}
+                  {p.url && <a href={p.url.startsWith('http') ? p.url : `https://${p.url}`} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm">신청·자세히 보기 <i className="bi bi-box-arrow-up-right" /></a>}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      ))}
+    </section>
+  )
+}
+
 function PolicyGuide({ cat }) {
   return (
     <div className="page">
       <Head cat={cat} />
+      <PolicyList />
 
       <section className="kit-block">
         <h2><i className="bi bi-grid" style={{ color: cat.color }} /> 분야별로 찾아보기</h2>
@@ -245,7 +293,7 @@ function PolicyGuide({ cat }) {
 export default function DiscoverDetail() {
   const { slug } = useParams()
   const cat = youthOf(slug)
-  if (!cat) return <Navigate to="/discover" replace />
+  if (!cat) return <Navigate to="/" replace />
   if (cat.kind === 'links') return <PolicyGuide cat={cat} />
   if (cat.kind === 'traffic') return <TrafficGuide cat={cat} />
   if (cat.kind === 'flight') return <FlightGuide cat={cat} />

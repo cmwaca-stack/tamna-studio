@@ -1,4 +1,7 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import Chips from '../components/Chips'
+import { useAppStore } from '../store/useAppStore'
 import { ApiError, Empty, Loading } from '../components/Status'
 import { fetchJejueo } from '../api/client'
 import { useAsync } from '../hooks/useAsync'
@@ -59,6 +62,10 @@ export default function Jejueo() {
   const cur = KINDS.find((k) => k.key === kind)
   const last = data.data ? Math.max(1, Math.ceil(data.data.total / data.data.pageSize)) : 1
 
+  const navigate = useNavigate()
+  const setThemeKey = useAppStore((s) => s.setThemeKey)
+  const goTheme = (k) => { setThemeKey(k); navigate('/kit') } // 다른 주제를 누르면 주제별 정보 화면으로
+
   function pickKind(k) { setKind(k); setPage(1); setQ(''); setInput(''); setType('') }
   function search(e) { e.preventDefault(); setPage(1); setQ(input.trim()) }
 
@@ -67,6 +74,7 @@ export default function Jejueo() {
       <header className="page-head">
         <h1><i className="bi bi-chat-quote" style={{ color: '#ffb703' }} />제주어</h1>
         <p className="muted">제주특별자치도청 OpenAPI로 제주 방언사전·생활방언·속담을 찾아보세요. "혼저 옵서예"를 오늘의 소재로.</p>
+        <Chips value="jejueo" onChange={goTheme} />
       </header>
 
       <div className="block-head">
