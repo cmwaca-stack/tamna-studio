@@ -1,5 +1,17 @@
+import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
 import { LINKPAGES } from '../data/links'
+
+// 사이트의 공식 마크(파비콘). 불러오지 못하면 이름 첫 글자를 보여줘요.
+function Logo({ name, url }) {
+  const [failed, setFailed] = useState(false)
+  const host = new URL(url).hostname
+  if (failed) return <span className="logo logo-fallback">{name.charAt(0)}</span>
+  return (
+    <img className="logo" src={`https://www.google.com/s2/favicons?domain=${host}&sz=64`} alt=""
+      loading="lazy" onError={() => setFailed(true)} />
+  )
+}
 
 // 제주언론사·제주커뮤니티·공공기관 공통 화면 (data/links.js 의 목록을 그려요)
 export default function LinkPage() {
@@ -19,7 +31,10 @@ export default function LinkPage() {
           <div className="links">
             {g.items.map((l) => (
               <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="link-card">
-                <strong>{l.name}<i className="bi bi-box-arrow-up-right" /></strong>
+                <strong>
+                  {page.logos && <Logo name={l.name} url={l.url} />}
+                  {l.name}<i className="bi bi-box-arrow-up-right" />
+                </strong>
                 <span className="muted">{l.note}</span>
               </a>
             ))}

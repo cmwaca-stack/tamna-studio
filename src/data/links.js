@@ -3,7 +3,7 @@ const q = (t) => encodeURIComponent(t)
 
 export const LINKPAGES = {
   press: {
-    title: '제주언론사', icon: 'newspaper', color: '#c92a2a',
+    title: '제주언론사', icon: 'newspaper', color: '#c92a2a', logos: true,
     desc: '제주 소식을 전하는 지역 신문·방송을 한곳에 모았어요. 눌러서 공식 사이트로 이동합니다.',
     groups: [
       { name: '신문·인터넷 언론', items: [
