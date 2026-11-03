@@ -153,8 +153,8 @@ code { background: rgba(15,50,70,0.04); padding: 1px 6px; border-radius: 6px; fo
 .link-card:hover { border-color: var(--sea); }
 .link-card strong i { margin-left: .4rem; font-size: .8em; color: var(--sea); }
 .link-card strong { display: flex; align-items: center; }
-.link-card .logo { width: 28px; height: 28px; margin-right: .6rem; border-radius: 6px; object-fit: contain; background: #fff; border: 1px solid var(--line); padding: 2px; flex: none; }
-.link-card .logo-fallback { display: inline-grid; place-items: center; background: var(--sea); color: #fff; font-weight: 800; font-size: .9rem; border: 0; padding: 0; }
+.link-card .logo { width: 48px; height: 48px; margin-right: .8rem; border-radius: 10px; object-fit: contain; background: #fff; border: 1px solid var(--line); padding: 4px; flex: none; }
+.link-card .logo-fallback { display: inline-grid; place-items: center; background: var(--sea); color: #fff; font-weight: 800; font-size: 1.4rem; border: 0; padding: 0; }
 .quick { display: grid; gap: .35rem; }
 .chip.on-hover:hover { background: var(--c); color: #fff; }
 .chip.on-hover:hover i { color: #fff; }
