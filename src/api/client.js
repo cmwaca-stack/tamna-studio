@@ -16,6 +16,7 @@ export const post = async (path, body) =>
 export const fetchPlaces = (keyword = '', type = '12', rows = 12, arrange = '') => get(`/api/tour?keyword=${encodeURIComponent(keyword)}&type=${type}&rows=${rows}${arrange ? `&arrange=${arrange}` : ''}`) // ① 한국관광공사
 export const fetchNear = (lat, lng, type = '12', rows = 8, radius = 5000) => get(`/api/tour?lat=${lat}&lng=${lng}&type=${type}&rows=${rows}&radius=${radius}`) // ① 한국관광공사 (좌표 주변)
 export const fetchVjFood = (keyword = '', src = 'vj') => get(`/api/olle?kind=food&src=${src}&keyword=${encodeURIComponent(keyword)}`) // 제주관광공사 비짓제주 음식점 (이름·영업시간, data.go.kr)
+export const fetchPlacesIn = (q, rect) => get(`/api/olle?kind=places&q=${encodeURIComponent(q)}&rect=${rect}`) // 생활정보 지도: 카카오 장소 검색(지도 범위 안)
 export const fetchHospitalData = (kind) => get(`/api/olle?kind=${kind}`) // 제주 의료기관 자료: emergency 응급 · stats 개소 현황 · public 공공의료기관 (data.go.kr)
 export const fetchWeather = (place = '제주시') => get(`/api/weather?place=${encodeURIComponent(place)}`) //                      ② 기상청
 export const fetchWeatherAll = () => get('/api/weather?place=all') //                                                             ② 기상청 (제주 전 지역)

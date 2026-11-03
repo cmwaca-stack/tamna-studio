@@ -67,6 +67,11 @@ export const YOUTH = [
     ],
   },
   {
+    slug: 'life', title: '생활정보', icon: 'house-heart', color: '#2b9348', kind: 'life',
+    tagline: '제주 사는 사람을 위한 생활 정보',
+    desc: '쓰레기 배출, 주유소·전기차 충전소, 미세먼지, 오일장까지 — 제주에 사는 분들이 자주 찾는 생활 정보를 모았어요.',
+  },
+  {
     slug: 'policy', title: '청년정책', icon: 'piggy-bank', color: '#0b8f9c', kind: 'links',
     tagline: '놓치기 쉬운 지원, 한 번에 확인',
     desc: '일자리·주거·교육·복지문화·참여 분야의 청년 지원 정책을 공식 사이트에서 제주 지역으로 찾아볼 수 있어요.',

@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
+import { KAKAO_KEY, loadKakao } from '../lib/kakaoMaps'
 
 // 실시간 교통 지도: 카카오맵의 교통정보 레이어(빨강=정체, 주황=서행, 초록=원활)를 제주 지도 위에 보여줘요.
 // 카카오 개발자 사이트의 "JavaScript 키"(.env.local 의 VITE_KAKAO_JS_KEY)와 사이트 주소 등록(플랫폼 > Web)이 필요해요.
-const KEY = import.meta.env.VITE_KAKAO_JS_KEY
+const KEY = KAKAO_KEY
 const PLACES = [
   { name: '제주 전체', lat: 33.38, lng: 126.55, level: 10 },
   { name: '제주시내', lat: 33.5, lng: 126.53, level: 7 },
@@ -11,22 +12,6 @@ const PLACES = [
   { name: '성산·구좌', lat: 33.46, lng: 126.85, level: 8 },
   { name: '애월·한림', lat: 33.42, lng: 126.3, level: 8 },
 ]
-
-let loader = null
-function loadKakao() {
-  if (loader) return loader
-  loader = new Promise((resolve, reject) => {
-    if (window.kakao?.maps?.load) { window.kakao.maps.load(() => resolve(window.kakao)); return }
-    const s = document.createElement('script')
-    s.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KEY}&autoload=false`
-    s.async = true
-    s.referrerPolicy = 'no-referrer' // 이 사이트 화면에서 보내는 Referer 때문에 카카오가 스크립트를 거절하는 경우가 있어 보내지 않아요
-    s.onload = () => window.kakao.maps.load(() => resolve(window.kakao))
-    s.onerror = () => { loader = null; reject(new Error('카카오 지도 프로그램(sdk.js)을 받지 못했어요 — 키·사이트 주소 등록 또는 광고 차단 확인')) }
-    document.head.appendChild(s)
-  })
-  return loader
-}
 
 export default function TrafficMap() {
   const box = useRef(null)

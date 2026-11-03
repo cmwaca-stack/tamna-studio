@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import LifeGuide from '../components/LifeGuide'
 import TrafficMap from '../components/TrafficMap'
 import ItemCard from '../components/ItemCard'
 import WeatherChip from '../components/WeatherChip'
@@ -299,5 +300,6 @@ export default function DiscoverDetail() {
   if (cat.kind === 'links') return <PolicyGuide cat={cat} />
   if (cat.kind === 'traffic') return <TrafficGuide cat={cat} />
   if (cat.kind === 'flight') return <FlightGuide cat={cat} />
+  if (cat.kind === 'life') return <LifeGuide cat={cat} />
   return <PlaceTabs key={cat.slug} cat={cat} />
 }
