@@ -22,18 +22,18 @@ export const LINKPAGES = {
     ],
   },
   community: {
-    title: '제주커뮤니티', icon: 'people', color: '#e8590c',
+    title: '제주커뮤니티', icon: 'people', color: '#e8590c', logos: true,
     desc: '제주살이 이야기와 이사·정착 정보를 나누는 곳으로 바로 연결해요. 검색 링크는 해당 서비스의 검색 결과로 이동합니다.',
     groups: [
       { name: '이야기·정보 찾기', items: [
         { name: '픽제주', url: 'https://www.picjeju.com/', note: '제주 소식·정보 사이트' },
         { name: '플레이제주', url: 'https://playjeju.co.kr/', note: '제주 소식·정보 사이트' },
-        { name: '잇지제주', url: `https://www.google.com/search?q=${q('잇지제주')}`, note: '구글 검색 결과로 연결돼요' },
+        { name: '잇지제주', url: `https://www.google.com/search?q=${q('잇지제주')}`, note: '구글 검색 결과로 연결돼요', logo: false },
         { name: '탐라오', url: 'https://tamraoo.com/', note: '제주 정보 사이트' },
         { name: '제주청년', url: 'https://jejuyouth.com/index.php', note: '제주 청년 정보 사이트' },
-        { name: '네이버 카페 · 제주 이주/정착', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 이주 정착')}`, note: '이주·정착 후기와 질문' },
-        { name: '네이버 카페 · 제주 청년', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 청년')}`, note: '청년 모임·정보' },
-        { name: '네이버 블로그 · 제주살이', url: `https://section.blog.naver.com/Search/Post.naver?keyword=${q('제주살이')}`, note: '한 달 살기·집 구하기 후기' },
+        { name: '네이버 카페 · 제주 이주/정착', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 이주 정착')}`, note: '이주·정착 후기와 질문', logoHost: 'naver.com' },
+        { name: '네이버 카페 · 제주 청년', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 청년')}`, note: '청년 모임·정보', logoHost: 'naver.com' },
+        { name: '네이버 블로그 · 제주살이', url: `https://section.blog.naver.com/Search/Post.naver?keyword=${q('제주살이')}`, note: '한 달 살기·집 구하기 후기', logoHost: 'naver.com' },
       ] },
     ],
   },

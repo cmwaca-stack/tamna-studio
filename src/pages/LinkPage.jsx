@@ -3,10 +3,10 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { LINKPAGES } from '../data/links'
 
 // 사이트의 공식 마크(파비콘). 불러오지 못하면 이름 첫 글자를 보여줘요.
-function Logo({ name, url }) {
+function Logo({ name, url, host: hostOverride, skip }) {
   const [failed, setFailed] = useState(false)
-  const host = new URL(url).hostname
-  if (failed) return <span className="logo logo-fallback">{name.charAt(0)}</span>
+  const host = hostOverride || new URL(url).hostname
+  if (failed || skip) return <span className="logo logo-fallback">{name.charAt(0)}</span>
   return (
     <img className="logo" src={`https://www.google.com/s2/favicons?domain=${host}&sz=64`} alt=""
       loading="lazy" onError={() => setFailed(true)} />
@@ -32,7 +32,7 @@ export default function LinkPage() {
             {g.items.map((l) => (
               <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="link-card">
                 <strong>
-                  {page.logos && <Logo name={l.name} url={l.url} />}
+                  {page.logos && <Logo name={l.name} url={l.url} host={l.logoHost} skip={l.logo === false} />}
                   {l.name}<i className="bi bi-box-arrow-up-right" />
                 </strong>
                 <span className="muted">{l.note}</span>
