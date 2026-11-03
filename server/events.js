@@ -15,6 +15,8 @@ const pickUrl = (text) => {
   const urls = [...unesc(text).matchAll(/https?:\/\/[^\s"'<>)]+/g)].map((m) => m[0].replace(/[.,;]+$/, ''))
   return urls.find((u) => !SNS.test(u)) ?? urls[0] ?? ''
 }
+export const pickEventUrl = pickUrl
+export const makeEventLink = (url, title) => make(url, title)
 const make = (url, title) => (url ? { link: url, linkKind: 'official' } : { link: searchLink(title), linkKind: 'search' })
 
 async function pool(items, n, fn) {

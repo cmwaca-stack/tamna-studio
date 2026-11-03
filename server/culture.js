@@ -1,6 +1,7 @@
 // 한국문화정보원 한눈에보는문화정보 조회서비스: 제주 전시·공연·축제 (기간별 조회, XML)
 import { XMLParser } from 'fast-xml-parser'
 import { enrichCultureEvents } from './events.js'
+import { getNoldaEvents } from './nolda.js'
 import { dataKey, KeyError, toList } from './http.js'
 
 const BASE = 'https://apis.data.go.kr/B553457/cultureinfo/period2'
@@ -28,6 +29,11 @@ const say = (text) => {
 // 1년치 전국 자료를 모두 받아(약 1000건) 제주 것만 골라요.
 export async function getCulture({ days = 365, rows = 1000 } = {}) {
   if (cache && Date.now() - cache.at < 30 * 60e3) return cache.data
+  // 1순위: 제주특별자치도 전시문화행사정보(제주in놀다) — 제주 자료만 100건 이상. 안 되면 아래 전국 자료에서 제주만 골라요.
+  try {
+    const nolda = await getNoldaEvents()
+    if (nolda.length) { cache = { at: Date.now(), data: nolda }; return nolda }
+  } catch { /* 아래로 */ }
   const from = new Date()
   const to = new Date(Date.now() + days * 86400e3)
   let items = []
