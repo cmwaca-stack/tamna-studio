@@ -28,7 +28,7 @@ export const LINKPAGES = {
       { name: '이야기·정보 찾기', items: [
         { name: '픽제주', url: 'https://www.picjeju.com/', note: '제주 소식·정보 사이트' },
         { name: '플레이제주', url: 'https://playjeju.co.kr/', note: '제주 소식·정보 사이트' },
-        { name: '잇지제주', url: `https://www.google.com/search?q=${q('잇지제주')}`, note: '구글 검색 결과로 연결돼요', logo: false },
+        { name: '잇지제주', url: 'https://www.idge.co.kr/', note: '제주 청년 정보·교육·지원사업 소식' },
         { name: '탐라오', url: 'https://tamraoo.com/', note: '제주 정보 사이트' },
         { name: '제주청년', url: 'https://jejuyouth.com/index.php', note: '제주 청년 정보 사이트' },
         { name: '네이버 카페 · 제주 이주/정착', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 이주 정착')}`, note: '이주·정착 후기와 질문', logoHost: 'naver.com' },
