@@ -77,6 +77,7 @@ function VjInfo({ p }) {
 // 전시·축제·행사 · 올레길: 탭마다 TourAPI 를 다른 조건으로 조회
 function PlaceTabs({ cat }) {
   const [i, setI] = useState(0)
+  const [q, setQ] = useState('') // 이 화면 안에서 찾는 검색어
   const tab = cat.tabs[i]
   const isCulture = tab.source === 'culture'
   const isVj = FOOD_SRC.includes(tab.source)
@@ -84,10 +85,12 @@ function PlaceTabs({ cat }) {
   // '기타' 탭(other): 같은 화면의 다른 탭 검색어(흑돼지·횟집·카페 등)에 걸리는 곳을 빼고 나머지만 보여줘요
   const taken = cat.tabs.filter((t) => t.keyword && !t.other).flatMap((t) => t.keyword.split('|').map((w) => w.trim()).filter(Boolean))
   const takenCats = cat.tabs.filter((t) => t.cat3).map((t) => t.cat3) // 업종 분류(예: 카페)로 나눈 탭
-  const list = tab.other
+  const base = tab.other
     ? places.data?.filter((p) => !taken.some((w) => p.title.includes(w)) && !takenCats.includes(p.cat3))
     : tab.cat3 ? places.data?.filter((p) => p.cat3 === tab.cat3)
       : tab.exceptCats ? places.data?.filter((p) => !takenCats.includes(p.cat3)) : places.data
+  const word = q.trim().toLowerCase()
+  const list = word ? base?.filter((p) => [p.title, p.addr, p.place, p.area, p.kind].some((v) => String(v ?? '').toLowerCase().includes(word))) : base
   const dot = (d) => (d && d.length === 8 ? `${d.slice(0, 4)}.${d.slice(4, 6)}.${d.slice(6)}` : d)
 
   return (
@@ -98,22 +101,18 @@ function PlaceTabs({ cat }) {
       <div className="block-head">
         <div className="seg" role="tablist">
           {cat.tabs.map((t, k) => (
-            <button key={t.label} type="button" role="tab" aria-selected={k === i} className={k === i ? 'on' : ''} onClick={() => setI(k)}>{t.label}</button>
+            <button key={t.label} type="button" role="tab" aria-selected={k === i} className={k === i ? 'on' : ''} onClick={() => { setI(k); setQ('') }}>{t.label}</button>
           ))}
         </div>
-        {!isCulture && (() => {
-          const term = `제주 ${(tab.keyword || tab.label).split('|')[0].trim()}`
-          return (
-            <a href={`https://search.naver.com/search.naver?query=${encodeURIComponent(term)}`} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" title="이 검색어로 네이버에서 찾아보기">
-              <i className="bi bi-search" />검색어: {term}
-            </a>
-          )
-        })()}
+        <label className="btn btn-ghost btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, cursor: 'text' }}>
+          <i className="bi bi-search" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="검색어 (가게·주소)" aria-label="이 목록에서 검색" style={{ border: 0, outline: 0, background: 'transparent', font: 'inherit', width: 150 }} />
+        </label>
       </div>
 
       <ApiError error={places.error} onRetry={places.reload} />
       {places.loading ? <Loading /> : places.error ? null : !list?.length ? (
-        <Empty text={`‘${tab.label}’ 검색 결과가 없어요. 다른 탭을 눌러 보세요.`} />
+        <Empty text={word ? `‘${q.trim()}’ 검색 결과가 없어요. 다른 검색어를 써 보세요.` : `‘${tab.label}’ 검색 결과가 없어요. 다른 탭을 눌러 보세요.`} />
       ) : (
         <div className="cards">
           {list.map((p) => (
