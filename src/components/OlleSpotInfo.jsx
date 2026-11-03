@@ -7,7 +7,6 @@ import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
 import { fieldVerdict, hourLabel, weatherIcon } from '../lib/weather'
 import { findNearby, kmText } from '../lib/nearby'
-import { useAppStore } from '../store/useAppStore'
 
 // 공공데이터 이름에 섞인 '?'(깨진 하이픈)를 '-' 로
 const fixName = (s = '') => s.replace(/([가-힣])\?([가-힣])/g, '$1-$2')
@@ -21,7 +20,6 @@ const SECTIONS = [
 // 3D 제주에서 올레길 핀(시·종점)을 눌렀을 때의 상세 정보:
 //  이 지점을 지나는 코스 · 지금 날씨 · 5km 안 가볼 곳/체험/맛집/숙소(가까운 순)
 export default function OlleSpotInfo({ spot, color }) {
-  const { addNote } = useAppStore()
   const idx = Number(String(spot.id).replace('olle-w', ''))
   const last = OLLE_COURSES.length // 21코스까지 → 마지막 지점 번호
   const arrive = idx >= 1 ? idx : null // 이 지점에서 끝나는 코스
@@ -100,8 +98,7 @@ export default function OlleSpotInfo({ spot, color }) {
           {near.loading ? <Loading /> : near.error ? <ApiError error={near.error} onRetry={near.reload} /> : !near.data?.[key]?.length ? <Empty text="이 근처에서 찾은 장소가 없어요." /> : (
             <div className="cards">
               {near.data[key].map((p) => (
-                <ItemCard key={p.id} title={p.title} subtitle={`${kmText(p.dist)} · ${p.addr}`} image={p.image} badge={badge}
-                  onSave={() => addNote({ source: 'tour', id: String(p.id), title: p.title })} />
+                <ItemCard key={p.id} lat={p.lat} lng={p.lng} title={p.title} subtitle={`${kmText(p.dist)} · ${p.addr}`} image={p.image} badge={badge} />
               ))}
             </div>
           )}

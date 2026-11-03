@@ -1,5 +1,8 @@
 // 제주 언론사·커뮤니티·공공기관 바로가기. 주소가 바뀌면 여기만 고치면 돼요.
 
+const q = (t) => encodeURIComponent(t)
+const map = (t) => `https://map.kakao.com/?q=${q(t)}` // 다음(카카오)지도 검색
+
 export const LINKPAGES = {
   press: {
     title: '제주언론사', icon: 'newspaper', color: '#c92a2a', logos: true,
@@ -56,6 +59,40 @@ export const LINKPAGES = {
       ] },
       { name: '공공기관 모아보기', items: [
         { name: '제주도 공공기관 목록 (제주도로지스)', url: 'http://www.jejudologis.com/jejupol.php?page=1&gubun=%EA%B3%B5%EA%B3%B5%EA%B8%B0%EA%B4%80&keyword=', note: '제주 지역 공공기관을 한눈에 찾아봐요' },
+      ] },
+    ],
+  },
+  hospital: {
+    title: '병원', icon: 'hospital', color: '#e0527e', logos: true,
+    desc: '아프거나 다쳤을 때 바로 쓰는 곳을 모았어요. 응급 상황이면 망설이지 말고 119에 전화하세요. 지도 검색은 다음지도에서 가까운 곳을 찾아 줘요.',
+    groups: [
+      { name: '지금 급해요', items: [
+        { name: '응급의료포털', url: 'https://www.e-gen.or.kr', note: '응급실·병원·약국 실시간 정보, 달빛어린이병원 안내' },
+        { name: '약국정보 (심야·공휴일 약국)', url: 'https://www.pharm114.or.kr', note: '밤늦게·휴일에 문 여는 약국 찾기' },
+        { name: '응급실 찾기 · 제주', url: map('제주 응급실'), note: '다음지도에서 가까운 응급실', emoji: '🚑' },
+        { name: '심야·24시 약국 · 제주', url: map('제주 24시 약국'), note: '다음지도에서 늦게까지 여는 약국', emoji: '💊' },
+      ] },
+      { name: '진료과로 찾기 (다음지도)', items: [
+        { name: '소아과·달빛어린이병원', url: map('제주 소아청소년과'), note: '아이가 아플 때', emoji: '🧸' },
+        { name: '치과', url: map('제주 치과'), note: '치통·치아 진료', emoji: '🦷' },
+        { name: '한의원', url: map('제주 한의원'), note: '한방 진료·침·물리치료', emoji: '🌿' },
+        { name: '내과·가정의학과', url: map('제주 내과'), note: '감기·복통·건강검진', emoji: '🩺' },
+        { name: '정형외과', url: map('제주 정형외과'), note: '삐었거나 다쳤을 때', emoji: '🦴' },
+        { name: '피부과', url: map('제주 피부과'), note: '햇볕 화상·피부 트러블', emoji: '🧴' },
+        { name: '이비인후과', url: map('제주 이비인후과'), note: '코·목·귀 증상', emoji: '👂' },
+        { name: '안과', url: map('제주 안과'), note: '눈 충혈·이물감', emoji: '👁️' },
+      ] },
+      { name: '주요 병원', items: [
+        { name: '제주대학교병원', url: 'https://www.jejunuh.co.kr', note: '제주시 · 상급종합병원' },
+        { name: '제주한라병원', url: 'https://www.hallahosp.co.kr', note: '제주시 · 종합병원' },
+        { name: '제주의료원 (지도로 찾기)', url: map('제주의료원'), note: '제주시 · 공공의료기관', emoji: '🏥' },
+        { name: '서귀포의료원 (지도로 찾기)', url: map('서귀포의료원'), note: '서귀포시 · 공공의료기관', emoji: '🏥' },
+      ] },
+      { name: '보건·건강 정보', items: [
+        { name: '제주특별자치도 보건', url: 'https://www.jeju.go.kr/health/index.htm', note: '보건소·감염병·건강 정책 안내' },
+        { name: '서귀포시 보건', url: 'https://www.seogwipo.go.kr/health/index.htm', note: '서귀포시 보건소·건강 안내' },
+        { name: '국민건강보험공단', url: 'https://www.nhis.or.kr', note: '자격 확인·건강검진·환급' },
+        { name: '보건복지부', url: 'https://www.mohw.go.kr', note: '보건복지상담 129 · 정책 안내' },
       ] },
     ],
   },

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, Navigate, useParams } from 'react-router-dom'
+import HospitalData from '../components/HospitalData'
 import { LINKPAGES } from '../data/links'
 
 // 사이트의 공식 마크(파비콘). 불러오지 못하면 이름 첫 글자를 보여줘요.
@@ -21,10 +22,11 @@ export default function LinkPage() {
   return (
     <div className="page">
       <header className="page-head" style={{ '--c': page.color }}>
-        <Link to="/" className="back"><i className="bi bi-arrow-left" />스튜디오</Link>
+        <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
         <h1><i className={`bi bi-${page.icon}`} style={{ color: page.color }} />{page.title}</h1>
         <p className="muted">{page.desc}</p>
       </header>
+      {kind === 'hospital' && <HospitalData />}
       {page.groups.map((g) => (
         <section key={g.name} className="kit-block">
           <h2>{g.name}</h2>
@@ -32,7 +34,7 @@ export default function LinkPage() {
             {g.items.map((l) => (
               <a key={l.url} href={l.url} target="_blank" rel="noreferrer" className="link-card">
                 <strong>
-                  {page.logos && <Logo name={l.name} url={l.url} host={l.logoHost} src={l.logoSrc} skip={l.logo === false} />}
+                  {l.emoji ? <span className="logo logo-emoji" aria-hidden="true">{l.emoji}</span> : page.logos && <Logo name={l.name} url={l.url} host={l.logoHost} src={l.logoSrc} skip={l.logo === false} />}
                   {l.name}<i className="bi bi-box-arrow-up-right" />
                 </strong>
                 <span className="muted">{l.note}</span>

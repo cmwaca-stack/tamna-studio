@@ -7,7 +7,6 @@ import PlaceInfo from './pages/PlaceInfo'
 import Jejueo from './pages/Jejueo'
 import Kit from './pages/Kit'
 import Guide from './pages/Guide'
-import Notes from './pages/Notes'
 import LinkPage from './pages/LinkPage'
 import OlleCourse from './pages/OlleCourse'
 import NotFound from './pages/NotFound'
@@ -26,7 +25,6 @@ export const router = createBrowserRouter([
       { path: 'jejueo', element: <Jejueo /> },
       { path: 'kit', element: <Kit /> },
       { path: 'guide', element: <Guide /> },
-      { path: 'notes', element: <Notes /> },
       { path: 'links/:kind', element: <LinkPage /> },
       { path: 'olle/:no', element: <OlleCourse /> },
       { path: '*', element: <NotFound /> },

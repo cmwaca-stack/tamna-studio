@@ -6,7 +6,7 @@ import { isSubCourse, OLLE_ORDER, SUB_POINTS } from '../data/olleCourses'
 import { OLLE_COURSES } from '../data/olle'
 import { useAsync } from '../hooks/useAsync'
 import { findNearby, kmText } from '../lib/nearby'
-import { useAppStore } from '../store/useAppStore'
+import { useStamps } from '../lib/stamps'
 
 // "포구·선착장-포구" 처럼 이어진 시·종점 글자를 둘로 나눠요
 const splitEnds = (ends = '') => ends.split('-').map((s) => s.trim()).filter(Boolean)
@@ -15,7 +15,7 @@ const fixName = (s = '') => s.replace(/([가-힣])\?([가-힣])/g, '$1-$2')
 // 올레길 코스 한 개를 설명하는 화면 (/olle/:no)
 export default function OlleCourse() {
   const { no } = useParams()
-  const { addNote } = useAppStore()
+  const { has, toggle } = useStamps()
   const idx = OLLE_ORDER.indexOf(no)
   const olle = useAsync(() => fetchOlle(), [])
   const rows = (olle.data ?? []).filter((c) => c.no === no)
@@ -77,6 +77,13 @@ export default function OlleCourse() {
         )}
       </section>
 
+      <section className="kit-block stamp-row">
+        <button type="button" className={`stamp-btn${has(no) ? ' on' : ''}`} aria-pressed={has(no)} onClick={() => toggle(no)}>
+          <span aria-hidden="true">🐾</span> {has(no) ? '도장 찍었어요! (눌러서 취소)' : `${no}코스 도장 찍기`}
+        </button>
+        <p className="muted small">걸은 코스에 도장을 찍어 모아 보세요. 홈에서 진행 상황을 볼 수 있어요.</p>
+      </section>
+
       {[['spot', 'bi-geo-alt', '시·종점 주변 가볼 곳', '가볼 곳'], ['activity', 'bi-bicycle', '시·종점 주변 체험·레포츠', '체험'], ['food', 'bi-cup-hot', '시·종점 주변 맛집·카페', '맛집·카페'], ['stay', 'bi-house-door', '시·종점 주변 숙소', '숙소']].map(([key, icon, heading, badge]) => (
         <section key={key} className="kit-block">
           <h2><i className={`bi ${icon}`} />{heading} <small className="muted">(5km 안 · 가까운 순 · 한국관광공사)</small></h2>
@@ -84,8 +91,7 @@ export default function OlleCourse() {
             : !places.data?.[key]?.length ? <Empty text="이 근처에서 찾은 장소가 없어요." /> : (
               <div className="cards">
                 {places.data[key].map((p) => (
-                  <ItemCard key={p.id} title={p.title} subtitle={`${p.from} 근처 ${kmText(p.dist)} · ${p.addr}`} image={p.image} badge={badge}
-                    onSave={() => addNote({ source: 'tour', id: String(p.id), title: p.title })} />
+                  <ItemCard key={p.id} lat={p.lat} lng={p.lng} title={p.title} subtitle={`${p.from} 근처 ${kmText(p.dist)} · ${p.addr}`} image={p.image} badge={badge} />
                 ))}
               </div>
             )}

@@ -23,15 +23,15 @@ export function makeCartoonTexture(rain = false) {
   const r = rng(7)
 
   // 바다
-  ctx.fillStyle = rain ? '#8fb7c8' : '#9adcf5'
+  ctx.fillStyle = rain ? '#8fb7c8' : '#aee9de'
   ctx.fillRect(0, 0, W, H)
-  ctx.fillStyle = rain ? '#9ec3d2' : '#b4e6f8'
+  ctx.fillStyle = rain ? '#9ec3d2' : '#c4f0e6'
   for (let i = 0; i < 26; i++) { // 물빛 얼룩
     ctx.beginPath(); ctx.ellipse(r() * W, r() * H, 60 + r() * 120, 22 + r() * 40, r() * 0.6 - 0.3, 0, 7); ctx.fill()
   }
   // 얕은 바다 테두리 (해안선에서 바깥으로 점점 연하게)
   ctx.lineJoin = 'round'
-  for (const [w, c] of [[150, '#a9e6f7'], [100, '#c4f0f4'], [56, '#def9f6']]) {
+  for (const [w, c] of [[150, '#bdeee3'], [100, '#d3f4ec'], [56, '#e8faf4']]) {
     ctx.strokeStyle = rain ? '#b9d4de' : c; ctx.lineWidth = w
     LANDS.forEach((p) => { path(ctx, p); ctx.stroke() })
   }
@@ -44,9 +44,9 @@ export function makeCartoonTexture(rain = false) {
   }
 
   // 섬 본체
-  ctx.fillStyle = '#4f9d3d'
+  ctx.fillStyle = '#8fc965'
   LANDS.forEach((p) => { path(ctx, p); ctx.fill() })
-  ctx.strokeStyle = '#f3e7b0'; ctx.lineWidth = 12
+  ctx.strokeStyle = '#fdeebd'; ctx.lineWidth = 12
   LANDS.forEach((p) => { path(ctx, p); ctx.stroke() }) // 모래 해안선
 
   // 섬 안쪽만 칠하기
@@ -57,7 +57,7 @@ export function makeCartoonTexture(rain = false) {
   // 중산간 밝은 초원 → 한라산 갈색 → 정상 분화구
   const hx = X(HALLA[0]), hz = Z(HALLA[1])
   const blob = (rx, rz, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(hx, hz, rx, rz, -0.04, 0, 7); ctx.fill() }
-  blob(560, 250, '#6bb44a'); blob(400, 175, '#5da23f'); blob(270, 118, '#9a7a56'); blob(170, 76, '#b08c66')
+  blob(560, 250, '#a6d86f'); blob(400, 175, '#92cb63'); blob(270, 118, '#c9a07c'); blob(170, 76, '#dbb895')
   ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.ellipse(hx - 20, hz - 6, 40, 22, 0, 0, 7); ctx.fill() // 정상 눈
   ctx.fillStyle = '#6fd0ea'; ctx.beginPath(); ctx.ellipse(hx - 20, hz - 4, 26, 13, 0, 0, 7); ctx.fill() // 백록담
 
@@ -67,8 +67,8 @@ export function makeCartoonTexture(rain = false) {
     if (!ctx.isPointInPath(x, y)) continue
     if (((x - hx) / 300) ** 2 + ((y - hz) / 130) ** 2 < 1) continue // 한라산 정상부는 비움
     const s = 12 + r() * 11
-    ctx.fillStyle = '#2f7d32'; ctx.beginPath(); ctx.arc(x, y, s, 0, 7); ctx.fill()
-    ctx.fillStyle = '#4db04a'; ctx.beginPath(); ctx.arc(x - s * 0.28, y - s * 0.3, s * 0.6, 0, 7); ctx.fill()
+    ctx.fillStyle = '#6fb35a'; ctx.beginPath(); ctx.arc(x, y, s, 0, 7); ctx.fill()
+    ctx.fillStyle = '#93d072'; ctx.beginPath(); ctx.arc(x - s * 0.28, y - s * 0.3, s * 0.6, 0, 7); ctx.fill()
   }
   // 작은 꽃 점
   for (let i = 0; i < 260; i++) {

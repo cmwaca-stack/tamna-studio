@@ -6,19 +6,21 @@ import { ApiError, Empty, Loading } from '../components/Status'
 import { fetchHeritage, fetchPlaces } from '../api/client'
 import { isSubCourse, OLLE_ORDER } from '../data/olleCourses'
 import { SPOTS } from '../data/spots'
+import { useStamps } from '../lib/stamps'
 import { PLACE_TYPES, themeOf } from '../data/themes'
 import { useAsync } from '../hooks/useAsync'
-import { useWeather } from '../hooks/useWeather'
-import { fieldVerdict, hourLabel, weatherIcon } from '../lib/weather'
 import { useAppStore } from '../store/useAppStore'
+
+// 사진이 없는 대표 장소 카드에 보여 줄 이모지
+const SPOT_EMOJI = { oreum: '⛰️', myth: '✨', jeju43: '🌸', history: '🏯', olle: '🥾' }
 
 // 주제별 정보 (옛 이름: 소재 키트) = 한 테마를 3개 공공 API 로 입체적으로 살펴보는 화면
 //   ① 뿌리(국가유산청) ② 보러 갈 곳(한국관광공사) ③ 답사 날씨(기상청)
 export default function Kit() {
-  const { themeKey, setThemeKey, addNote } = useAppStore()
+  const { themeKey, setThemeKey } = useAppStore()
+  const { has: stamped } = useStamps()
   const theme = themeOf(themeKey)
   const [type, setType] = useState('12')
-  const [place, setPlace] = useState('서귀포시')
 
   // 주제마다 어울리는 검색어를 따로 씁니다 (kitKeyword / kitHeritage). kitHeritage 가 false 면 국가유산 칸을 숨겨요.
   const heritageWord = theme.kitHeritage === undefined ? theme.heritageKeyword : theme.kitHeritage
@@ -27,8 +29,6 @@ export default function Kit() {
   const spots = SPOTS[theme.spots] ?? []
   const heritage = useAsync(() => (showHeritage ? fetchHeritage(heritageWord || '') : Promise.resolve([])), [showHeritage, heritageWord])
   const places = useAsync(() => fetchPlaces(placeWord, type, 24), [placeWord, type])
-  const weather = useWeather(place)
-  const verdict = fieldVerdict(weather.slots)
 
   return (
     <div className="page">
@@ -51,12 +51,12 @@ export default function Kit() {
           <div className="block-head"><h2><i className="bi bi-signpost-split" />올레 코스 둘러보기 <small className="muted">점을 누르면 코스 설명으로 가요</small></h2></div>
           <div className="olle-track" role="list">
             {OLLE_ORDER.map((no) => (
-              <Link key={no} to={`/olle/${no}`} role="listitem" className={`olle-stop${isSubCourse(no) ? ' sub' : ''}`} aria-label={`올레 ${no}코스`} title={`올레 ${no}코스`}>
+              <Link key={no} to={`/olle/${no}`} role="listitem" className={`olle-stop${isSubCourse(no) ? ' sub' : ''}${stamped(no) ? ' done' : ''}`} aria-label={`올레 ${no}코스${stamped(no) ? ' (도장 찍음)' : ''}`} title={`올레 ${no}코스${stamped(no) ? ' · 도장 찍음 🐾' : ''}`}>
                 <span className="olle-dot" /><b>{no}</b>
               </Link>
             ))}
           </div>
-          <p className="muted small">1~21코스는 섬을 한 바퀴 도는 본 코스, 빈 점(예: 1-1)은 우도·가파도·추자도 등 부속 코스예요.</p>
+          <p className="muted small">1~21코스는 섬을 한 바퀴 도는 본 코스, 빈 점(예: 1-1)은 우도·가파도·추자도 등 부속 코스예요. 🐾 도장을 찍은 코스는 분홍색으로 바뀌어요.</p>
         </section>
       )}
 
@@ -65,45 +65,16 @@ export default function Kit() {
           <div className="block-head"><h2><i className={`bi bi-${theme.icon}`} />대표 {theme.spotLabel ?? theme.label} <small className="muted">{spots.length}곳</small></h2></div>
           <div className="cards">
             {spots.map((s) => (
-              <ItemCard key={s.id} title={s.title} subtitle={s.sub} autoImage badge={theme.spotLabel ?? theme.label}
-                onSave={() => addNote({ source: 'tour', id: s.id, title: s.title })} />
+              <ItemCard key={s.id} lat={s.lat} lng={s.lng} emoji={SPOT_EMOJI[theme.key]} title={s.title} subtitle={s.sub} autoImage badge={theme.spotLabel ?? theme.label} />
             ))}
           </div>
         </section>
       )}
 
-      {theme.key === 'olle' ? (
+      {theme.key === 'olle' && (
         <section className="kit-block">
           <img className="olle-map" src="/olle-info-map.webp" alt="제주올레 안내소 지도: 공식안내소와 족은안내소 위치" loading="lazy" />
           <p className="muted small">출처: 제주올레 (jejuolle.org)</p>
-        </section>
-      ) : (
-        <section className="kit-block">
-          <div className="block-head">
-            <h2><i className="bi bi-cloud-sun" />답사 날씨</h2>
-            <div className="seg">
-              {['제주시', '서귀포시'].map((p) => (
-                <button key={p} type="button" className={place === p ? 'on' : ''} onClick={() => setPlace(p)}>{p}</button>
-              ))}
-            </div>
-          </div>
-          {weather.loading ? <Loading text="기상청 예보 확인 중…" /> : weather.error ? <ApiError error={weather.error} onRetry={weather.reload} /> : (
-            <>
-              {verdict && <div className={`verdict ${verdict.tone}`}><i className={`bi bi-${verdict.icon}`} />{verdict.text}</div>}
-              <div className="slots">
-                {weather.slots.map((w) => (
-                  <div key={w.time} className="slot">
-                    <span className="muted">{hourLabel(w.time)}</span>
-                    <i className={`bi bi-${weatherIcon(w)}`} />
-                    <strong>{w.temp}℃</strong>
-                    <small>{w.rain !== '없음' ? w.rain : w.sky}</small>
-                    <div className="pop" title={`강수확률 ${w.pop}%`}><span style={{ width: `${w.pop}%` }} /></div>
-                    <small className="muted">{w.pop}%</small>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
         </section>
       )}
 
@@ -117,8 +88,7 @@ export default function Kit() {
         ) : (
           <div className="cards">
             {heritage.data.map((h) => (
-              <ItemCard key={h.id} tone="heritage" autoImage title={h.name} subtitle={h.city} badge={h.kind}
-                onSave={() => addNote({ source: 'heritage', id: h.id, title: h.name })} />
+              <ItemCard key={h.id} lat={h.lat} lng={h.lng} tone="heritage" autoImage title={h.name} subtitle={h.city} badge={h.kind} />
             ))}
           </div>
         )}
@@ -139,8 +109,7 @@ export default function Kit() {
         ) : (
           <div className="cards">
             {places.data.map((p) => (
-              <ItemCard key={p.id} title={p.title} subtitle={p.addr} image={p.image} badge={PLACE_TYPES[p.type]}
-                onSave={() => addNote({ source: 'tour', id: p.id, title: p.title })} />
+              <ItemCard key={p.id} lat={p.lat} lng={p.lng} title={p.title} subtitle={p.addr} image={p.image} badge={PLACE_TYPES[p.type]} />
             ))}
           </div>
         )}

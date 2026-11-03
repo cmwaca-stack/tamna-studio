@@ -28,6 +28,17 @@ export const YOUTH = [
     ],
   },
   {
+    slug: 'photo', title: '인생샷 장소', icon: 'camera', color: '#ff8fab', weather: true,
+    tagline: '사진 찍기 좋은 곳만 쏙쏙',
+    desc: '바다·오름·꽃밭·감성 카페까지, 사진이 잘 나오는 제주 장소를 모았어요. 날씨를 먼저 보고 골라 보세요.',
+    tabs: [
+      { label: '해변·바다', type: '12', keyword: '해변|해수욕장|포구|해안', rows: 40 },
+      { label: '오름·숲', type: '12', keyword: '오름|숲|곶자왈|폭포', rows: 40 },
+      { label: '정원·꽃', type: '12', keyword: '정원|수목원|공원|꽃|유채|동백|수국', rows: 40 },
+      { label: '감성 카페', type: '39', keyword: '', rows: 500, arrange: 'Q', cat3: 'A05020900' },
+    ],
+  },
+  {
     slug: 'traffic', title: '실시간 교통정보', icon: 'cone-striped', color: '#7048e8', kind: 'traffic', weather: true,
     tagline: '떠나기 전, 지금 도로 상황',
     desc: '이동 전에 날씨에 맞는 운전 주의 사항을 확인하고, 공식 사이트에서 도로 상황과 버스 정보를 바로 열어 보세요.',

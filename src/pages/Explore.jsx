@@ -13,7 +13,7 @@ import { useAppStore } from '../store/useAppStore'
 const FILTERS = [['all', '전체'], ['spot', '테마 핀'], ['tour', '장소·전시'], ['heritage', '국가유산']]
 
 export default function Explore() {
-  const { themeKey, setThemeKey, addNote } = useAppStore()
+  const { themeKey, setThemeKey } = useAppStore()
   const [params] = useSearchParams()
   const initial = params.get('q') ?? '' // 청년 탐색에서 넘어올 때 검색어를 이어받음
   const [custom, setCustom] = useState(initial) // 직접 검색어 (비우면 테마 키워드)
@@ -29,7 +29,6 @@ export default function Explore() {
 
   function pickTheme(key) { setThemeKey(key); setCustom(''); setQuery(''); setSelected(null) }
   function search(e) { e.preventDefault(); setCustom(query.trim()); setSelected(null) }
-  const save = (p) => addNote({ source: p.source === 'spot' ? 'tour' : p.source, id: p.id, title: p.title }) // 노트 테이블은 tour/heritage 만 허용
 
   return (
     <div className="explore">
@@ -64,7 +63,7 @@ export default function Explore() {
 
       <div className="explore-stage">
         <LazyScene items={shown} routes={routes} weather={wx} selectedKey={selected?.key} onPick={setSelected} />
-        <PinDetail pin={selected} onSave={save} onClose={() => setSelected(null)} />
+        <PinDetail pin={selected} onClose={() => setSelected(null)} />
       </div>
     </div>
   )

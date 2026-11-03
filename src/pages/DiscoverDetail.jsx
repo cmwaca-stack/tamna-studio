@@ -8,13 +8,16 @@ import { fetchCulture, fetchFlights, fetchPlaces, fetchPolicies, fetchSnowCctv }
 import { TYPE_LABEL, youthOf } from '../data/youth'
 import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
-import { fieldVerdict, hourLabel, weatherIcon } from '../lib/weather'
+import { fieldVerdict } from '../lib/weather'
 import { useAppStore } from '../store/useAppStore'
+
+// 사진이 없는 카드에 보여 줄 이모지
+const PLACE_EMOJI = { food: '🍜', photo: '📸', weekend: '🎟️' }
 
 function Head({ cat }) {
   return (
     <header className="page-head" style={{ '--c': cat.color }}>
-      <Link to="/" className="back"><i className="bi bi-arrow-left" />스튜디오</Link>
+      <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
       <h1><i className={`bi bi-${cat.icon}`} style={{ color: cat.color }} />{cat.title}</h1>
       <p className="muted">{cat.desc}</p>
     </header>
@@ -34,7 +37,6 @@ function WeatherLine() {
 
 // 전시·축제·행사 · 올레길: 탭마다 TourAPI 를 다른 조건으로 조회
 function PlaceTabs({ cat }) {
-  const addNote = useAppStore((s) => s.addNote)
   const [i, setI] = useState(0)
   const tab = cat.tabs[i]
   const isCulture = tab.source === 'culture'
@@ -70,8 +72,7 @@ function PlaceTabs({ cat }) {
       ) : (
         <div className="cards">
           {list.map((p) => (
-            <ItemCard key={p.id} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}
-              onSave={() => addNote({ source: 'tour', id: p.id, title: p.title })} />
+            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title} />
           ))}
         </div>
       )}
@@ -107,17 +108,6 @@ function DriveCheck() {
           <div key={t.title} className={`tip ${t.tone}`}>
             <i className={`bi bi-${t.icon}`} />
             <div><strong>{t.title}</strong><p className="muted">{t.text}</p></div>
-          </div>
-        ))}
-      </div>
-      <div className="hours">
-        {slots.map((s) => (
-          <div key={s.time} className="hour">
-            <span className="muted small">{hourLabel(s.time)}</span>
-            <i className={`bi bi-${weatherIcon(s)}`} />
-            <strong>{s.temp}℃</strong>
-            <span className="muted small">강수 {s.pop}%</span>
-            <span className="muted small">바람 {Math.round(s.wind ?? 0)}m/s</span>
           </div>
         ))}
       </div>

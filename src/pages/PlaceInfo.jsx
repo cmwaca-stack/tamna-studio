@@ -18,7 +18,7 @@ export default function PlaceInfo() {
   const { id } = useParams()
   const { state } = useLocation()
   const navigate = useNavigate()
-  const { addNote, setThemeKey } = useAppStore()
+  const { setThemeKey } = useAppStore()
 
   const spot = ALL.find((s) => s.id === id) ?? state?.pin ?? null
   const themeKey = spot?.source === 'cctv' ? 'cctv' : spot?.id?.split('-')[0]
@@ -48,7 +48,6 @@ export default function PlaceInfo() {
     .sort((a, b) => km(spot, a) - km(spot, b)).slice(0, 4)
   const q = `${spot.title}에 대해 소재로 쓸 만한 이야기와 방문 팁을 알려줘`
   const enc = encodeURIComponent(spot.title)
-  const save = () => addNote({ source: 'tour', id: spot.id, title: spot.title })
 
   return (
     <div className="page narrow place">
@@ -99,7 +98,7 @@ export default function PlaceInfo() {
         {places.loading ? <Loading /> : places.error ? null : !places.data?.length ? <Empty text="관련 관광 정보가 없어요." /> : (
           <div className="cards">
             {places.data.map((p) => (
-              <ItemCard key={p.id} title={p.title} subtitle={p.addr} image={p.image} badge="장소·전시" onSave={() => addNote({ source: 'tour', id: String(p.id), title: p.title })} />
+              <ItemCard key={p.id} lat={p.lat} lng={p.lng} title={p.title} subtitle={p.addr} image={p.image} badge="장소·전시" />
             ))}
           </div>
         )}
@@ -112,7 +111,7 @@ export default function PlaceInfo() {
           {heritage.loading ? <Loading /> : heritage.error ? <ApiError error={heritage.error} onRetry={heritage.reload} /> : !heritage.data?.length ? <Empty text="관련 국가유산이 없어요." /> : (
             <div className="cards">
               {heritage.data.slice(0, 6).map((h) => (
-                <ItemCard key={h.id} title={h.name} subtitle={[h.kind, h.city].filter(Boolean).join(' · ')} badge="국가유산" tone="heritage" autoImage onSave={() => addNote({ source: 'heritage', id: String(h.id), title: h.name })} />
+                <ItemCard key={h.id} lat={h.lat} lng={h.lng} title={h.name} subtitle={[h.kind, h.city].filter(Boolean).join(' · ')} badge="국가유산" tone="heritage" autoImage />
               ))}
             </div>
           )}
@@ -129,8 +128,7 @@ export default function PlaceInfo() {
       )}
 
       <div className="place-actions">
-        {!isCctv && <button type="button" className="btn btn-primary" onClick={save}><i className="bi bi-bookmark-plus" />노트에 저장</button>}
-        <Link to={`/guide?q=${encodeURIComponent(q)}`} className="btn btn-ghost"><i className="bi bi-stars" />AI 가이드에게 묻기</Link>
+        <Link to={`/guide?q=${encodeURIComponent(q)}`} className="btn btn-ghost"><i className="bi bi-stars" />AI 검색으로 물어보기</Link>
       </div>
     </div>
   )

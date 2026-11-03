@@ -34,10 +34,10 @@ function Ocean({ rain, wind = 2 }) {
     <>
     <mesh position={[0, -0.75, 0]} rotation={[-Math.PI / 2, 0, 0]}>
       <planeGeometry args={[120, 80]} />
-      <meshStandardMaterial color={rain ? '#4f6a76' : '#62c9f2'} />
+      <meshStandardMaterial color={rain ? '#6a7f86' : '#8fd9cf'} />
     </mesh>
     <mesh geometry={geometry} position={[0, -0.32, 0]}>
-      <meshStandardMaterial color={rain ? '#7392a0' : '#62c9f2'} roughness={0.25} metalness={0.1} transparent opacity={0.45} />
+      <meshStandardMaterial color={rain ? '#8aa3ad' : '#8fd9cf'} roughness={0.25} metalness={0.1} transparent opacity={0.45} />
     </mesh>
     </>
   )
@@ -110,15 +110,15 @@ export default function Scene3D({ items = [], routes = [], rain = false, weather
   // weather 가 없으면 예전처럼 rain(true/false)만으로 표현
   const w = weather ?? { sky: rain ? 'overcast' : 'clear', precip: rain ? 'rain' : 'none', wind: 2, dir: 300 }
   const wet = isWet(w), gloomy = wet || w.sky === 'overcast'
-  const bg = w.precip === 'snow' ? '#dbe3e8' : wet ? '#b4c3cc' : w.sky === 'overcast' ? '#bfcdd6' : w.sky === 'partly' ? '#cbe5f5' : '#cdeaf9'
+  const bg = w.precip === 'snow' ? '#dbe3e8' : wet ? '#b4c3cc' : w.sky === 'overcast' ? '#bfcdd6' : w.sky === 'partly' ? '#ffe9d9' : '#ffeedd'
   const [hovering, setHovering] = useState(false) // 핀 위에 마우스가 있으면 회전을 멈춰 누르기 쉽게
   return (
     <Canvas camera={{ position: [0, 7.5, 12.5], fov: 45 }} dpr={[1, 2]}>
       <color attach="background" args={[bg]} />
       <fog attach="fog" args={[bg, wet ? 12 : 16, wet ? 40 : 70]} />
       <ambientLight intensity={gloomy ? 0.88 : 1.0} color="#ffffff" />
-      <directionalLight position={[8, 11, 6]} intensity={wet ? 1.0 : w.sky === 'overcast' ? 1.3 : w.sky === 'partly' ? 2.0 : 2.4} color={gloomy ? '#e3edf3' : '#fff4dc'} />
-      <hemisphereLight args={['#d6eeff', '#6f9460', 0.7]} />
+      <directionalLight position={[8, 11, 6]} intensity={wet ? 1.0 : w.sky === 'overcast' ? 1.3 : w.sky === 'partly' ? 2.0 : 2.4} color={gloomy ? '#e3edf3' : '#ffe6bd'} />
+      <hemisphereLight args={['#ffe9d6', '#a3b86f', 0.7]} />
 
       {!gloomy && (
         <mesh position={[14, 12, -20]}>

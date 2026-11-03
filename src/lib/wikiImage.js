@@ -3,6 +3,8 @@
 //  - exact: false → 같은 종류의 대표 사진(예: 방사탑, 환해장성)이라 화면에 "참고 이미지"로 표시해요.
 //  - null         → 맞는 사진이 없어요 (카드는 기본 그림). 엉뚱한 사진을 붙이는 것보다 비워 두는 게 낫습니다.
 // 이름이 맞는지(제목 일치) 확인하지 않은 검색 결과는 쓰지 않아요. 요청은 동시에 4개까지만 보내요.
+import { fetchPlaces } from '../api/client'
+
 const cache = new Map()
 const BASE = 'https://ko.wikipedia.org'
 const MAX_PARALLEL = 4
@@ -128,11 +130,85 @@ async function commonsPhoto(query) {
   return real(page?.imageinfo?.[0]?.thumburl)
 }
 
+// 이름 변형: 괄호를 뺀 이름과 괄호 안 이름(예: 단산(바구니오름) → 단산, 바구니오름)
+function variants(name) {
+  const inner = (name.match(/\(([^)]+)\)/) ?? [])[1]
+  const clean = name.replace(/\([^)]*\)/g, '').trim()
+  return [...new Set([clean, inner].filter((v) => v && norm(v).length >= 3))]
+}
+
+// ① 한국관광공사 목록: 공식 관광 사진이라 가장 믿을 만해요. 목록은 한 번만 받아 둬요.
+let tourList = null
+function tourPlaces() {
+  tourList ??= Promise.all(['12', '14', '28', '39'].map((t) => fetchPlaces('', t, 500).catch(() => []))).then((l) => l.flat().filter((p) => p.image))
+  return tourList
+}
+async function tourImage(name) {
+  const list = await tourPlaces()
+  const hit = variants(name).map((v) => list.find((p) => sameThing(v, p.title))).find(Boolean)
+  return hit ? { src: hit.image, exact: true } : null
+}
+
+// ② 위키데이터: 이름이 같은 항목의 대표 사진(P18). 항목 이름이 같을 때만 써요.
+async function wikidataImage(name) {
+  for (const v of variants(name)) {
+    const q = new URLSearchParams({ action: 'wbsearchentities', search: v, language: 'ko', uselang: 'ko', format: 'json', origin: '*', limit: '5', type: 'item' })
+    const j = await getJson('https://www.wikidata.org/w/api.php?' + q)
+    if (j === undefined) return undefined
+    const item = (j?.search ?? []).find((e) => sameThing(v, e.label ?? ''))
+    if (!item) continue
+    const c = await getJson('https://www.wikidata.org/w/api.php?' + new URLSearchParams({ action: 'wbgetclaims', entity: item.id, property: 'P18', format: 'json', origin: '*' }))
+    if (c === undefined) return undefined
+    const file = c?.claims?.P18?.[0]?.mainsnak?.datavalue?.value
+    const src = file ? real('https://commons.wikimedia.org/wiki/Special:FilePath/' + encodeURIComponent(file) + '?width=500') : null
+    if (src && !/\.svg/i.test(file)) return { src, exact: true }
+  }
+  return null
+}
+
+// ②-2 위키백과 문서 본문 사진: 대표 사진은 없어도 그 장소 문서에 실린 사진이면 그 장소 사진이에요.
+// 아이콘·로고·지도·위치도 같은 파일은 빼요.
+const NOT_PHOTO = /\.(svg|gif|webm|ogv|pdf|tif)$|flag|logo|icon|symbol|ambox|commons-|edit-|question|locator|location|map|지도|위치|표지|stub|red_pog|wikisource|wikiquote|disambig|crystal|oojs|padlock|increase|decrease|steady|nuvola/i
+async function articleImage(titles, name) {
+  const q = new URLSearchParams({ action: 'query', format: 'json', origin: '*', titles: titles.join('|'), redirects: '1', prop: 'images', imlimit: '30' })
+  const j = await getJson(BASE + '/w/api.php?' + q)
+  if (j === undefined) return undefined
+  const page = Object.values(j?.query?.pages ?? {}).find((p) => p.images && sameThing(name, p.title))
+  const files = (page?.images ?? []).map((i) => i.title).filter((t) => !NOT_PHOTO.test(t)).slice(0, 6)
+  if (!files.length) return null
+  const info = await getJson(BASE + '/w/api.php?' + new URLSearchParams({
+    action: 'query', format: 'json', origin: '*', titles: files.join('|'), prop: 'imageinfo', iiprop: 'url|size', iiurlwidth: '500',
+  }))
+  if (info === undefined) return undefined
+  const best = Object.values(info?.query?.pages ?? {})
+    .filter((p) => real(p.imageinfo?.[0]?.thumburl) && (p.imageinfo[0].width ?? 0) >= 400 && (p.imageinfo[0].height ?? 0) >= 250)
+    .sort((a, b) => files.indexOf(a.title) - files.indexOf(b.title))[0]
+  return best ? { src: real(best.imageinfo[0].thumburl), exact: true } : null
+}
+
+// ③ 위키미디어 커먼즈: 사진 파일 이름에 장소 이름이 그대로 들어 있을 때만 (예: "제주도 아부오름1.jpg")
+async function commonsByTitle(name) {
+  for (const v of variants(name)) {
+    const q = new URLSearchParams({
+      action: 'query', format: 'json', origin: '*', generator: 'search', gsrnamespace: '6', gsrsearch: v + ' filetype:bitmap',
+      gsrlimit: '8', prop: 'imageinfo', iiprop: 'url', iiurlwidth: '500',
+    })
+    const j = await getJson('https://commons.wikimedia.org/w/api.php?' + q)
+    if (j === undefined) return undefined
+    const pages = Object.values(j?.query?.pages ?? {}).sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
+    const hit = pages.find((p) => norm(p.title.replace(/^File:/, '').replace(/\.[a-z]+$/i, '')).includes(norm(v)) && real(p.imageinfo?.[0]?.thumburl))
+    if (hit) return { src: real(hit.imageinfo[0].thumburl), exact: true }
+  }
+  return null
+}
+
 // 이름으로 못 찾을 때 대신 보여 줄 같은 종류의 대표 사진 (예: 몰래물마을방사탑1호 → 방사탑)
 const KINDS = ['방사탑', '환해장성'] // 향교·읍성처럼 다른 지역 사진이 나올 수 있는 종류는 쓰지 않아요
 
 async function find(name) {
   if (BLOCKED.includes(name)) return null
+  const tour = await tourImage(name)
+  if (tour) return tour
   // "A - B" 처럼 부제가 붙은 이름은 앞부분(A)도 같이 찾아봐요
   const main = name.split(/\s[-–]\s/)[0]
   const clean = main.replace(/\([^)]*\)/g, '').trim()
@@ -141,11 +217,20 @@ async function find(name) {
   const direct = await lookup(titles, name, [name, main, clean, clean.replace(/ /g, '')])
   if (direct === undefined) return undefined
   if (direct) return { src: direct.src, exact: true }
+  const wd = await wikidataImage(name)
+  if (wd === undefined) return undefined
+  if (wd) return wd
+  const art = await articleImage(titles, name)
+  if (art === undefined) return undefined
+  if (art) return art
   if (base !== '연대') {
     const r = await search(`${base} 제주`)
     if (r === undefined) return undefined
     if (r && sameThing(name, r.title)) return { src: r.src, exact: true }
   }
+  const cm = await commonsByTitle(name)
+  if (cm === undefined) return undefined
+  if (cm) return cm
   const kind = KINDS.find((k) => clean.includes(k))
   if (!kind) return null
   const k = await summary(kind)

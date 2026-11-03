@@ -10,11 +10,10 @@ Three.js 로 만든 입체 제주섬(한라산·오름) 위에 검색 결과가 
 
 | 경로 | 화면 | 하는 일 |
 | --- | --- | --- |
-| `/` | 스튜디오 | 3D 제주 + 소재 테마 선택, 동작 체크(React·Supabase·/api) |
-| `/explore` | 3D 탐색 | 테마·직접 검색 → 핀 + 목록, 핀 선택 → 노트 저장 |
+| `/` | 홈 | 3D 제주 + 소재 테마 선택, 동작 체크(React·Supabase·/api) |
+| `/explore` | 3D 탐색 | 테마·직접 검색 → 핀 + 목록, 핀 선택 → 상세 |
 | `/kit` | 소재 키트 | 테마별 답사 날씨 판정 · 국가유산 · 전시/행사/명소 |
-| `/guide` | AI 가이드 | 에이전트가 API 도구를 골라 호출, 호출한 도구 표시 |
-| `/notes` | 내 노트 | Supabase 저장 소재 + 메모 편집·삭제 (테마별 묶음) |
+| `/guide` | AI 검색 | 에이전트가 API 도구를 골라 호출, 호출한 도구 표시 |
 
 ## 사용한 공공데이터 API
 
@@ -43,12 +42,12 @@ api/       Vercel 서버 함수 (비밀 키는 여기서만): hello · tour · w
 server/    공공 API 호출 함수 (화면용 + 에이전트 도구용 공용) · http.js 공통 도구
 src/
   router.jsx · nav.js · layouts/RootLayout.jsx
-  store/useAppStore.js     전역 상태 (닉네임·테마, 노트(Supabase), 대화, 토스트)
+  store/useAppStore.js     전역 상태 (닉네임·테마, 대화, 토스트)
   data/themes.js           소재 테마 6종 + 키워드
   hooks/                   useThemePins · useWeather · useAsync
   lib/                     supabase · pins · geo · terrain(3D 지형) · weather
   components/              Scene3D(Three.js) · LazyScene · Chips · ItemCard · PinDetail · WeatherChip · Status
-  pages/                   Home · Explore · Kit · Guide · Notes · NotFound
+  pages/                   Home · Explore · Kit · Guide · NotFound
 supabase.sql               tamna_notes 테이블 + RLS 정책
 ```
 
@@ -80,7 +79,6 @@ npm run dev                         # http://localhost:5173  (화면 + /api 동�
 2. 대시보드 **SQL Editor → New query** 에 `supabase.sql` 전체를 붙여넣고 **Run**
 3. **Project Settings → API** 에서 `Project URL` 과 `anon public` 키를 `.env.local` 에 입력
 4. `npm run dev` 를 다시 켜고 홈의 **동작 체크 → Supabase** 가 `연결 OK` 인지 확인
-5. 3D 탐색/소재 키트에서 **노트에 저장** → 내 노트에서 확인 → 새로고침 후에도 유지되는지 확인
 
 > RLS 정책은 실습용(누구나 읽기·쓰기, 닉네임으로만 구분)입니다. 실제 서비스에서는 Supabase Auth 로 제한하세요.
 
@@ -97,7 +95,6 @@ npm run dev                         # http://localhost:5173  (화면 + /api 동�
 - [ ] 홈 "동작 체크" 3개 모두 OK (React·라우터 / Supabase / 서버 함수 /api)
 - [ ] `/api/tour?keyword=해녀` · `/api/weather?place=서귀포시` · `/api/heritage?keyword=관덕정` 에서 JSON 확인
 - [ ] 소재 키트에서 날씨·유산·장소 3종 표시, 로딩·에러·빈 결과 화면 확인
-- [ ] 소재 저장 → 알림 → 내 노트 → 새로고침 후에도 유지, 메모 저장·삭제
 - [ ] 3D 제주: 마우스로 회전·확대, 핀 클릭 → 저장
 - [ ] 에이전트 테스트 4개 (아래 캡처 칸)
 - [ ] Vercel 환경변수 4개 입력 → Redeploy → 시크릿 창에서 고정 주소 확인
