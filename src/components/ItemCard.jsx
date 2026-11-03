@@ -8,14 +8,20 @@ export default function ItemCard({ title, subtitle, image, badge, tone = 'tour',
   useEffect(() => {
     if (image || !autoImage) return undefined
     let alive = true
-    wikiImage(title).then((src) => alive && setFound(src))
+    wikiImage(title).then((r) => alive && setFound(r))
     return () => { alive = false }
   }, [title, image, autoImage])
-  const src = image || found
+  const src = image || found?.src
+  const reference = !image && found && !found.exact // 같은 종류의 대표 사진이면 "참고 이미지"로 표시
   return (
     <article className="card">
       {src
-        ? <img className="card-img" src={src} alt={title} loading="lazy" onError={() => setFound(null)} />
+        ? (
+          <div className="card-photo">
+            <img className="card-img" src={src} alt={title} loading="lazy" onError={() => setFound(null)} />
+            {reference && <span className="img-note">참고 이미지</span>}
+          </div>
+        )
         : <div className="card-img empty"><i className={`bi bi-${tone === 'heritage' ? 'bank2' : 'image'}`} /></div>}
       <div className="card-body">
         {badge && <span className={`tag ${tone}`}>{badge}</span>}

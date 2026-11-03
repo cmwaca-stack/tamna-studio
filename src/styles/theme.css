@@ -353,3 +353,8 @@ code { background: rgba(15,50,70,0.04); padding: 1px 6px; border-radius: 6px; fo
 .olle-stop:hover, .olle-stop:focus-visible { color: inherit; outline: none; }
 .olle-stop:hover .olle-dot, .olle-stop:focus-visible .olle-dot { transform: scale(1.35); box-shadow: 0 0 0 3px var(--sea); }
 .olle-nav { display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; margin-bottom: .8rem; }
+
+.olle-map { display: block; width: 100%; height: auto; border-radius: 16px; border: 1px solid var(--line); background: #d9ecf7; }
+
+.card-photo { position: relative; }
+.img-note { position: absolute; right: .5rem; bottom: .5rem; padding: .15rem .5rem; border-radius: 999px; background: rgba(15,50,70,.72); color: #fff; font-size: .72rem; font-weight: 700; }

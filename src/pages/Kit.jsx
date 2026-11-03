@@ -46,6 +46,20 @@ export default function Kit() {
         </div>
       </section>
 
+      {theme.key === 'olle' && (
+        <section className="kit-block">
+          <div className="block-head"><h2><i className="bi bi-signpost-split" />올레 코스 둘러보기 <small className="muted">점을 누르면 코스 설명으로 가요</small></h2></div>
+          <div className="olle-track" role="list">
+            {OLLE_ORDER.map((no) => (
+              <Link key={no} to={`/olle/${no}`} role="listitem" className={`olle-stop${isSubCourse(no) ? ' sub' : ''}`} aria-label={`올레 ${no}코스`} title={`올레 ${no}코스`}>
+                <span className="olle-dot" /><b>{no}</b>
+              </Link>
+            ))}
+          </div>
+          <p className="muted small">1~21코스는 섬을 한 바퀴 도는 본 코스, 빈 점(예: 1-1)은 우도·가파도·추자도 등 부속 코스예요.</p>
+        </section>
+      )}
+
       {spots.length > 0 && (
         <section className="kit-block">
           <div className="block-head"><h2><i className={`bi bi-${theme.icon}`} />대표 {theme.spotLabel ?? theme.label} <small className="muted">{spots.length}곳</small></h2></div>
@@ -58,33 +72,40 @@ export default function Kit() {
         </section>
       )}
 
-      <section className="kit-block">
-        <div className="block-head">
-          <h2><i className="bi bi-cloud-sun" />답사 날씨</h2>
-          <div className="seg">
-            {['제주시', '서귀포시'].map((p) => (
-              <button key={p} type="button" className={place === p ? 'on' : ''} onClick={() => setPlace(p)}>{p}</button>
-            ))}
-          </div>
-        </div>
-        {weather.loading ? <Loading text="기상청 예보 확인 중…" /> : weather.error ? <ApiError error={weather.error} onRetry={weather.reload} /> : (
-          <>
-            {verdict && <div className={`verdict ${verdict.tone}`}><i className={`bi bi-${verdict.icon}`} />{verdict.text}</div>}
-            <div className="slots">
-              {weather.slots.map((w) => (
-                <div key={w.time} className="slot">
-                  <span className="muted">{hourLabel(w.time)}</span>
-                  <i className={`bi bi-${weatherIcon(w)}`} />
-                  <strong>{w.temp}℃</strong>
-                  <small>{w.rain !== '없음' ? w.rain : w.sky}</small>
-                  <div className="pop" title={`강수확률 ${w.pop}%`}><span style={{ width: `${w.pop}%` }} /></div>
-                  <small className="muted">{w.pop}%</small>
-                </div>
+      {theme.key === 'olle' ? (
+        <section className="kit-block">
+          <img className="olle-map" src="/olle-info-map.webp" alt="제주올레 안내소 지도: 공식안내소와 족은안내소 위치" loading="lazy" />
+          <p className="muted small">출처: 제주올레 (jejuolle.org)</p>
+        </section>
+      ) : (
+        <section className="kit-block">
+          <div className="block-head">
+            <h2><i className="bi bi-cloud-sun" />답사 날씨</h2>
+            <div className="seg">
+              {['제주시', '서귀포시'].map((p) => (
+                <button key={p} type="button" className={place === p ? 'on' : ''} onClick={() => setPlace(p)}>{p}</button>
               ))}
             </div>
-          </>
-        )}
-      </section>
+          </div>
+          {weather.loading ? <Loading text="기상청 예보 확인 중…" /> : weather.error ? <ApiError error={weather.error} onRetry={weather.reload} /> : (
+            <>
+              {verdict && <div className={`verdict ${verdict.tone}`}><i className={`bi bi-${verdict.icon}`} />{verdict.text}</div>}
+              <div className="slots">
+                {weather.slots.map((w) => (
+                  <div key={w.time} className="slot">
+                    <span className="muted">{hourLabel(w.time)}</span>
+                    <i className={`bi bi-${weatherIcon(w)}`} />
+                    <strong>{w.temp}℃</strong>
+                    <small>{w.rain !== '없음' ? w.rain : w.sky}</small>
+                    <div className="pop" title={`강수확률 ${w.pop}%`}><span style={{ width: `${w.pop}%` }} /></div>
+                    <small className="muted">{w.pop}%</small>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+      )}
 
       {showHeritage && <section className="kit-block">
         <div className="block-head">
@@ -124,20 +145,6 @@ export default function Kit() {
           </div>
         )}
       </section>
-
-      {theme.key === 'olle' && (
-        <section className="kit-block">
-          <div className="block-head"><h2><i className="bi bi-signpost-split" />올레 코스 둘러보기 <small className="muted">점을 누르면 코스 설명으로 가요</small></h2></div>
-          <div className="olle-track" role="list">
-            {OLLE_ORDER.map((no) => (
-              <Link key={no} to={`/olle/${no}`} role="listitem" className={`olle-stop${isSubCourse(no) ? ' sub' : ''}`} aria-label={`올레 ${no}코스`} title={`올레 ${no}코스`}>
-                <span className="olle-dot" /><b>{no}</b>
-              </Link>
-            ))}
-          </div>
-          <p className="muted small">1~21코스는 섬을 한 바퀴 도는 본 코스, 빈 점(예: 1-1)은 우도·가파도·추자도 등 부속 코스예요.</p>
-        </section>
-      )}
     </div>
   )
 }

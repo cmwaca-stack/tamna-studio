@@ -28,7 +28,7 @@ export const THEMES = [
   },
   // 올레길: 홈의 '청년 탐색' 줄에서 선택 (칩 줄에는 숨김). 3D 제주 위에 1~21코스를 선으로 그려요.
   {
-    key: 'olle', label: '올레길', icon: 'signpost-split', color: '#2f9e44', hidden: true,
+    key: 'olle', label: '올레길', icon: 'signpost-split', color: '#2f9e44',
     keyword: '올레', heritageKeyword: '', spotsOnly: true, routes: 'olle', spotSets: [{ key: 'olle', color: '#2f9e44', label: '올레길 시·종점' }],
     spotNote: '제주올레 1~21코스를 3D 제주 위에 선으로 보여줘요. 핀은 코스의 시·종점이고, 선은 시·종점 사이를 해안선을 따라 이은 개략선이에요.',
     blurb: '섬을 한 바퀴 도는 21개 코스. 걸으며 만나는 바다·오름·마을을 소재로.',
