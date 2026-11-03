@@ -1,3 +1,4 @@
+import { mapLink } from '../lib/kakaoLink'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import CctvPlayer from '../components/CctvPlayer'
 import ItemCard from '../components/ItemCard'
@@ -85,7 +86,7 @@ export default function PlaceInfo() {
         <h2 className="section-title"><i className="bi bi-geo-alt" />위치</h2>
         {spot.lat != null && <p className="muted">위도 {Number(spot.lat).toFixed(4)} · 경도 {Number(spot.lng).toFixed(4)} <small>(대략적 위치)</small></p>}
         <div className="place-actions">
-          <a className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer" href={`https://map.kakao.com/link/map/${enc},${spot.lat},${spot.lng}`}><i className="bi bi-map" />카카오맵</a>
+          <a className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer" href={mapLink(spot.title, spot.lat, spot.lng)}><i className="bi bi-map" />카카오맵</a>
           <a className="btn btn-ghost btn-sm" target="_blank" rel="noreferrer" href={`https://map.naver.com/p/search/${enc}`}><i className="bi bi-signpost-2" />네이버지도</a>
           <Link className="btn btn-ghost btn-sm" to="/" onClick={() => themeKey && setThemeKey(themeKey)}><i className="bi bi-badge-3d" />3D 제주에서 보기</Link>
         </div>

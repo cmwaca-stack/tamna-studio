@@ -38,7 +38,7 @@ export async function getEvStations() {
       id: `ev-${d.충전소아이디}`, name: String(d.충전소명 ?? '').trim(), addr: [d.충전소주소, d.상세주소].filter(Boolean).join(' · '),
       phone: String(d.연락처 ?? '').trim(), hours: String(d.이용가능시간 ?? '').replace(/\s+/g, ' ').trim(), since: String(d.등록일자 ?? ''),
       lat: Number(d.위도), lng: Number(d.경도),
-      url: `https://map.kakao.com/link/map/${encodeURIComponent(d.충전소명 ?? '충전소')},${d.위도},${d.경도}`,
+      url: `https://map.kakao.com/link/map/${encodeURIComponent(String(d.충전소명 ?? '충전소').replace(/[\/,:;?#%<>[]()"']/g, ' ').replace(/s+/g, ' ').trim().slice(0, 40) || '충전소')},${d.위도},${d.경도}`,
     }))
   evCache = { at: Date.now(), rows }
   return rows

@@ -80,7 +80,7 @@ function PlaceTabs({ cat }) {
   const tab = cat.tabs[i]
   const isCulture = tab.source === 'culture'
   const isVj = FOOD_SRC.includes(tab.source)
-  const places = useAsync(() => (isCulture ? fetchCulture() : isVj ? foodTab(tab) : tab.type === '39' ? fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '').then(withFoodExtra) : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '')), [tab.keyword, tab.type, tab.rows, tab.arrange, isCulture, isVj, tab.source])
+  const places = useAsync(() => (isCulture ? fetchCulture() : isVj ? foodTab(tab) : tab.type === '39' ? fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '').then(withFoodExtra) : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '', !!tab.event)), [tab.keyword, tab.type, tab.rows, tab.arrange, isCulture, isVj, tab.source, tab.event])
   // '기타' 탭(other): 같은 화면의 다른 탭 검색어(흑돼지·횟집·카페 등)에 걸리는 곳을 빼고 나머지만 보여줘요
   const taken = cat.tabs.filter((t) => t.keyword && !t.other).flatMap((t) => t.keyword.split('|').map((w) => w.trim()).filter(Boolean))
   const takenCats = cat.tabs.filter((t) => t.cat3).map((t) => t.cat3) // 업종 분류(예: 카페)로 나눈 탭
@@ -112,7 +112,7 @@ function PlaceTabs({ cat }) {
       ) : (
         <div className="cards">
           {list.map((p) => (
-            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.info && <VjInfo p={p} />}</ItemCard>
+            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} href={p.link} hrefLabel={p.linkKind === 'search' ? '검색으로 알아보기' : '공식 안내 보기'} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.info && <VjInfo p={p} />}{(p.price || p.tel) && <p className="muted small">{p.price && `💰 ${p.price}`}{p.price && p.tel && ' · '}{p.tel && `📞 ${p.tel}`}</p>}</ItemCard>
           ))}
         </div>
       )}

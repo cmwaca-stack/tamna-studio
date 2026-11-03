@@ -1,5 +1,6 @@
 // 한국문화정보원 한눈에보는문화정보 조회서비스: 제주 전시·공연·축제 (기간별 조회, XML)
 import { XMLParser } from 'fast-xml-parser'
+import { enrichCultureEvents } from './events.js'
 import { dataKey, KeyError, toList } from './http.js'
 
 const BASE = 'https://apis.data.go.kr/B553457/cultureinfo/period2'
@@ -56,7 +57,7 @@ export async function getCulture({ days = 365, rows = 1000 } = {}) {
   })).filter((x) => x.title)
   // sido 필터가 완벽하지 않아 제주 밖 것이 섞일 수 있어, 지역 글자 또는 제주 좌표 안의 것만 남깁니다
   const inJeju = (x) => /제주|서귀포/.test(`${x.area} ${x.place}`) || (x.lat >= 33.1 && x.lat <= 33.6 && x.lng >= 126.1 && x.lng <= 127.0)
-  const jeju = data.filter(inJeju)
+  const jeju = await enrichCultureEvents(data.filter(inJeju)) // 행사 안내 주소·요금·전화 붙이기
   cache = { at: Date.now(), data: jeju }
   return jeju
 }

@@ -10,8 +10,8 @@ export const YOUTH = [
     desc: '제주에서 열리는 전시와 문화시설, 축제·행사를 모았어요. 날씨를 먼저 보고 계획하세요.',
     tabs: [
       { label: '진행 중 전시·공연', source: 'culture' },
-      { label: '전시·문화', type: '14', keyword: '', rows: 100 },
-      { label: '축제·행사', type: '15', keyword: '', rows: 100 },
+      { label: '전시·문화', type: '14', keyword: '', rows: 100, event: true },
+      { label: '축제·행사', type: '15', keyword: '', rows: 100, event: true },
     ],
   },
   {

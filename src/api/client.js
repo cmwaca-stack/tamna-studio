@@ -13,7 +13,7 @@ export const get = async (path) => readJson(await fetch(path))
 export const post = async (path, body) =>
   readJson(await fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }))
 
-export const fetchPlaces = (keyword = '', type = '12', rows = 12, arrange = '') => get(`/api/tour?keyword=${encodeURIComponent(keyword)}&type=${type}&rows=${rows}${arrange ? `&arrange=${arrange}` : ''}`) // ① 한국관광공사
+export const fetchPlaces = (keyword = '', type = '12', rows = 12, arrange = '', detail = false) => get(`/api/tour?keyword=${encodeURIComponent(keyword)}&type=${type}&rows=${rows}${arrange ? `&arrange=${arrange}` : ''}${detail ? '&detail=1' : ''}`) // ① 한국관광공사
 export const fetchNear = (lat, lng, type = '12', rows = 8, radius = 5000) => get(`/api/tour?lat=${lat}&lng=${lng}&type=${type}&rows=${rows}&radius=${radius}`) // ① 한국관광공사 (좌표 주변)
 export const fetchVjFood = (keyword = '', src = 'vj') => get(`/api/olle?kind=food&src=${src}&keyword=${encodeURIComponent(keyword)}`) // 제주관광공사 비짓제주 음식점 (이름·영업시간, data.go.kr)
 export const fetchPlacesIn = (q, rect) => get(`/api/olle?kind=places&q=${encodeURIComponent(q)}&rect=${rect}`) // 생활정보 지도: 카카오 장소 검색(지도 범위 안)
