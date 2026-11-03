@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Chips from '../components/Chips'
 import ItemCard from '../components/ItemCard'
 import { ApiError, Empty, Loading } from '../components/Status'
@@ -7,8 +7,20 @@ import { SPOTS } from '../data/spots'
 import { PLACE_TYPES, themeOf } from '../data/themes'
 import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
+import { wikiImage } from '../lib/wikiImage'
 import { fieldVerdict, hourLabel, weatherIcon } from '../lib/weather'
 import { useAppStore } from '../store/useAppStore'
+
+// 대표 장소 카드: 위키백과에서 사진을 찾아 붙여요 (못 찾으면 기본 그림)
+function SpotCard({ spot, badge, onSave }) {
+  const [image, setImage] = useState(null)
+  useEffect(() => {
+    let alive = true
+    wikiImage(spot.title).then((src) => alive && setImage(src))
+    return () => { alive = false }
+  }, [spot.title])
+  return <ItemCard title={spot.title} subtitle={spot.sub} image={image} badge={badge} onSave={onSave} />
+}
 
 // 주제별 정보 (옛 이름: 소재 키트) = 한 테마를 3개 공공 API 로 입체적으로 살펴보는 화면
 //   ① 뿌리(국가유산청) ② 보러 갈 곳(한국관광공사) ③ 답사 날씨(기상청)
@@ -53,7 +65,7 @@ export default function Kit() {
           <div className="block-head"><h2><i className={`bi bi-${theme.icon}`} />대표 {theme.spotLabel ?? theme.label} <small className="muted">{spots.length}곳</small></h2></div>
           <div className="cards">
             {spots.map((s) => (
-              <ItemCard key={s.id} title={s.title} subtitle={s.sub} badge={theme.spotLabel ?? theme.label}
+              <SpotCard key={s.id} spot={s} badge={theme.spotLabel ?? theme.label}
                 onSave={() => addNote({ source: 'tour', id: s.id, title: s.title })} />
             ))}
           </div>
