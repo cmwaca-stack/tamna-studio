@@ -1,8 +1,9 @@
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import CctvPlayer from '../components/CctvPlayer'
 import ItemCard from '../components/ItemCard'
+import OlleSpotInfo from '../components/OlleSpotInfo'
 import { ApiError, Empty, Loading } from '../components/Status'
-import { fetchHeritage, fetchOlle, fetchPlaces } from '../api/client'
+import { fetchHeritage, fetchPlaces } from '../api/client'
 import { infoOf } from '../data/spotInfo'
 import { SPOTS } from '../data/spots'
 import { themeOf } from '../data/themes'
@@ -27,14 +28,10 @@ export default function PlaceInfo() {
   const isCctv = spot?.source === 'cctv'
   const wantsHeritage = themeKey !== 'oreum' && !isCctv
 
-  const places = useAsync(() => (kw && !isCctv ? fetchPlaces(kw, '', 6) : Promise.resolve([])), [kw, isCctv])
-  const heritage = useAsync(() => (kw && wantsHeritage ? fetchHeritage(kw) : Promise.resolve([])), [kw, wantsHeritage])
+  const places = useAsync(() => (kw && !isCctv && themeKey !== 'olle' ? fetchPlaces(kw, '', 6) : Promise.resolve([])), [kw, isCctv])
+  const heritage = useAsync(() => (kw && wantsHeritage && themeKey !== 'olle' ? fetchHeritage(kw) : Promise.resolve([])), [kw, wantsHeritage])
 
-  const isOlle = themeKey === 'olle'
-  const olleIdx = isOlle ? Number(String(spot?.id).replace('olle-w', '')) : -1
-  const olle = useAsync(() => (isOlle ? fetchOlle() : Promise.resolve([])), [isOlle])
-  // 이 지점은 (i)코스의 도착점이자 (i+1)코스의 출발점
-  const ollePicks = isOlle ? [olleIdx, olleIdx + 1].flatMap((n) => (olle.data ?? []).filter((c) => c.no === String(n))) : []
+  const isOlle = themeKey === 'olle' // 올레 핀은 OlleSpotInfo 가 코스·날씨·주변 정보를 따로 보여줘요
 
   if (!spot) {
     return (
@@ -74,7 +71,7 @@ export default function PlaceInfo() {
         </section>
       )}
 
-      {!isCctv && (
+      {!isCctv && !isOlle && (
       <section className="place-sec glass">
         <h2 className="section-title"><i className="bi bi-info-circle" />소개</h2>
         {info ? <p className="place-text">{info.d}</p> : <p className="muted">이 장소의 상세 소개는 아직 준비 중이에요. 아래 관련 공공데이터와 AI 가이드를 이용해 보세요.</p>}
@@ -83,22 +80,7 @@ export default function PlaceInfo() {
       </section>
       )}
 
-      {isOlle && (
-        <section className="place-sec glass">
-          <h2 className="section-title"><i className="bi bi-signpost-2" />올레 코스 정보 (제주도청)</h2>
-          {olle.loading ? <Loading /> : olle.error ? <ApiError error={olle.error} onRetry={olle.reload} /> : !ollePicks.length ? <p className="muted">이 지점과 맞는 코스 정보를 찾지 못했어요.</p> : (
-            <div className="olle-info">
-              {ollePicks.map((c) => (
-                <div key={c.name} className="olle-course">
-                  <strong>{c.name || `${c.no}코스`}</strong>
-                  <p className="muted">{c.km && <><i className="bi bi-rulers" /> {c.km}km</>}{c.time && <> · <i className="bi bi-clock" /> {c.time}</>}</p>
-                  {c.ends && <p className="muted small">{c.ends}</p>}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
-      )}
+      {isOlle && <OlleSpotInfo spot={spot} color={color} />}
 
       <section className="place-sec glass">
         <h2 className="section-title"><i className="bi bi-geo-alt" />위치</h2>
@@ -110,7 +92,7 @@ export default function PlaceInfo() {
         </div>
       </section>
 
-      {!isCctv && (
+      {!isCctv && !isOlle && (
       <section className="place-sec">
         <h2 className="section-title"><i className="bi bi-signpost-split" />관련 장소·전시 (한국관광공사)</h2>
         <ApiError error={places.error} onRetry={places.reload} />
@@ -124,7 +106,7 @@ export default function PlaceInfo() {
       </section>
       )}
 
-      {wantsHeritage && (
+      {wantsHeritage && !isOlle && (
         <section className="place-sec">
           <h2 className="section-title"><i className="bi bi-bank2" />관련 국가유산 (국가유산청)</h2>
           {heritage.loading ? <Loading /> : heritage.error ? <ApiError error={heritage.error} onRetry={heritage.reload} /> : !heritage.data?.length ? <Empty text="관련 국가유산이 없어요." /> : (

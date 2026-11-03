@@ -1,25 +1,17 @@
 import { Link, Navigate, useParams } from 'react-router-dom'
 import ItemCard from '../components/ItemCard'
 import { ApiError, Empty, Loading } from '../components/Status'
-import { fetchOlle, fetchPlaces } from '../api/client'
-import { isSubCourse, OLLE_ORDER } from '../data/olleCourses'
+import { fetchOlle } from '../api/client'
+import { isSubCourse, OLLE_ORDER, SUB_POINTS } from '../data/olleCourses'
 import { OLLE_COURSES } from '../data/olle'
 import { useAsync } from '../hooks/useAsync'
+import { findNearby, kmText } from '../lib/nearby'
 import { useAppStore } from '../store/useAppStore'
 
 // "포구·선착장-포구" 처럼 이어진 시·종점 글자를 둘로 나눠요
 const splitEnds = (ends = '') => ends.split('-').map((s) => s.trim()).filter(Boolean)
-const firstWord = (s) => s.split('·')[0].trim()
 // 공공데이터 이름에 섞인 '?'(깨진 하이픈)를 '-' 로
 const fixName = (s = '') => s.replace(/([가-힣])\?([가-힣])/g, '$1-$2')
-// 관광공사 검색은 짧은 이름이 잘 맞아서, 긴 이름에서 끝말(포구·해변 등)을 뗀 이름도 같이 시도해요
-const stem = (w) => w.replace(/(해비치해변|해수욕장|해변|포구|초등학교|체육공원|1리사무소|사무소|여행자센터|안내소|선착장|정보화마을|녹차밭)$/, '')
-const findAround = async (w) => {
-  const full = await fetchPlaces(w, '12', 4).catch(() => [])
-  const short = stem(w)
-  return full.length || !short || short === w ? full : fetchPlaces(short, '12', 4).catch(() => [])
-}
-
 // 올레길 코스 한 개를 설명하는 화면 (/olle/:no)
 export default function OlleCourse() {
   const { no } = useParams()
@@ -30,11 +22,9 @@ export default function OlleCourse() {
   const base = OLLE_COURSES.find((c) => String(c.no) === no) // 1~21코스의 시·종점(키 없이도 있음)
   const first = rows[0]
   const [start, end] = first ? splitEnds(first.ends) : base ? [base.from[0], base.to[0]] : []
-  const around = [...new Set([start, end].filter(Boolean).map(firstWord))]
-  const places = useAsync(
-    () => Promise.all(around.map(findAround)).then((l) => l.flat()),
-    [around.join('|')],
-  )
+  // 시·종점 좌표: 1~21코스는 data/olle.js, 부속 코스는 data/olleCourses.js 의 SUB_POINTS
+  const points = base ? [base.from, base.to] : SUB_POINTS[no] ?? []
+  const places = useAsync(() => findNearby(points), [no])
   if (idx < 0) return <Navigate to="/kit" replace />
   const prev = OLLE_ORDER[idx - 1]
   const next = OLLE_ORDER[idx + 1]
@@ -87,18 +77,20 @@ export default function OlleCourse() {
         )}
       </section>
 
-      <section className="kit-block">
-        <h2><i className="bi bi-geo-alt" />시·종점 주변 가볼 곳 <small className="muted">(한국관광공사)</small></h2>
-        {places.loading ? <Loading /> : places.error ? <ApiError error={places.error} onRetry={places.reload} />
-          : !places.data?.length ? <Empty text="시·종점 주변 장소를 찾지 못했어요." /> : (
-            <div className="cards">
-              {places.data.map((p) => (
-                <ItemCard key={p.id} title={p.title} subtitle={p.addr} image={p.image} badge="가볼 곳"
-                  onSave={() => addNote({ source: 'tour', id: String(p.id), title: p.title })} />
-              ))}
-            </div>
-          )}
-      </section>
+      {[['spot', 'bi-geo-alt', '시·종점 주변 가볼 곳', '가볼 곳'], ['activity', 'bi-bicycle', '시·종점 주변 체험·레포츠', '체험'], ['food', 'bi-cup-hot', '시·종점 주변 맛집·카페', '맛집·카페'], ['stay', 'bi-house-door', '시·종점 주변 숙소', '숙소']].map(([key, icon, heading, badge]) => (
+        <section key={key} className="kit-block">
+          <h2><i className={`bi ${icon}`} />{heading} <small className="muted">(5km 안 · 가까운 순 · 한국관광공사)</small></h2>
+          {places.loading ? <Loading /> : places.error ? <ApiError error={places.error} onRetry={places.reload} />
+            : !places.data?.[key]?.length ? <Empty text="이 근처에서 찾은 장소가 없어요." /> : (
+              <div className="cards">
+                {places.data[key].map((p) => (
+                  <ItemCard key={p.id} title={p.title} subtitle={`${p.from} 근처 ${kmText(p.dist)} · ${p.addr}`} image={p.image} badge={badge}
+                    onSave={() => addNote({ source: 'tour', id: String(p.id), title: p.title })} />
+                ))}
+              </div>
+            )}
+        </section>
+      ))}
 
       <section className="kit-block">
         <div className="olle-nav">

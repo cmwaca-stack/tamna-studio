@@ -38,10 +38,14 @@ function PlaceTabs({ cat }) {
   const [i, setI] = useState(0)
   const tab = cat.tabs[i]
   const isCulture = tab.source === 'culture'
-  const places = useAsync(() => (isCulture ? fetchCulture() : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12)), [tab.keyword, tab.type, tab.rows, isCulture])
+  const places = useAsync(() => (isCulture ? fetchCulture() : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '')), [tab.keyword, tab.type, tab.rows, tab.arrange, isCulture])
   // '기타' 탭(other): 같은 화면의 다른 탭 검색어(흑돼지·횟집·카페 등)에 걸리는 곳을 빼고 나머지만 보여줘요
   const taken = cat.tabs.filter((t) => t.keyword && !t.other).flatMap((t) => t.keyword.split('|').map((w) => w.trim()).filter(Boolean))
-  const list = tab.other ? places.data?.filter((p) => !taken.some((w) => p.title.includes(w))) : places.data
+  const takenCats = cat.tabs.filter((t) => t.cat3).map((t) => t.cat3) // 업종 분류(예: 카페)로 나눈 탭
+  const list = tab.other
+    ? places.data?.filter((p) => !taken.some((w) => p.title.includes(w)) && !takenCats.includes(p.cat3))
+    : tab.cat3 ? places.data?.filter((p) => p.cat3 === tab.cat3)
+      : tab.exceptCats ? places.data?.filter((p) => !takenCats.includes(p.cat3)) : places.data
   const dot = (d) => (d && d.length === 8 ? `${d.slice(0, 4)}.${d.slice(4, 6)}.${d.slice(6)}` : d)
 
   return (
