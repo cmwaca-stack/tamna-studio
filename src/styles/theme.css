@@ -454,3 +454,12 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .stat-icon { font-size: 1.6rem; line-height: 1.1; }
 .stat b { font-family: 'Jua', Pretendard, sans-serif; font-weight: 400; }
 .stat-num { font-family: 'Jua', Pretendard, sans-serif; font-size: 1.6rem; color: var(--sea); line-height: 1.1; }
+
+.hosp-grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.hosp-logo { width: 2.4rem; height: 2.4rem; border-radius: 12px; background: #fff; border: 1px solid #ffd9cc; padding: .2rem; object-fit: contain; flex: none; }
+@media (max-width: 720px) { .hosp-grid.two { grid-template-columns: 1fr; } }
+.hosp-logo.own { width: 3.2rem; height: 3.2rem; padding: 0; border-radius: 50%; }
+.hosp-logo.own.wide { width: 6.5rem; border-radius: 12px; padding: .15rem .3rem; }
+
+/* 3D 지도: 일러스트에 마우스를 올리면 나오는 이름표 */
+.prop-tip { position: absolute; z-index: 6; display: none; pointer-events: none; padding: .12rem .55rem; font-size: .74rem; font-weight: 700; line-height: 1.5; white-space: nowrap; color: #5a3d31; background: rgba(255, 255, 255, .94); border: 1px solid #ffd9cc; border-radius: 999px; box-shadow: 0 4px 12px rgba(120, 70, 50, .18); }

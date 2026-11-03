@@ -23,6 +23,9 @@ export const YOUTH = [
       { label: '흑돼지', type: '39', keyword: '흑돼지|돼지|오겹|근고기|돔베|제주돈', rows: 40 },
       { label: '해산물·회', type: '39', keyword: '횟집|물회|해물|활어|해산물|전복|갈치|고등어|성게|회센터|해녀|한치|옥돔|어촌|수산', rows: 60 },
       { label: '고기국수·국밥', type: '39', keyword: '고기국수|국수|몸국|국밥|순대|접짝뼈|해장국|보말|칼국수|수제비', rows: 60 },
+      { label: '해장국', type: '39', keyword: '해장국|내장탕|순대국|국밥', source: 'vjfood' }, // 비짓제주(이름·영업시간) + 모범음식점·향토음식·관광공사의 주소·좌표·사진
+      { label: '향토음식', type: '39', keyword: '', source: 'localfood' }, // 도 지정 향토음식업소 51곳(주소·좌표·대표메뉴)
+      { label: '모범음식점', type: '39', keyword: '', source: 'modelfood' }, // 도 지정 모범음식점 420곳(구분·주소)
       { label: '카페', type: '39', keyword: '', rows: 500, arrange: 'Q', cat3: 'A05020900' }, // 업종 분류 A05020900 = 카페/전통찻집
       { label: '기타', type: '39', keyword: '', rows: 500, arrange: 'Q', other: true },
     ],

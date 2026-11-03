@@ -94,7 +94,7 @@ export default function Kit() {
         )}
       </section>}
 
-      <section className="kit-block">
+      {theme.key !== 'olle' && <section className="kit-block">
         <div className="block-head">
           <h2><i className="bi bi-geo-alt" />{theme.label} 관련 가볼 곳</h2>
           <div className="seg">
@@ -113,7 +113,7 @@ export default function Kit() {
             ))}
           </div>
         )}
-      </section>
+      </section>}
     </div>
   )
 }

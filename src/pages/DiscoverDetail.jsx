@@ -4,7 +4,8 @@ import CctvPlayer from '../components/CctvPlayer'
 import ItemCard from '../components/ItemCard'
 import WeatherChip from '../components/WeatherChip'
 import { ApiError, Empty, Loading } from '../components/Status'
-import { fetchCulture, fetchFlights, fetchPlaces, fetchPolicies, fetchSnowCctv } from '../api/client'
+import { withFoodExtra } from '../lib/foodExtra'
+import { fetchCulture, fetchFlights, fetchPlaces, fetchVjFood, fetchPolicies, fetchSnowCctv } from '../api/client'
 import { TYPE_LABEL, youthOf } from '../data/youth'
 import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
@@ -35,12 +36,51 @@ function WeatherLine() {
   )
 }
 
+// 음식점 자료 3종(비짓제주·향토음식·모범음식점)을 이름으로 이어 붙여요. 한국관광공사 자료에 같은 이름이 있으면 사진도 붙여요
+const nameKey = (n) => n.replace(/\(.*?\)|\s+/g, '')
+const FOOD_SRC = ['vjfood', 'localfood', 'modelfood']
+async function foodTab(tab) {
+  if (tab.source === 'localfood') {
+    const [list, tour] = await Promise.all([fetchVjFood(tab.keyword, 'local'), fetchPlaces('', '39', 500, 'Q').catch(() => [])])
+    const img = new Map(tour.map((p) => [nameKey(p.title), p.image]))
+    return withFoodExtra(list.map((v, k) => ({ id: `lf-${k}`, title: v.title, addr: v.addr, lat: v.lat, lng: v.lng, image: img.get(nameKey(v.title)), type: '39', info: { menu: v.menu } })))
+  }
+  if (tab.source === 'modelfood') {
+    const list = await fetchVjFood(tab.keyword, 'model')
+    return withFoodExtra(list.map((v, k) => ({ id: `mf-${k}`, title: v.title, addr: v.addr, type: '39', info: { kind: v.kind } })))
+  }
+  const [vj, model, local, tour] = await Promise.all([
+    fetchVjFood(tab.keyword, 'vj'), fetchVjFood(tab.keyword, 'model').catch(() => []), fetchVjFood('', 'local').catch(() => []), fetchPlaces('', '39', 500, 'Q').catch(() => []),
+  ])
+  const byName = (arr) => new Map(arr.map((p) => [nameKey(p.title), p]))
+  const T = byName(tour); const L = byName(local); const M = byName(model)
+  const seen = new Set()
+  const out = []
+  const add = (v, info) => {
+    const k = nameKey(v.title)
+    if (seen.has(k)) return
+    seen.add(k)
+    const t = T.get(k); const l = L.get(k); const m = M.get(k)
+    out.push({ id: `vj-${out.length}`, title: v.title, addr: t?.addr || l?.addr || m?.addr, image: t?.image, lat: t?.lat || l?.lat, lng: t?.lng || l?.lng, type: '39', info: { ...info, menu: info.menu || l?.menu } })
+  }
+  vj.forEach((v) => add(v, v))
+  model.forEach((v) => add(v, {})) // 모범음식점 중 이름에 해당 음식이 들어간 곳도 함께
+  return withFoodExtra(out)
+}
+
+function VjInfo({ p }) {
+  const { open, weekend, rest, reserve, menu, kind } = p.info
+  const lines = [kind && `🍽️ ${kind} · 제주도 모범음식점`, open && `🕘 영업 ${open}${weekend && weekend !== open ? ` (주말 ${weekend})` : ''}`, rest && `☕ 휴게 ${rest}`, reserve && `📞 예약 ${reserve}`, menu && `🍲 ${menu}`].filter(Boolean)
+  return lines.length ? <p className="muted small">{lines.map((l) => <span key={l} style={{ display: 'block' }}>{l}</span>)}</p> : null
+}
+
 // 전시·축제·행사 · 올레길: 탭마다 TourAPI 를 다른 조건으로 조회
 function PlaceTabs({ cat }) {
   const [i, setI] = useState(0)
   const tab = cat.tabs[i]
   const isCulture = tab.source === 'culture'
-  const places = useAsync(() => (isCulture ? fetchCulture() : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '')), [tab.keyword, tab.type, tab.rows, tab.arrange, isCulture])
+  const isVj = FOOD_SRC.includes(tab.source)
+  const places = useAsync(() => (isCulture ? fetchCulture() : isVj ? foodTab(tab) : tab.type === '39' ? fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '').then(withFoodExtra) : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '')), [tab.keyword, tab.type, tab.rows, tab.arrange, isCulture, isVj, tab.source])
   // '기타' 탭(other): 같은 화면의 다른 탭 검색어(흑돼지·횟집·카페 등)에 걸리는 곳을 빼고 나머지만 보여줘요
   const taken = cat.tabs.filter((t) => t.keyword && !t.other).flatMap((t) => t.keyword.split('|').map((w) => w.trim()).filter(Boolean))
   const takenCats = cat.tabs.filter((t) => t.cat3).map((t) => t.cat3) // 업종 분류(예: 카페)로 나눈 탭
@@ -72,7 +112,7 @@ function PlaceTabs({ cat }) {
       ) : (
         <div className="cards">
           {list.map((p) => (
-            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title} />
+            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.info && <VjInfo p={p} />}</ItemCard>
           ))}
         </div>
       )}

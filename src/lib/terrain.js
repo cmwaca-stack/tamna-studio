@@ -12,9 +12,17 @@ export const HALLA = toXZ(33.3617, 126.5292) // 한라산 정상(백록담)
 const ring = (pts) => pts.map(([la, ln]) => toXZ(la, ln))
 const UDO = Array.from({ length: 24 }, (_, i) => {
   const t = (i / 24) * Math.PI * 2
-  return [33.5015 + 0.0125 * Math.sin(t) * (1 + 0.15 * Math.cos(2 * t)), 126.9535 + 0.0135 * Math.cos(t)]
+  return [33.5025 + 0.0185 * Math.sin(t) * (1 + 0.15 * Math.cos(2 * t)), 126.9650 + 0.0210 * Math.cos(t)]
 })
-export const LANDS = [ring(COAST), ring(UDO)]
+const MARA = Array.from({ length: 24 }, (_, i) => { // 마라도(최남단): 우도보다 더 작고 납작한 섬
+  const t = (i / 24) * Math.PI * 2
+  return [33.1128 + 0.0105 * Math.sin(t) * (1 + 0.12 * Math.cos(2 * t)), 126.2670 + 0.0150 * Math.cos(t)]
+})
+const BIYANG = Array.from({ length: 24 }, (_, i) => { // 비양도(한림 앞바다): 둥근 화산섬
+  const t = (i / 24) * Math.PI * 2
+  return [33.4260 + 0.0185 * Math.sin(t) * (1 + 0.1 * Math.cos(3 * t)), 126.2150 + 0.0240 * Math.cos(t)]
+})
+export const LANDS = [ring(COAST), ring(UDO), ring(MARA), ring(BIYANG)]
 
 function inside(x, z, poly) {
   let c = false

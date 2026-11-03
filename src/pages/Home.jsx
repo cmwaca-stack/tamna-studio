@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LazyScene from '../components/LazyScene'
 import RegionWeather from '../components/RegionWeather'
-import HomeMore from '../components/HomeMore'
 import WeatherChip from '../components/WeatherChip'
 import { THEMES, spotSetsOf, themeOf } from '../data/themes'
 import { YOUTH } from '../data/youth'
@@ -87,9 +86,7 @@ export default function Home() {
           <span className="pill">{loading ? <><span className="spinner" />핀 꽂는 중</> : <><i className="bi bi-geo-alt-fill" />핀 {pins.length}개</>}</span>
           <span className="pill legend">{spotSetsOf(theme).map((s) => <span key={s.key}><i className="dot" style={{ background: s.color }} />{s.label} </span>)}{!theme.spotsOnly && <><i className="dot tour" />장소 {!theme.noHeritage && <><i className="dot heritage" />유산</>}</>}</span>
         </div>
-        <a className="scroll-hint" href="#more" aria-label="아래로 더 보기">더 보기 <span aria-hidden="true">▾</span></a>
       </section>
-      <div id="more"><HomeMore /></div>
     </>
   )
 }

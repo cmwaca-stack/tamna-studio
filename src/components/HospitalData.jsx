@@ -9,6 +9,24 @@ const fmt = (n) => n.toLocaleString('ko-KR')
 const KIND_ICON = { 권역응급의료센터: '🚑', 지역응급의료센터: '🏥', 지역응급의료기관: '🏥', 달빛어린이병원: '🌙' }
 const STAT_ICON = { 종합병원: '🏥', 병원: '🏨', 요양병원: '🛏️', 정신병원: '🧠', 한방병원: '🌿', 치과병원: '🦷', 의원: '🩺', 치과의원: '🦷', 한의원: '🌿', 조산원: '👶' }
 
+// 병원별 대표 마크: 직접 받은 로고 이미지(wide=가로로 긴 로고), 사이트에 마크(파비콘)가 있는 곳은 그걸 써요.
+// 마크를 찾지 못한 병원은 이모지로 대신해요.
+const IMG = {
+  한마음병원: { src: '/hosp/hanmaeum.png' },
+  중앙병원: { src: '/hosp/jungang.png', wide: true },
+  제주의료원: { src: '/hosp/jejumed.png', wide: true },
+  서귀포의료원: { src: '/hosp/jjsmc.png', wide: true },
+}
+const SITE = { 제주한라병원: 'www.hallahosp.co.kr' }
+function HospLogo({ name, fallback }) {
+  const [failed, setFailed] = useState(false)
+  const host = SITE[name]
+  const img = IMG[name]
+  if (img) return <img className={`hosp-logo own${img.wide ? ' wide' : ''}`} src={img.src} alt={name} />
+  if (!host || failed) return <span className="hosp-icon" aria-hidden="true">{fallback}</span>
+  return <img className="hosp-logo" src={`https://www.google.com/s2/favicons?domain=${host}&sz=64`} alt="" onError={() => setFailed(true)} />
+}
+
 function Dated({ date }) {
   return date ? <small className="muted"> · {date} 기준</small> : null
 }
@@ -32,7 +50,7 @@ function Emergency() {
           <div className="hosp-grid">
             {rows.map((h) => (
               <article key={h.name} className="hosp-card">
-                <span className="hosp-icon" aria-hidden="true">{KIND_ICON[h.kind] ?? '🏥'}</span>
+                <HospLogo name={h.name} fallback={KIND_ICON[h.kind] ?? '🏥'} />
                 <div className="hosp-body">
                   <span className="tag">{h.kind}</span>
                   <h3>{h.name}</h3>
@@ -59,10 +77,10 @@ function PublicHospitals() {
     <section className="kit-block emergency">
       <h2>🏛️ 공공의료기관 <Dated date={all[0]?.date} /></h2>
       {list.loading ? <Loading /> : list.error ? <ApiError error={list.error} onRetry={list.reload} /> : !all.length ? <Empty text="공공의료기관 정보를 찾지 못했어요." /> : (
-        <div className="hosp-grid">
+        <div className="hosp-grid two">
           {all.map((h) => (
-            <article key={h.name} className="hosp-card wide">
-              <span className="hosp-icon" aria-hidden="true">🏛️</span>
+            <article key={h.name} className="hosp-card">
+              <HospLogo name={h.name} fallback="🏛️" />
               <div className="hosp-body">
                 <h3>{h.name}</h3>
                 <p className="muted">{h.addr}</p>
