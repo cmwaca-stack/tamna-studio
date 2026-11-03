@@ -23,7 +23,7 @@ export const LINKPAGES = {
   },
   community: {
     title: '제주커뮤니티', icon: 'people', color: '#e8590c',
-    desc: '제주살이 이야기, 이사·정착 정보, 중고 거래를 나누는 곳으로 바로 연결해요. 검색 링크는 해당 서비스의 검색 결과로 이동합니다.',
+    desc: '제주살이 이야기와 이사·정착 정보를 나누는 곳으로 바로 연결해요. 검색 링크는 해당 서비스의 검색 결과로 이동합니다.',
     groups: [
       { name: '이야기·정보 찾기', items: [
         { name: '픽제주', url: 'https://www.picjeju.com/', note: '제주 소식·정보 사이트' },
@@ -34,11 +34,6 @@ export const LINKPAGES = {
         { name: '네이버 카페 · 제주 이주/정착', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 이주 정착')}`, note: '이주·정착 후기와 질문' },
         { name: '네이버 카페 · 제주 청년', url: `https://section.cafe.naver.com/ca-fe/home/search/articles?q=${q('제주 청년')}`, note: '청년 모임·정보' },
         { name: '네이버 블로그 · 제주살이', url: `https://section.blog.naver.com/Search/Post.naver?keyword=${q('제주살이')}`, note: '한 달 살기·집 구하기 후기' },
-        { name: '다음 카페 · 제주', url: `https://search.daum.net/search?w=cafe&q=${q('제주도 정착')}`, note: '지역 카페 검색' },
-      ] },
-      { name: '우리 동네 생활', items: [
-        { name: '당근 · 제주', url: `https://www.daangn.com/kr/search/${q('제주')}`, note: '중고 거래·동네 모임' },
-        { name: '제주 일자리 · 알바', url: `https://www.albamon.com/search/total?keyword=${q('제주')}`, note: '알바·단기 일자리' },
       ] },
     ],
   },
