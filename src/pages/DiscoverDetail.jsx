@@ -101,9 +101,14 @@ function PlaceTabs({ cat }) {
             <button key={t.label} type="button" role="tab" aria-selected={k === i} className={k === i ? 'on' : ''} onClick={() => setI(k)}>{t.label}</button>
           ))}
         </div>
-        {tab.keyword && !isCulture && (
-          <Link to={`/explore?q=${encodeURIComponent(tab.keyword)}`} className="btn btn-ghost btn-sm"><i className="bi bi-badge-3d" />3D 지도에서 보기</Link>
-        )}
+        {!isCulture && (() => {
+          const term = `제주 ${(tab.keyword || tab.label).split('|')[0].trim()}`
+          return (
+            <a href={`https://search.naver.com/search.naver?query=${encodeURIComponent(term)}`} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" title="이 검색어로 네이버에서 찾아보기">
+              <i className="bi bi-search" />검색어: {term}
+            </a>
+          )
+        })()}
       </div>
 
       <ApiError error={places.error} onRetry={places.reload} />

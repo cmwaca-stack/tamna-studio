@@ -3,6 +3,7 @@
 // 실행: node scripts/build-food-extra.cjs [해장국|향토|관광공사|모범]  (개발 서버가 5173 에서 켜져 있어야 해요)
 const fs = require('fs')
 const path = require('path')
+const { verifiedPhoto } = require('./verified-photo.cjs')
 const root = path.join(__dirname, '..')
 const K = fs.readFileSync(path.join(root, '.env.local'), 'utf8').match(/^KAKAO_REST_KEY=(.*)$/m)[1].trim()
 const H = { Authorization: `KakaoAK ${K}` }
@@ -32,15 +33,11 @@ async function findOne({ title, addr }) {
     return (n.includes(key) || key.includes(n)) && /제주|서귀포/.test(d.address_name)
   })
   const place = hit ?? null
-  const q = place ? `${place.place_name} ${place.road_address_name || place.address_name}` : `제주 ${title} ${area}`
-  const im = await (await fetch(`https://dapi.kakao.com/v2/search/image?size=5&sort=accuracy&query=${encodeURIComponent(q)}`, { headers: H })).json()
-  // 스티커·이모티콘·로고·광고성 이미지는 빼고, 블로그·카페 사진을 먼저 골라요
-  const bad = /sticker|emoticon|emoji|line.me|storep|logo|banner|icon|clipart/i
-  const ok = (im.documents ?? []).filter((d) => d.width >= 300 && d.height >= 200 && /^https:/.test(d.image_url) && !bad.test(d.image_url + d.doc_url))
-  const pic = ok.find((d) => d.collection === 'blog' || d.collection === 'cafe') ?? ok[0]
+  // 그 가게를 소개하는 블로그 글에 실린 사진만 써요 (글을 못 찾으면 사진 없음)
+  const pic = await verifiedPhoto({ headers: H, name: place ? place.place_name : title, area, addr: place ? (place.road_address_name || place.address_name) : addr })
   return {
     ...(place ? { addr: place.road_address_name || place.address_name, lat: place.y, lng: place.x, tel: place.phone, place: place.place_url } : {}),
-    ...(pic ? { img: pic.image_url, thumb: pic.thumbnail_url, doc: pic.doc_url } : {}),
+    ...(pic ? { img: pic.img, thumb: pic.thumb, doc: pic.doc, post: pic.post } : {}),
   }
 }
 
