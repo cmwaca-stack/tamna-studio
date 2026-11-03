@@ -24,6 +24,7 @@ export const YOUTH = [
       { label: '해산물·회', type: '39', keyword: '횟집|물회|해물|활어|해산물|전복|갈치|고등어|성게|회센터|해녀|한치|옥돔|어촌|수산', rows: 60 },
       { label: '고기국수·국밥', type: '39', keyword: '고기국수|국수|몸국|국밥|순대|접짝뼈|해장국|보말|칼국수|수제비', rows: 60 },
       { label: '카페', type: '39', keyword: '카페|커피|베이커리|디저트', rows: 40 },
+      { label: '기타', type: '39', keyword: '', rows: 100, other: true },
     ],
   },
   {
@@ -55,13 +56,6 @@ export const YOUTH = [
     slug: 'policy', title: '청년정책', icon: 'piggy-bank', color: '#0b8f9c', kind: 'links',
     tagline: '놓치기 쉬운 지원, 한 번에 확인',
     desc: '일자리·주거·교육·복지문화·참여 분야의 청년 지원 정책을 공식 사이트에서 제주 지역으로 찾아볼 수 있어요.',
-    areas: [
-      { icon: 'briefcase', label: '일자리', note: '구직·창업·직무 경험' },
-      { icon: 'house-heart', label: '주거', note: '월세·전세·청년주택' },
-      { icon: 'mortarboard', label: '교육', note: '교육비·역량 강화' },
-      { icon: 'palette', label: '복지·문화', match: '복지', note: '문화패스·활동 지원' },
-      { icon: 'megaphone', label: '참여·권리', match: '참여', note: '청년 참여 기구·공모' },
-    ],
     links: [
       { name: '온통청년', url: 'https://www.youthcenter.go.kr', note: '전국 청년정책 통합 검색 · 지역을 ‘제주’로 선택해 찾아보세요' },
       { name: '제주특별자치도청', url: 'https://www.jeju.go.kr', note: '제주도 공고·모집 안내' },

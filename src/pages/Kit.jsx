@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Chips from '../components/Chips'
 import ItemCard from '../components/ItemCard'
 import { ApiError, Empty, Loading } from '../components/Status'
 import { fetchHeritage, fetchPlaces } from '../api/client'
+import { isSubCourse, OLLE_ORDER } from '../data/olleCourses'
 import { SPOTS } from '../data/spots'
 import { PLACE_TYPES, themeOf } from '../data/themes'
 import { useAsync } from '../hooks/useAsync'
@@ -41,10 +43,6 @@ export default function Kit() {
           <h2><i className={`bi bi-${theme.icon}`} />{theme.label}</h2>
           <p>{theme.blurb}</p>
           {theme.sensitive && <p className="notice"><i className="bi bi-heart-pulse" />민감한 역사예요. 확인된 사실만 쓰고, 추모와 존중의 톤을 지켜 주세요.</p>}
-        </div>
-        <div>
-          <div className="eyebrow">이런 작업으로 이어져요</div>
-          <ul className="ideas">{theme.ideas.map((t) => <li key={t}><i className="bi bi-lightbulb" />{t}</li>)}</ul>
         </div>
       </section>
 
@@ -126,6 +124,20 @@ export default function Kit() {
           </div>
         )}
       </section>
+
+      {theme.key === 'olle' && (
+        <section className="kit-block">
+          <div className="block-head"><h2><i className="bi bi-signpost-split" />올레 코스 둘러보기 <small className="muted">점을 누르면 코스 설명으로 가요</small></h2></div>
+          <div className="olle-track" role="list">
+            {OLLE_ORDER.map((no) => (
+              <Link key={no} to={`/olle/${no}`} role="listitem" className={`olle-stop${isSubCourse(no) ? ' sub' : ''}`} aria-label={`올레 ${no}코스`} title={`올레 ${no}코스`}>
+                <span className="olle-dot" /><b>{no}</b>
+              </Link>
+            ))}
+          </div>
+          <p className="muted small">1~21코스는 섬을 한 바퀴 도는 본 코스, 빈 점(예: 1-1)은 우도·가파도·추자도 등 부속 코스예요.</p>
+        </section>
+      )}
     </div>
   )
 }

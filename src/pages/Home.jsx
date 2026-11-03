@@ -76,10 +76,9 @@ export default function Home() {
         </div>
 
         <div className="stage-hud">
-          <WeatherChip place="제주시" />
+          <WeatherChip place="제주시" wind={wx.label.split(' · ').pop()} />
           <span className="pill">{loading ? <><span className="spinner" />핀 꽂는 중</> : <><i className="bi bi-geo-alt-fill" />핀 {pins.length}개</>}</span>
           <span className="pill legend">{spotSetsOf(theme).map((s) => <span key={s.key}><i className="dot" style={{ background: s.color }} />{s.label} </span>)}{!theme.spotsOnly && <><i className="dot tour" />장소 {!theme.noHeritage && <><i className="dot heritage" />유산</>}</>}</span>
-          <span className="pill"><i className="bi bi-wind" />제주 하늘 · {wx.label}</span>
         </div>
       </section>
     </>
