@@ -33,8 +33,8 @@ function Trash() {
 function Fuel() {
   return (
     <section className="kit-block">
-      <PlaceMap options={[{ label: '주유소', keyword: '주유소' }, { label: '전기차 충전소', keyword: '전기차충전소' }, { label: 'LPG 충전소', keyword: 'LPG충전소' }]} />
-      <p className="muted small">위치·전화번호를 보여줘요. 기름값과 충전기 사용 가능 여부는 아래 공식 사이트에서 확인하세요.</p>
+      <PlaceMap options={[{ label: '주유소', keyword: '주유소' }, { label: '전기차 충전소 (한국전력)', keyword: '', ev: true }, { label: '전기차 충전소 (전체·더 많이)', keyword: '전기차충전소' }, { label: 'LPG 충전소', keyword: 'LPG충전소' }]} />
+      <p className="muted small">주유소는 위치·전화번호를 보여줘요. "전기차 충전소 (한국전력)"는 한국전력공사 자료(2025년 12월 말 기준) 제주 204곳의 위치·이용 시간·연락처예요. 기름값과 충전기 사용 가능 여부(충전 중인지)는 아래 공식 사이트에서 확인하세요.</p>
       <div className="links">
         <a href="https://www.opinet.co.kr" target="_blank" rel="noreferrer" className="link-card"><strong>오피넷<i className="bi bi-box-arrow-up-right" /></strong><span className="muted">지역별 주유소 최저가·가격 비교 (한국석유공사)</span></a>
         <a href="https://ev.or.kr" target="_blank" rel="noreferrer" className="link-card"><strong>무공해차 통합누리집<i className="bi bi-box-arrow-up-right" /></strong><span className="muted">전기차 충전소 찾기·보조금 안내</span></a>

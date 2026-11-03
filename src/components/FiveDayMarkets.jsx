@@ -26,7 +26,7 @@ function MarketPhoto({ name, photo }) {
   if (!photo || broken) return null
   return (
     <div className="market-photo">
-      <img src={photo.img} alt={name} loading="lazy" onError={() => setBroken(true)} />
+      <img src={photo.img} alt={name} loading="lazy" referrerPolicy="no-referrer" onError={() => setBroken(true)} />
       <span className="img-note">검색 이미지</span>
     </div>
   )

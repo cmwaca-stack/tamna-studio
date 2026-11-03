@@ -31,7 +31,7 @@ export default function ItemCard({ title, subtitle, image, badge, tone = 'tour',
       {src
         ? (
           <div className="card-photo">
-            <img className="card-img" src={src} alt={title} loading="lazy" onError={() => { if (src === extra) setExtra(null); else { setFound(null); setBroken(true) } }} />
+            <img className="card-img" src={src} alt={title} loading="lazy" referrerPolicy="no-referrer" onError={() => { if (src === extra) setExtra(null); else { setFound(null); setBroken(true) } }} />
             {(imgNote || searched || reference) && <span className="img-note">{imgNote || (searched ? '검색 이미지' : '참고 이미지')}</span>}
           </div>
         )

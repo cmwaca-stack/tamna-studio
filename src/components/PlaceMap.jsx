@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { fetchPlacesIn } from '../api/client'
+import { fetchEvStations, fetchPlacesIn } from '../api/client'
 import { KAKAO_KEY, loadKakao, NO_KEY_HELP } from '../lib/kakaoMaps'
 
 // 카카오 장소 검색(서버)으로 지도에 보이는 범위 안의 장소를 찾아 핀과 목록으로 보여줘요 (최대 45곳)
@@ -30,14 +30,16 @@ export default function PlaceMap({ options }) {
     info.current = new kakao.maps.InfoWindow({ content: `<div style="padding:6px 10px;font-size:12px;font-weight:700;white-space:nowrap">${p.name.replace(/</g, '&lt;')}</div>`, removable: true })
     info.current.open(map.current, m)
   }
-  const search = useCallback(async (keyword) => {
+  const search = useCallback(async (keyword, ev) => {
     const kakao = window.kakao
     if (!kakao || !map.current) return
     setBusy(true)
     const b = map.current.getBounds()
     const sw = b.getSouthWest(), ne = b.getNorthEast()
     try {
-      const found = await fetchPlacesIn(keyword, [sw.getLng(), sw.getLat(), ne.getLng(), ne.getLat()].map((v) => v.toFixed(5)).join(','))
+      const found = ev
+        ? (await fetchEvStations()).filter((p) => p.lat >= sw.getLat() && p.lat <= ne.getLat() && p.lng >= sw.getLng() && p.lng <= ne.getLng()).slice(0, 45)
+        : await fetchPlacesIn(keyword, [sw.getLng(), sw.getLat(), ne.getLng(), ne.getLat()].map((v) => v.toFixed(5)).join(','))
       marks.current.forEach((m) => m.setMap(null))
       marks.current = found.map((p) => {
         const m = new kakao.maps.Marker({ position: new kakao.maps.LatLng(p.lat, p.lng), map: map.current, title: p.name })
@@ -64,13 +66,13 @@ export default function PlaceMap({ options }) {
       setState('ready')
       kakao.maps.event.addListener(map.current, 'tilesloaded', function once() {
         kakao.maps.event.removeListener(map.current, 'tilesloaded', once)
-        search(options[0].keyword)
+        search(options[0].keyword, options[0].ev)
       })
     }).catch((e) => { if (alive) { setWhy(e?.message ?? String(e)); setState('fail') } })
     return () => { alive = false; marks.current.forEach((m) => m.setMap(null)); map.current = null }
   }, [])
 
-  const pickOpt = (i) => { setOpt(i); search(options[i].keyword) }
+  const pickOpt = (i) => { setOpt(i); search(options[i].keyword, options[i].ev) }
   const pickArea = (i) => {
     setArea(i)
     const kakao = window.kakao
@@ -78,7 +80,7 @@ export default function PlaceMap({ options }) {
     const a = AREAS[i]
     map.current.setLevel(a.level)
     map.current.setCenter(new kakao.maps.LatLng(a.lat, a.lng))
-    setTimeout(() => search(options[opt].keyword), 350)
+    setTimeout(() => search(options[opt].keyword, options[opt].ev), 350)
   }
   const flyTo = (p) => {
     const kakao = window.kakao
@@ -98,7 +100,7 @@ export default function PlaceMap({ options }) {
       </div>
       <div className="chips">
         {AREAS.map((a, i) => <button key={a.name} type="button" className={`chip${area === i ? ' on' : ''}`} onClick={() => pickArea(i)}>{a.name}</button>)}
-        <button type="button" className="btn btn-ghost btn-sm" disabled={state !== 'ready' || busy} onClick={() => search(options[opt].keyword)}><i className="bi bi-arrow-repeat" />이 지도에서 다시 찾기</button>
+        <button type="button" className="btn btn-ghost btn-sm" disabled={state !== 'ready' || busy} onClick={() => search(options[opt].keyword, options[opt].ev)}><i className="bi bi-arrow-repeat" />이 지도에서 다시 찾기</button>
       </div>
       <div className="tmap-box">
         <div ref={box} className="tmap-canvas" />
@@ -114,6 +116,7 @@ export default function PlaceMap({ options }) {
               <div key={p.id} className="place-row">
                 <button type="button" className="place-name" onClick={() => flyTo(p)} title="지도에서 위치 보기">{p.name}</button>
                 <span className="muted small">{p.addr}</span>
+                {p.hours && <span className="muted small">🕘 이용 {p.hours}</span>}
                 <span className="place-acts">
                   {p.phone && <a href={`tel:${p.phone.replace(/[^0-9+]/g, '')}`}>📞 {p.phone}</a>}
                   <a href={p.url} target="_blank" rel="noreferrer">카카오맵 ↗</a>
