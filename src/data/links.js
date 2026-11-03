@@ -32,7 +32,7 @@ export const LINKPAGES = {
       { name: '이야기·정보 찾기', items: [
         { name: '픽제주', url: 'https://www.picjeju.com/', note: '제주 소식·정보 사이트' },
         { name: '플레이제주', url: 'https://playjeju.co.kr/', note: '제주 소식·정보 사이트' },
-        { name: '잇지제주', url: 'https://www.idge.co.kr/', note: '제주 청년 정보·교육·지원사업 소식' },
+        { name: '잇지제주', url: 'https://www.idge.co.kr/', note: '제주 청년 정보·교육·지원사업 소식', logoSrc: '/org/idge.png' },
         { name: '탐라오', url: 'https://tamraoo.com/', note: '제주 정보 사이트' },
         { name: '제주청년', url: 'https://jejuyouth.com/index.php', note: '제주 청년 정보 사이트' },
         { name: '한라대게시판', url: 'https://www.halla.ac.kr/kr/160/subview.do', note: '한라대학교 게시판' },
@@ -46,16 +46,18 @@ export const LINKPAGES = {
     desc: '제주살이에 자주 쓰는 도·시 기관 공식 사이트예요. 민원·공고·지원 사업을 확인할 때 이용하세요.',
     groups: [
       { name: '도·시 행정', items: [
-        { name: '제주특별자치도', url: 'https://www.jeju.go.kr', note: '도청 공고·민원', logoSrc: 'https://www.jeju.go.kr/favicon.ico' },
-        { name: '제주시', url: 'https://www.jejusi.go.kr', note: '제주시 행정 안내', logoSrc: 'https://www.jejusi.go.kr/favicon.ico' },
-        { name: '서귀포시', url: 'https://www.seogwipo.go.kr', note: '서귀포시 행정 안내', logoSrc: 'https://www.seogwipo.go.kr/favicon.ico' },
-        { name: '제주도의회', url: 'https://www.council.jeju.kr', note: '의정 소식', logo: false },
+        { name: '제주특별자치도', url: 'https://www.jeju.go.kr', note: '도청 공고·민원', logoSrc: '/org/jejudo.png' },
+        { name: '제주시', url: 'https://www.jejusi.go.kr', note: '제주시 행정 안내', logoSrc: '/org/jejusi.png' },
+        { name: '서귀포시', url: 'https://www.seogwipo.go.kr', note: '서귀포시 행정 안내', logoSrc: '/org/seogwipo.png' },
+        { name: '제주도의회', url: 'https://www.council.jeju.kr', note: '의정 소식', logoSrc: '/org/council.png' },
       ] },
       { name: '지원·생활 기관', items: [
         { name: '정부24', url: 'https://www.gov.kr', note: '전입신고·증명서 등 민원' },
-        { name: '제주관광공사', url: 'https://ijto.or.kr', note: '관광·여행 정보', logo: false },
+        { name: '제주관광공사', url: 'https://ijto.or.kr', note: '관광·여행 정보', logoSrc: '/org/jejuto.png' },
         { name: '제주지방기상청', url: 'https://www.kma.go.kr/jeju/index.jsp', note: '제주 날씨·특보' },
-        { name: '제주경찰청', url: 'https://jjpolice.go.kr/index.jsp', note: '치안·민원 안내', logo: false },
+        { name: '제주경찰청', url: 'https://jjpolice.go.kr/index.jsp', note: '치안·민원 안내', logoSrc: '/org/jejupolice.png' },
+        { name: '제주평생교육다모아', url: 'https://damoa.jeju.kr/map/map.htm?up=&name=', note: '지도로 찾는 평생교육 기관·프로그램' },
+        { name: '제주가치돌봄 (사회서비스원)', url: 'https://jeju.pass.or.kr/wide_area_care', note: '돌봄·사회서비스 광역지원기관 안내', logoSrc: '/org/jejupass.png' },
       ] },
       { name: '공공기관 모아보기', items: [
         { name: '제주도 공공기관 목록 (제주도로지스)', url: 'http://www.jejudologis.com/jejupol.php?page=1&gubun=%EA%B3%B5%EA%B3%B5%EA%B8%B0%EA%B4%80&keyword=', note: '제주 지역 공공기관을 한눈에 찾아봐요' },

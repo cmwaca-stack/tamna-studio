@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { fetchWeatherAll } from '../api/client'
+import { WindArrow } from './WindCompass'
+import { windName } from '../lib/windDir'
 
 // 날씨 한 줄 → 이모티콘
 export function weatherEmoji(w) {
@@ -42,8 +44,7 @@ export default function RegionWeather() {
         <span className="region-wx-emoji" aria-hidden="true">{weatherEmoji(w)}</span>
         <div>
           <strong>{w.place}</strong> <span className="muted">{w.temp}℃</span>
-          {w.city && <span className="region-wx-city">{w.city} 인구 {w.rank}위</span>}
-          <div className="region-wx-line">{text(w)} · 강수 {w.pop}%{w.wind != null ? ` · 바람 ${w.wind}m/s` : ''}</div>
+          <div className="region-wx-line">{text(w)} · 강수 {w.pop}%{w.wind != null && <> · <WindArrow dir={w.windDir} size={12} /> {windName(w.windDir)} {w.wind}m/s</>}</div>
         </div>
       </div>
       <div className="region-wx-dots" role="tablist" aria-label="지역 선택">

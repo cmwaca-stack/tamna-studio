@@ -2,10 +2,10 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LazyScene from '../components/LazyScene'
 import RegionWeather from '../components/RegionWeather'
-import WeatherChip from '../components/WeatherChip'
 import { THEMES, spotSetsOf, themeOf } from '../data/themes'
 import { YOUTH } from '../data/youth'
 import { useThemePins } from '../hooks/useThemePins'
+import WindCompass from '../components/WindCompass'
 import { useWeather } from '../hooks/useWeather'
 import { sceneWeather } from '../lib/sceneWeather'
 import { useAppStore } from '../store/useAppStore'
@@ -36,7 +36,7 @@ export default function Home() {
   const navigate = useNavigate()
   // 핀을 누르면 그 장소의 소개 화면으로 이동 (고정 핀은 id 로, 공공 API 핀은 pin 정보를 같이 넘김)
   const openPin = (p) => navigate(`/place/${p.id}`, { state: { pin: p } })
-  const { pins, routes, loading } = useThemePins(theme)
+  const { pins, routes } = useThemePins(theme)
   // 실시간 예보(제주시)로 3D 날씨를 정함. 주소 끝에 ?w=rain|snow|sleet|shower|wind|cloudy|clear 를 붙이면 효과를 미리 볼 수 있어요
   const wx = sceneWeather(useWeather('제주시').slots[0], new URLSearchParams(window.location.search).get('w'))
 
@@ -45,10 +45,11 @@ export default function Home() {
       <section className="stage">
         <div className="stage-canvas"><LazyScene items={pins} routes={routes} weather={wx} autoRotate onPick={openPin} /><div className="jeju-hand" aria-hidden="true">JEJU ISLAND</div></div>
         <RegionWeather />
+        <div className="stage-wind"><WindCompass dir={wx.dir} speed={wx.wind} /></div>
 
         <div className={`stage-panel glass${open ? '' : ' folded'}`}>
           <div className="panel-head">
-            <h1>알뜰정보 제주살이 <span className="wiggle" aria-hidden="true">🍊</span></h1>
+            <h1>알뜰정보 제주살이</h1>
             <button type="button" className="fold-btn" aria-expanded={open} aria-label={open ? '메뉴판 접기' : '메뉴판 펼치기'} onClick={() => setOpen((v) => !v)}>
               <i className={`bi bi-chevron-${open ? 'up' : 'down'}`} />{open ? '접기' : '펼치기'}
             </button>
@@ -82,8 +83,6 @@ export default function Home() {
         </div>
 
         <div className="stage-hud">
-          <WeatherChip place="제주시" wind={wx.label.split(' · ').pop()} />
-          <span className="pill">{loading ? <><span className="spinner" />핀 꽂는 중</> : <><i className="bi bi-geo-alt-fill" />핀 {pins.length}개</>}</span>
           <span className="pill legend">{spotSetsOf(theme).map((s) => <span key={s.key}><i className="dot" style={{ background: s.color }} />{s.label} </span>)}{!theme.spotsOnly && <><i className="dot tour" />장소 {!theme.noHeritage && <><i className="dot heritage" />유산</>}</>}</span>
         </div>
       </section>

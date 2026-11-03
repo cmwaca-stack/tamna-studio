@@ -1,16 +1,15 @@
 import { useState } from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import CctvPlayer from '../components/CctvPlayer'
+import { Link, Navigate, useParams } from 'react-router-dom'
+import TrafficMap from '../components/TrafficMap'
 import ItemCard from '../components/ItemCard'
 import WeatherChip from '../components/WeatherChip'
 import { ApiError, Empty, Loading } from '../components/Status'
 import { withFoodExtra } from '../lib/foodExtra'
-import { fetchCulture, fetchFlights, fetchPlaces, fetchVjFood, fetchPolicies, fetchSnowCctv } from '../api/client'
+import { fetchCulture, fetchFlights, fetchPlaces, fetchVjFood, fetchPolicies } from '../api/client'
 import { TYPE_LABEL, youthOf } from '../data/youth'
 import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
 import { fieldVerdict } from '../lib/weather'
-import { useAppStore } from '../store/useAppStore'
 
 // 사진이 없는 카드에 보여 줄 이모지
 const PLACE_EMOJI = { food: '🍜', photo: '📸', weekend: '🎟️' }
@@ -155,19 +154,17 @@ function DriveCheck() {
   )
 }
 
-// 실시간 교통정보: 날씨 기반 운전 안내 + 공식 사이트 + (제공될 때만) CCTV
+// 실시간 교통정보: 날씨 기반 운전 안내 + 막히는 곳을 보여주는 실시간 교통 지도 + 공식 사이트
 function TrafficGuide({ cat }) {
-  const navigate = useNavigate()
-  const setThemeKey = useAppStore((st) => st.setThemeKey)
-  const cams = useAsync(fetchSnowCctv, [])
-  const [sel, setSel] = useState(null)
-  const cur = cams.data?.find((c) => c.id === sel) ?? cams.data?.[0]
-  const hasCams = !!cams.data?.length
   return (
     <div className="page">
       <Head cat={cat} />
       <WeatherLine />
       <DriveCheck />
+      <section className="kit-block">
+        <h2><i className="bi bi-map" style={{ color: cat.color }} /> 실시간 교통 지도 <small className="muted">(어디가 막히는지)</small></h2>
+        <TrafficMap />
+      </section>
       <section className="kit-block">
         <h2><i className="bi bi-box-arrow-up-right" style={{ color: cat.color }} /> 실시간 도로·버스 정보 (공식 사이트)</h2>
         <div className="links">
@@ -179,27 +176,6 @@ function TrafficGuide({ cat }) {
           ))}
         </div>
       </section>
-      {hasCams && (
-        <section className="kit-block">
-          <div className="block-head">
-          <h2><i className="bi bi-camera-video" style={{ color: cat.color }} /> 제주 도로 CCTV <small className="muted">(제주시 적설 감시 · 산간도로 중심)</small></h2>
-          <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setThemeKey('cctv'); navigate('/') }}><i className="bi bi-badge-3d" />3D 지도에서 위치 보기</button>
-          </div>
-          <div className="cctv">
-            <div className="cctv-main">
-              {cur && <CctvPlayer key={cur.id} url={cur.url} />}
-              <strong>{cur?.name}</strong>
-            </div>
-            <div className="cctv-list">
-              {cams.data.map((c) => (
-                <button key={c.id} type="button" className={c.id === cur?.id ? 'on' : ''} onClick={() => setSel(c.id)}>
-                  <i className="bi bi-camera-video" />{c.name}
-                </button>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   )
 }

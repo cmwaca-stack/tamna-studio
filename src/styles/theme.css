@@ -465,8 +465,32 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .prop-tip { position: absolute; z-index: 6; display: none; pointer-events: none; padding: .12rem .55rem; font-size: .74rem; font-weight: 700; line-height: 1.5; white-space: nowrap; color: #5a3d31; background: rgba(255, 255, 255, .94); border: 1px solid #ffd9cc; border-radius: 999px; box-shadow: 0 4px 12px rgba(120, 70, 50, .18); }
 
 /* 3D 지도: 흑돼지·해녀·산방산·성산일출봉이 가끔 하는 말풍선 */
-.prop-bubble { position: absolute; left: 0; top: 0; z-index: 7; pointer-events: none; padding: .22rem .65rem; font-size: .82rem; font-weight: 800; line-height: 1.4; white-space: nowrap; color: #5a3d31; background: #fff; border: 2px solid #ffd9cc; border-radius: 16px; box-shadow: 0 6px 14px rgba(120, 70, 50, .2); animation: bubble-pop .28s cubic-bezier(.34, 1.56, .64, 1); transition: opacity .35s; }
+.prop-bubble { position: absolute; left: 0; top: 0; transform: translate(-50%, -100%); transform-origin: 50% 100%; z-index: 7; pointer-events: none; padding: .22rem .65rem; font-size: .82rem; font-weight: 800; line-height: 1.4; white-space: nowrap; color: #5a3d31; background: #fff; border: 2px solid #ffd9cc; border-radius: 16px; box-shadow: 0 6px 14px rgba(120, 70, 50, .2); animation: bubble-pop .26s cubic-bezier(.34, 1.7, .64, 1); transition: opacity .3s, scale .3s; }
 .prop-bubble::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 10px; height: 10px; background: #fff; border-right: 2px solid #ffd9cc; border-bottom: 2px solid #ffd9cc; transform: translateX(-50%) rotate(45deg); }
-.prop-bubble.out { opacity: 0; }
-@keyframes bubble-pop { from { opacity: 0; scale: .6; } to { opacity: 1; scale: 1; } }
+.prop-bubble.out { opacity: 0; scale: .6; }
+@keyframes bubble-pop { from { opacity: 0; scale: .2; } to { opacity: 1; scale: 1; } }
 @media (prefers-reduced-motion: reduce) { .prop-bubble { animation: none; } }
+
+/* 실시간 교통 지도 */
+.tmap { display: grid; gap: .7rem; }
+.tmap-bar { display: grid; gap: .6rem; }
+.tmap-legend { display: flex; flex-wrap: wrap; align-items: center; gap: .9rem; font-size: .85rem; font-weight: 700; }
+.tmap-legend i { display: inline-block; width: 22px; height: 6px; border-radius: 4px; margin-right: .35rem; vertical-align: middle; }
+.tmap-box { position: relative; border-radius: 22px; overflow: hidden; border: 2px solid #ffd9cc; background: #eef3f0; }
+.tmap-canvas { width: 100%; height: min(70vh, 560px); min-height: 360px; }
+.tmap-msg { position: absolute; inset: 0; display: grid; place-items: center; padding: 1.2rem; text-align: center; background: rgba(255, 255, 255, .85); }
+
+/* 바람 방향 표시 */
+.wind-arrow { display: inline-block; vertical-align: -2px; color: var(--sea); transition: transform .6s cubic-bezier(.34, 1.4, .64, 1); }
+.wind-compass { display: inline-flex; align-items: center; gap: .55rem; padding: .3rem .8rem .3rem .35rem; border-radius: 999px; background: rgba(255, 255, 255, .92); border: 2px solid #ffd9cc; box-shadow: 0 6px 14px rgba(120, 70, 50, .14); font-size: .82rem; line-height: 1.25; }
+.wc-dial { position: relative; display: grid; place-items: center; flex: none; width: 58px; height: 58px; border-radius: 50%; background: #f1f7f6; border: 2px solid #cfe5e0; color: #1c8f8a; }
+.wc-dial b { position: absolute; left: 50%; top: 50%; font-size: .62rem; font-weight: 800; color: #6a8a88; }
+.wc-n { color: #e8590c !important; }
+.wc-dial .wind-arrow { color: #1c8f8a; transition: none; }
+.wc-text { display: grid; }
+.wc-text strong { color: #1c6f6a; font-size: .95rem; }
+.wc-text small { color: #8a7468; font-size: .68rem; }
+
+/* 바람 나침반: 오른쪽 위 날씨 카드 바로 아래 */
+.stage-wind { position: absolute; right: 24px; top: 116px; z-index: 2; }
+@media (max-width: 900px) { .stage-wind { right: 12px; top: 104px; } }

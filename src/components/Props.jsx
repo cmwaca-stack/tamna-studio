@@ -71,6 +71,9 @@ function Chatter() {
         const el = document.createElement('div')
         el.className = 'prop-bubble'
         el.textContent = LINES[kind]
+        const at = spot(it) // 말한 순간의 자리에 그대로 팝업처럼 떴다 사라져요 (움직이는 동물을 따라다니지 않음)
+        el.style.left = `${at[0]}px`
+        el.style.top = `${at[1]}px`
         host.appendChild(el)
         S.bubbles.push({ it, el, until: now + 2.6 })
         S.step += k + 1
@@ -79,10 +82,8 @@ function Chatter() {
       S.next = now + 1.6 + Math.random() * 1.6
     }
     S.bubbles = S.bubbles.filter((b) => {
-      const p = spot(b.it)
-      if (now >= b.until || !p) { b.el.remove(); return false }
-      b.el.style.transform = `translate(${p[0]}px, ${p[1]}px) translate(-50%, -100%)`
-      b.el.classList.toggle('out', b.until - now < 0.4)
+      if (now >= b.until) { b.el.remove(); return false }
+      b.el.classList.toggle('out', b.until - now < 0.3)
       return true
     })
   })

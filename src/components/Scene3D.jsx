@@ -8,6 +8,7 @@ import { makeCartoonTexture } from '../lib/cartoonTexture'
 import Props from './Props'
 import { WeatherClouds, Precip, WindStreaks } from './WeatherFx'
 import { isWet } from '../lib/sceneWeather'
+import { setAzimuth } from '../lib/azimuth'
 
 const still = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
 const PIN_COLOR = { tour: '#f08c00', heritage: '#1c7ed6' } // 장소(주황) · 국가유산(파랑)
@@ -105,6 +106,12 @@ function RouteLine({ route }) {
   return <Line points={points} color={route.color} lineWidth={3.5} />
 }
 
+// 카메라가 도는 각도를 바람 나침반에 알려 줘요 (동서남북이 화면에 맞춰 돌아가도록)
+function AzimuthSync() {
+  useFrame(({ camera }) => setAzimuth((Math.atan2(camera.position.x, camera.position.z) * 180) / Math.PI))
+  return null
+}
+
 // items: { key, source('tour'|'heritage'), title, lat, lng }[]  (lib/pins.js 로 변환)
 export default function Scene3D({ items = [], routes = [], rain = false, weather, onPick, selectedKey, autoRotate = false }) {
   // weather 가 없으면 예전처럼 rain(true/false)만으로 표현
@@ -126,6 +133,7 @@ export default function Scene3D({ items = [], routes = [], rain = false, weather
           <meshBasicMaterial color="#fff6c8" fog={false} />
         </mesh>
       )}
+      <AzimuthSync />
       <WeatherClouds weather={w} />
 
       <Ocean rain={gloomy} wind={w.wind} />
