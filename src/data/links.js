@@ -56,7 +56,7 @@ export const LINKPAGES = {
         { name: '온통청년', url: 'https://www.youthcenter.go.kr', note: '청년정책 통합 검색' },
         { name: '제주관광공사', url: 'https://ijto.or.kr', note: '관광·여행 정보', logo: false },
         { name: '제주지방기상청', url: 'https://www.kma.go.kr/jeju/index.jsp', note: '제주 날씨·특보' },
-        { name: '제주경찰청', url: 'https://www.jeju.police.go.kr', note: '치안·민원 안내', logo: false },
+        { name: '제주경찰청', url: 'https://jjpolice.go.kr/index.jsp', note: '치안·민원 안내', logo: false },
       ] },
     ],
   },
