@@ -7,26 +7,42 @@ const parser = new XMLParser({ parseTagValue: false })
 const ymd = (d) => d.toISOString().slice(0, 10).replaceAll('-', '')
 let cache = null // 30분 보관
 
-const unesc = (t = '') => String(t).replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&').replaceAll('&quot;', '"')
+// 제목에 &amp;lt; 처럼 두 번 감싸인 글자가 있어서 더 이상 바뀌지 않을 때까지 풀어요
+const unesc = (t = '') => {
+  let v = String(t)
+  for (let i = 0; i < 3; i++) {
+    const n = v.replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&middot;', '·').replaceAll('&quot;', '"').replaceAll('&#39;', "'").replaceAll('&amp;', '&')
+    if (n === v) break
+    v = n
+  }
+  return v
+}
 const say = (text) => {
   if (/SERVICE_KEY_IS_NOT_REGISTERED|SERVICE KEY IS NOT REGISTERED/i.test(text)) return '키가 아직 등록되지 않았어요 — 활용신청 승인 후 잠시 뒤 다시 시도하세요'
   if (/SERVICE ACCESS DENIED|ACCESS_DENIED/i.test(text)) return '한눈에보는문화정보 활용신청이 안 되어 있어요'
   return null
 }
 
-export async function getCulture({ days = 90, rows = 100 } = {}) {
+// 이 서비스는 sido(시도) 조건을 무시하고 전국 자료를 돌려줘요. 그래서 앞 100건만 보면 제주 것이 4개뿐이에요 →
+// 1년치 전국 자료를 모두 받아(약 1000건) 제주 것만 골라요.
+export async function getCulture({ days = 365, rows = 1000 } = {}) {
   if (cache && Date.now() - cache.at < 30 * 60e3) return cache.data
   const from = new Date()
   const to = new Date(Date.now() + days * 86400e3)
-  const qs = new URLSearchParams({ from: ymd(from), to: ymd(to), PageNo: '1', numOfrows: String(rows), sido: '제주' })
-  const res = await fetch(`${BASE}?${qs}&serviceKey=${encodeURIComponent(dataKey())}`)
-  const text = await res.text()
-  const why = say(text)
-  if (why) throw new KeyError(`한눈에보는문화정보: ${why}`)
-  const xml = parser.parse(text)
-  const body = xml?.response?.body ?? xml?.response?.msgBody ?? xml?.response
-  if (!body) throw new Error(`한눈에보는문화정보 응답 이상: ${text.slice(0, 160)}`)
-  const items = toList(body.items?.item ?? body.perforList ?? body.item)
+  let items = []
+  for (let page = 1; page <= 4; page += 1) {
+    const qs = new URLSearchParams({ from: ymd(from), to: ymd(to), PageNo: String(page), numOfrows: String(rows) })
+    const res = await fetch(`${BASE}?${qs}&serviceKey=${encodeURIComponent(dataKey())}`)
+    const text = await res.text()
+    const why = say(text)
+    if (why) throw new KeyError(`한눈에보는문화정보: ${why}`)
+    const xml = parser.parse(text)
+    const body = xml?.response?.body ?? xml?.response?.msgBody ?? xml?.response
+    if (!body) throw new Error(`한눈에보는문화정보 응답 이상: ${text.slice(0, 160)}`)
+    const got = toList(body.items?.item ?? body.perforList ?? body.item)
+    items = items.concat(got)
+    if (got.length < rows || items.length >= Number(body.totalCount ?? 0)) break
+  }
   const data = items.map((x) => ({
     id: String(x.seq ?? x.title),
     title: unesc(x.title),

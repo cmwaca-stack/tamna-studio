@@ -463,3 +463,10 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 
 /* 3D 지도: 일러스트에 마우스를 올리면 나오는 이름표 */
 .prop-tip { position: absolute; z-index: 6; display: none; pointer-events: none; padding: .12rem .55rem; font-size: .74rem; font-weight: 700; line-height: 1.5; white-space: nowrap; color: #5a3d31; background: rgba(255, 255, 255, .94); border: 1px solid #ffd9cc; border-radius: 999px; box-shadow: 0 4px 12px rgba(120, 70, 50, .18); }
+
+/* 3D 지도: 흑돼지·해녀·산방산·성산일출봉이 가끔 하는 말풍선 */
+.prop-bubble { position: absolute; left: 0; top: 0; z-index: 7; pointer-events: none; padding: .22rem .65rem; font-size: .82rem; font-weight: 800; line-height: 1.4; white-space: nowrap; color: #5a3d31; background: #fff; border: 2px solid #ffd9cc; border-radius: 16px; box-shadow: 0 6px 14px rgba(120, 70, 50, .2); animation: bubble-pop .28s cubic-bezier(.34, 1.56, .64, 1); transition: opacity .35s; }
+.prop-bubble::after { content: ''; position: absolute; left: 50%; bottom: -7px; width: 10px; height: 10px; background: #fff; border-right: 2px solid #ffd9cc; border-bottom: 2px solid #ffd9cc; transform: translateX(-50%) rotate(45deg); }
+.prop-bubble.out { opacity: 0; }
+@keyframes bubble-pop { from { opacity: 0; scale: .6; } to { opacity: 1; scale: 1; } }
+@media (prefers-reduced-motion: reduce) { .prop-bubble { animation: none; } }

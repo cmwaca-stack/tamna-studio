@@ -147,6 +147,7 @@ const ART = {
     c.fillStyle = '#ffffff'; c.beginPath(); c.moveTo(70, 300); c.lineTo(442, 300); c.quadraticCurveTo(410, 420, 330, 428); c.lineTo(160, 428); c.quadraticCurveTo(96, 410, 70, 300); c.fill() // 선체
     c.fillStyle = '#e8590c'; c.beginPath(); c.moveTo(78, 322); c.lineTo(436, 322); c.lineTo(428, 352); c.lineTo(92, 352); c.fill() // 주황 띠
     rrect(c, 190, 190, 130, 110, 22, '#fff4e0'); rrect(c, 176, 176, 158, 28, 14, '#4dabf7') // 선실 + 지붕
+    rrect(c, 266, 138, 32, 46, 6, '#ff8a3c'); rrect(c, 260, 130, 44, 14, 6, '#3a3a40') // 굴뚝
     rrect(c, 208, 214, 36, 34, 8, '#9ad7f2'); rrect(c, 262, 214, 36, 34, 8, '#9ad7f2') // 창
     line(c, [[150, 300], [150, 150]], 6, '#6b4a2b'); c.fillStyle = '#ffd43b'; c.beginPath(); c.moveTo(150, 150); c.lineTo(214, 166); c.lineTo(150, 184); c.fill() // 깃발
     circ(c, 124, 366, 10, '#fff'); circ(c, 124, 366, 5, '#9ad7f2')
@@ -346,6 +347,61 @@ const ART = {
     c.fillStyle = '#c4d2de'; c.beginPath(); c.moveTo(262, 318); c.lineTo(200, 406); c.lineTo(270, 406); c.lineTo(356, 326); c.closePath(); c.fill() // 앞쪽 날개
     rrect(c, 286, 346, 70, 26, 13, '#8fa2b3') // 엔진
     ell(c, 468, 306, 10, 6, 'rgba(255,130,150,.6)') // 볼터치
+  },
+  // 연기: 몽글몽글한 흰 연기 한 덩이 (낚시배 굴뚝에서 피어올라요)
+  puff(c) {
+    ;[[256, 280, 120, 0.5], [190, 300, 84, 0.55], [326, 296, 90, 0.55], [226, 220, 84, 0.6], [300, 226, 76, 0.6], [258, 172, 66, 0.65]].forEach(([x, y, r, a]) => {
+      const g = c.createRadialGradient(x, y, r * 0.15, x, y, r)
+      g.addColorStop(0, `rgba(255,255,255,${a + 0.3})`); g.addColorStop(0.7, `rgba(235,240,246,${a})`); g.addColorStop(1, 'rgba(235,240,246,0)')
+      c.fillStyle = g; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill()
+    })
+  },
+  // 연기고리: 비행기가 뒤에 남기는 도넛 모양의 하얀 연기
+  ring(c) {
+    const g = c.createRadialGradient(256, 256, 96, 256, 256, 220)
+    g.addColorStop(0, 'rgba(255,255,255,0)'); g.addColorStop(0.35, 'rgba(255,255,255,.55)'); g.addColorStop(0.55, 'rgba(255,255,255,.95)'); g.addColorStop(0.8, 'rgba(240,245,250,.5)'); g.addColorStop(1, 'rgba(240,245,250,0)')
+    c.fillStyle = g; c.beginPath(); c.arc(256, 256, 220, 0, 7); c.fill()
+  },
+  // 뿔소라: 뿔(가시)이 돋은 갈색 나선 껍데기 + 입구 안쪽의 크림색 소용돌이 (제주 해녀가 따는 바다 소라)
+  whelk(c) {
+    ell(c, 256, 468, 180, 22, 'rgba(40,70,40,.22)')
+    const OUT = '#4a2a18', BODY = '#a8672f', LIGHT = '#c98542'
+    // 가시: 껍데기 둘레에서 바깥으로 뾰족하게 솟은 뿔
+    const spikes = (cx, cy, rx, ry, angs, len) => angs.forEach((a) => {
+      const x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * ry
+      const nx = Math.cos(a), ny = Math.sin(a), tx = -ny, ty = nx
+      c.fillStyle = BODY; c.strokeStyle = OUT; c.lineWidth = 5; c.lineJoin = 'round'
+      c.beginPath(); c.moveTo(x + tx * 20 - nx * 8, y + ty * 20 - ny * 8); c.lineTo(x + nx * len, y + ny * len); c.lineTo(x - tx * 20 - nx * 8, y - ty * 20 - ny * 8); c.closePath(); c.fill(); c.stroke()
+    })
+    const whorl = (cx, cy, rx, ry, fill) => { c.fillStyle = fill; c.strokeStyle = OUT; c.lineWidth = 6; c.beginPath(); c.ellipse(cx, cy, rx, ry, 0, 0, 7); c.fill(); c.stroke() }
+    // 아래 큰 고리부터 위 작은 고리 순서로 (위쪽이 아래쪽 위에 겹쳐요)
+    spikes(256, 340, 150, 118, [Math.PI * 1.05, Math.PI * 1.3, Math.PI * 1.7, Math.PI * 1.95, Math.PI * 0.05, Math.PI * 0.3], 44)
+    whorl(256, 340, 150, 118, BODY)
+    spikes(274, 226, 102, 72, [Math.PI * 1.0, Math.PI * 1.25, Math.PI * 1.75, Math.PI * 2.0], 38)
+    whorl(274, 226, 102, 72, BODY)
+    spikes(288, 148, 66, 48, [Math.PI * 1.0, Math.PI * 1.35, Math.PI * 1.7, Math.PI * 2.0], 30)
+    whorl(288, 148, 66, 48, BODY)
+    spikes(296, 96, 36, 28, [Math.PI * 1.15, Math.PI * 1.85], 22)
+    whorl(296, 96, 36, 28, LIGHT)
+    // 입구(앞쪽 아래): 크림색 + 소용돌이
+    c.save(); c.translate(222, 352); c.rotate(-0.35)
+    c.fillStyle = OUT; c.beginPath(); c.ellipse(0, 0, 86, 68, 0, 0, 7); c.fill()
+    c.fillStyle = '#f6e6d2'; c.beginPath(); c.ellipse(0, 0, 78, 60, 0, 0, 7); c.fill()
+    c.strokeStyle = '#b98a62'; c.lineWidth = 4; c.lineCap = 'round'
+    for (let k = 0; k < 4; k++) { c.beginPath(); c.ellipse(8 + k * 2, 4, 62 - k * 15, 46 - k * 11, 0.1, Math.PI * 0.2, Math.PI * 1.65); c.stroke() }
+    c.fillStyle = '#d9b48c'; c.beginPath(); c.ellipse(20, 6, 14, 10, 0, 0, 7); c.fill()
+    c.restore()
+    // 껍데기 무늬: 주황 점 + 짧은 결
+    let seed = 11; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647)
+    ;[[256, 340, 150, 118], [274, 226, 102, 72], [288, 148, 66, 48]].forEach(([cx, cy, rx, ry]) => {
+      for (let k = 0; k < 26; k++) {
+        const a = rnd() * Math.PI * 2, r = 0.25 + rnd() * 0.7
+        const x = cx + Math.cos(a) * rx * r, y = cy + Math.sin(a) * ry * r
+        if (x > 150 && x < 300 && y > 290 && y < 420) continue // 입구 자리는 비워요
+        ell(c, x, y, 3 + rnd() * 4, 2.5 + rnd() * 3, rnd() > 0.4 ? '#e08a3c' : 'rgba(74,42,24,.55)')
+      }
+    })
+    ;[[330, 300], [370, 360], [318, 400], [392, 316]].forEach(([x, y]) => line(c, [[x - 12, y + 6], [x + 12, y - 6]], 3, 'rgba(74,42,24,.5)'))
   },
   // 동백: 붉은 겹꽃잎 + 노란 수술 + 윤기 나는 잎
   camellia(c) {

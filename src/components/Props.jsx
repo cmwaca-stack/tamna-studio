@@ -5,7 +5,7 @@ import { toXZ } from '../lib/geo'
 import { spriteTexture } from '../lib/spriteArt'
 import { heightAt, onLand, snapToLand } from '../lib/terrain'
 
-// 제주를 상징하는 귀여운 일러스트 스티커: 돌하르방 · 귤 · 귤나무 · 유채꽃 · 초가집 · 동백 · 조랑말 · 해녀 · 테왁 · 돌고래 · 비행기 · 오징어 · 갈치 · 흑돼지 · 낚시배 · 산방산 · 성산일출봉 · 우도봉·소 · 비양도 · 용두암 · 주상절리 · 정방폭포 · 마라도
+// 제주를 상징하는 귀여운 일러스트 스티커: 돌하르방 · 귤 · 귤나무 · 유채꽃 · 초가집 · 동백 · 조랑말 · 해녀 · 테왁 · 뿔소라 · 돌고래 · 비행기 · 오징어 · 갈치 · 흑돼지 · 낚시배 · 산방산 · 성산일출봉 · 우도봉·소 · 비양도 · 용두암 · 주상절리 · 정방폭포 · 마라도
 // 카메라를 향해 항상 서 있고, 핀 클릭을 막지 않도록 레이캐스트를 끕니다.
 const NR = () => null
 
@@ -22,6 +22,71 @@ function useHover(ref, kind, s) {
     HOVER.add(it)
     return () => HOVER.delete(it)
   }, [ref, kind, s])
+}
+
+// 말풍선: 흑돼지(돌아가며)·해녀·돌고래·산방산·성산일출봉·우도가 가끔 한마디씩 해요
+const LINES = { pig: '꿀꿀', haenyeo: '혼저옵써', sanbang: '옵데강', seongsan: '왔수과', dolphin: '무사?', udobong: '쉬멍헙써' }
+const SPEAKERS = new Set()
+function useSpeaker(ref, kind, s) {
+  useEffect(() => {
+    if (!LINES[kind]) return undefined
+    const it = { ref, kind, s }
+    SPEAKERS.add(it)
+    return () => SPEAKERS.delete(it)
+  }, [ref, kind, s])
+}
+
+function Chatter() {
+  const { gl, camera } = useThree()
+  const st = useRef({ next: 1.2, step: 0, pig: 0, bubbles: [] })
+  const v = useMemo(() => new THREE.Vector3(), [])
+  // 일러스트의 머리 위 화면 좌표 (화면 밖·카메라 뒤면 null)
+  const spot = (it) => {
+    const o = it.ref.current
+    if (!o) return null
+    o.getWorldPosition(v)
+    v.y += it.s * 0.52
+    v.project(camera)
+    if (v.z > 1 || Math.abs(v.x) > 1 || Math.abs(v.y) > 1) return null
+    const el = gl.domElement
+    return [(v.x * 0.5 + 0.5) * el.clientWidth, (-v.y * 0.5 + 0.5) * el.clientHeight]
+  }
+  useEffect(() => {
+    const S = st.current
+    return () => { S.bubbles.forEach((b) => b.el.remove()); S.bubbles = [] }
+  }, [])
+  useFrame(({ clock }) => {
+    const S = st.current
+    const host = gl.domElement.parentElement
+    if (!host) return
+    const now = clock.elapsedTime
+    if (now >= S.next) {
+      const order = ['pig', 'haenyeo', 'dolphin', 'pig', 'sanbang', 'udobong', 'pig', 'seongsan', 'dolphin', 'haenyeo']
+      // 차례가 된 쪽이 화면 밖이면 다음 차례로 넘겨서, 보이는 쪽이 꼭 말하게 해요 (돼지는 5마리가 차례로)
+      for (let k = 0; k < order.length; k++) {
+        const kind = order[(S.step + k) % order.length]
+        const list = [...SPEAKERS].filter((x) => x.kind === kind && spot(x) && !S.bubbles.some((bb) => bb.it === x))
+        if (!list.length) continue
+        const it = kind === 'pig' ? list[S.pig++ % list.length] : list[Math.floor(Math.random() * list.length)]
+        const el = document.createElement('div')
+        el.className = 'prop-bubble'
+        el.textContent = LINES[kind]
+        host.appendChild(el)
+        S.bubbles.push({ it, el, until: now + 2.6 })
+        S.step += k + 1
+        break
+      }
+      S.next = now + 1.6 + Math.random() * 1.6
+    }
+    S.bubbles = S.bubbles.filter((b) => {
+      const p = spot(b.it)
+      if (now >= b.until || !p) { b.el.remove(); return false }
+      b.el.style.transform = `translate(${p[0]}px, ${p[1]}px) translate(-50%, -100%)`
+      b.el.classList.toggle('out', b.until - now < 0.4)
+      return true
+    })
+  })
+  return null
 }
 
 // 포인터가 일러스트 위에 있는지 화면 좌표로 직접 계산해요 (핀 클릭을 가로막지 않도록 3D 클릭 판정은 그대로 꺼 둠)
@@ -71,6 +136,7 @@ function HoverLabels() {
 function Sprite({ kind, x, y, z, s, wind, i, bob }) {
   const ref = useRef()
   useHover(ref, kind, s)
+  useSpeaker(ref, kind, s)
   useFrame(({ camera, clock }) => {
     if (!ref.current) return
     ref.current.rotation.y = Math.atan2(camera.position.x - x, camera.position.z - z)
@@ -101,6 +167,7 @@ const screenSide = (vx, vz, rotY) => vx * Math.cos(rotY) - vz * Math.sin(rotY)
 function Pony({ x: hx, z: hz, s, i, wind, kind = 'pony' }) {
   const ref = useRef()
   useHover(ref, kind, s)
+  useSpeaker(ref, kind, s)
   const st = useRef({ x: hx, z: hz, tx: hx, tz: hz, mode: 'rest', timer: rand(0.5, 4), speed: 0, gait: 0.2, phase: rand(0, 6), flip: 1, fx: 1 })
   const still = useMemo(calm, [])
   const pickTarget = (a) => {
@@ -160,6 +227,7 @@ function Pony({ x: hx, z: hz, s, i, wind, kind = 'pony' }) {
 function Dolphin({ x: hx, z: hz, s, i }) {
   const ref = useRef()
   useHover(ref, 'dolphin', s)
+  useSpeaker(ref, 'dolphin', s)
   const st = useRef({ x: hx + rand(-0.6, 0.6), z: hz + rand(-0.6, 0.6), h: rand(0, Math.PI * 2), turn: 0, turnTarget: 0, tTimer: rand(1, 3), speed: rand(0.45, 0.65), jump: -1, jTimer: rand(2, 8), flip: 1, fx: 1, phase: rand(0, 6) })
   const still = useMemo(calm, [])
   useFrame(({ camera, clock }, dt) => {
@@ -208,6 +276,55 @@ function Dolphin({ x: hx, z: hz, s, i }) {
   )
 }
 
+// 배 굴뚝에서 가끔 폴폴 피어오르는 연기: 한 번에 4덩이가 차례로 올라가며 커지고 흐려져요. 연기는 피어난 자리에 남아 배가 지나간 길을 따라 흩어져요.
+function Smoke({ st, s }) {
+  const meshes = useRef([])
+  const mats = useRef([])
+  const pool = useRef(Array.from({ length: 4 }, () => ({ age: -1, x: 0, z: 0 })))
+  const t = useRef({ next: rand(1, 6), queue: 0, gap: 0 })
+  const still = useMemo(calm, [])
+  useFrame(({ camera }, dt) => {
+    dt = Math.min(dt, 0.05)
+    const T = t.current
+    if (!still) {
+      T.next -= dt
+      if (T.next <= 0 && T.queue === 0) { T.queue = 4; T.gap = 0; T.next = rand(6, 12) }
+      if (T.queue > 0) {
+        T.gap -= dt
+        if (T.gap <= 0) {
+          const p = pool.current.find((d) => d.age < 0)
+          if (p) { p.age = 0; p.x = st.current.x; p.z = st.current.z }
+          T.queue -= 1; T.gap = 0.5
+        }
+      }
+    }
+    pool.current.forEach((p, k) => {
+      const m = meshes.current[k], mat = mats.current[k]
+      if (!m || !mat) return
+      if (p.age < 0) { m.visible = false; return }
+      p.age += dt
+      const u = p.age / 3
+      if (u >= 1) { p.age = -1; m.visible = false; return }
+      m.visible = true
+      m.position.set(p.x + u * 0.35, -0.3 + s * 0.46 + s * 0.22 + u * 0.8, p.z)
+      m.rotation.y = Math.atan2(camera.position.x - m.position.x, camera.position.z - m.position.z)
+      const sc = s * (0.2 + 0.42 * u)
+      m.scale.set(sc, sc, 1)
+      mat.opacity = 0.8 * (1 - u) ** 1.3
+    })
+  })
+  return (
+    <>
+      {[0, 1, 2, 3].map((k) => (
+        <mesh key={k} ref={(el) => { meshes.current[k] = el }} raycast={NR} visible={false}>
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial ref={(el) => { mats.current[k] = el }} map={spriteTexture('puff')} transparent depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+    </>
+  )
+}
+
 // 낚시배: 돌고래처럼 바다 위를 천천히 오가요. 육지에 다가가면 방향을 틀고, 둥실둥실 흔들려요.
 function Boat({ x: hx, z: hz, s, i }) {
   const ref = useRef()
@@ -241,12 +358,15 @@ function Boat({ x: hx, z: hz, s, i }) {
     g.rotation.z = Math.sin(clock.elapsedTime * 1.1 + i) * 0.05
   })
   return (
-    <group ref={ref} position={[hx, -0.3, hz]}>
-      <mesh raycast={NR}>
-        <planeGeometry args={[s, s]} />
-        <meshBasicMaterial map={spriteTexture('boat')} transparent alphaTest={0.08} toneMapped={false} side={THREE.DoubleSide} />
-      </mesh>
-    </group>
+    <>
+      <group ref={ref} position={[hx, -0.3, hz]}>
+        <mesh raycast={NR}>
+          <planeGeometry args={[s, s]} />
+          <meshBasicMaterial map={spriteTexture('boat')} transparent alphaTest={0.08} toneMapped={false} side={THREE.DoubleSide} />
+        </mesh>
+      </group>
+      <Smoke st={st} s={s} />
+    </>
   )
 }
 
@@ -292,10 +412,61 @@ function Fish({ kind, x: hx, z: hz, s, i }) {
   )
 }
 
+// 비행기 뒤에 가끔 폴폴 피어나는 연기고리: 한 번에 3개가 차례로 생겨 제자리에서 커지며 흐려져요
+function Rings({ pos, s }) {
+  const meshes = useRef([])
+  const mats = useRef([])
+  const pool = useRef(Array.from({ length: 6 }, () => ({ age: -1, x: 0, y: 0, z: 0 })))
+  const t = useRef({ next: rand(2, 6), queue: 0, gap: 0 })
+  const still = useMemo(calm, [])
+  useFrame(({ camera }, dt) => {
+    dt = Math.min(dt, 0.05)
+    const T = t.current
+    const p0 = pos.current
+    if (!still && p0.on) {
+      T.next -= dt
+      if (T.next <= 0 && T.queue === 0) { T.queue = 3; T.gap = 0; T.next = rand(5, 10) }
+      if (T.queue > 0) {
+        T.gap -= dt
+        if (T.gap <= 0) {
+          const p = pool.current.find((d) => d.age < 0)
+          if (p) { p.age = 0; p.x = p0.x + p0.bx * s * 0.42; p.y = p0.y; p.z = p0.z + p0.bz * s * 0.42 }
+          T.queue -= 1; T.gap = 0.45
+        }
+      }
+    }
+    pool.current.forEach((p, k) => {
+      const m = meshes.current[k], mat = mats.current[k]
+      if (!m || !mat) return
+      if (p.age < 0) { m.visible = false; return }
+      p.age += dt
+      const u = p.age / 3.2
+      if (u >= 1) { p.age = -1; m.visible = false; return }
+      m.visible = true
+      m.position.set(p.x, p.y + u * 0.15, p.z)
+      m.rotation.y = Math.atan2(camera.position.x - p.x, camera.position.z - p.z)
+      const sc = s * (0.2 + 0.55 * u)
+      m.scale.set(sc, sc, 1)
+      mat.opacity = 0.85 * (1 - u) ** 1.2
+    })
+  })
+  return (
+    <>
+      {[0, 1, 2, 3, 4, 5].map((k) => (
+        <mesh key={k} ref={(el) => { meshes.current[k] = el }} raycast={NR} visible={false}>
+          <planeGeometry args={[1, 1]} />
+          <meshBasicMaterial ref={(el) => { mats.current[k] = el }} map={spriteTexture('ring')} transparent depthWrite={false} toneMapped={false} side={THREE.DoubleSide} />
+        </mesh>
+      ))}
+    </>
+  )
+}
+
 // 비행기 ① 직선 왕복: 제주공항에서 떠서 북·동·남쪽으로 곧게 날아갔다가 같은 길로 돌아와 내려앉기를 되풀이해요. 멀어질수록 높이 올라가고 서서히 흐려져요.
 const smooth01 = (t) => t * t * (3 - 2 * t)
 function Plane({ from, to, s, i, offset, period }) {
   const ref = useRef()
+  const pos = useRef({ x: 0, y: 0, z: 0, bx: 0, bz: 0, on: false })
   const mat = useRef()
   const still = useMemo(calm, [])
   useFrame(({ camera, clock }) => {
@@ -310,6 +481,8 @@ function Plane({ from, to, s, i, offset, period }) {
     g.position.set(x, y, z)
     const rotY = Math.atan2(camera.position.x - x, camera.position.z - z)
     const vx = (to[0] - from[0]) * (out ? 1 : -1), vz = (to[1] - from[1]) * (out ? 1 : -1)
+    const vl = Math.hypot(vx, vz) || 1
+    pos.current = { x, y, z, bx: -vx / vl, bz: -vz / vl, on: u > 0.12 && u < 0.85 } // 활주로 근처·아주 먼 곳에선 안 피워요
     const side = screenSide(vx, vz, rotY)
     g.rotation.y = rotY
     g.scale.x = side >= 0 ? 1 : -1
@@ -317,18 +490,22 @@ function Plane({ from, to, s, i, offset, period }) {
     if (mat.current) mat.current.opacity = 1 - smooth01(clamp((u - 0.88) / 0.12, 0, 1)) // 멀어지면 흐려짐
   })
   return (
-    <group ref={ref}>
-      <mesh raycast={NR}>
-        <planeGeometry args={[s, s]} />
-        <meshBasicMaterial ref={mat} map={spriteTexture('plane')} transparent alphaTest={0.02} toneMapped={false} side={THREE.DoubleSide} depthWrite={false} />
-      </mesh>
-    </group>
+    <>
+      <group ref={ref}>
+        <mesh raycast={NR}>
+          <planeGeometry args={[s, s]} />
+          <meshBasicMaterial ref={mat} map={spriteTexture('plane')} transparent alphaTest={0.02} toneMapped={false} side={THREE.DoubleSide} depthWrite={false} />
+        </mesh>
+      </group>
+      <Rings pos={pos} s={s} />
+    </>
   )
 }
 
 // 비행기 ② 선회: 제주도 상공을 큰 타원으로 빙글빙글 돌아요 (한 대는 시계 방향, 한 대는 반대 방향)
 function CirclePlane({ rx, rz, alt, s, i, dir, period, phase }) {
   const ref = useRef()
+  const pos = useRef({ x: 0, y: 0, z: 0, bx: 0, bz: 0, on: true })
   const still = useMemo(calm, [])
   useFrame(({ camera, clock }) => {
     const g = ref.current
@@ -337,6 +514,8 @@ function CirclePlane({ rx, rz, alt, s, i, dir, period, phase }) {
     const x = Math.cos(th) * rx, z = Math.sin(th) * rz
     const vx = -Math.sin(th) * rx * dir, vz = Math.cos(th) * rz * dir // 진행 방향
     g.position.set(x, alt + Math.sin(th * 2 + i) * 0.12, z)
+    const vl = Math.hypot(vx, vz) || 1
+    pos.current = { x, y: g.position.y, z, bx: -vx / vl, bz: -vz / vl, on: true }
     const rotY = Math.atan2(camera.position.x - x, camera.position.z - z)
     const side = screenSide(vx, vz, rotY)
     g.rotation.y = rotY
@@ -344,12 +523,15 @@ function CirclePlane({ rx, rz, alt, s, i, dir, period, phase }) {
     g.rotation.z = -0.1 * g.scale.x * dir // 도는 쪽으로 살짝 기울여요
   })
   return (
-    <group ref={ref}>
-      <mesh raycast={NR}>
-        <planeGeometry args={[s, s]} />
-        <meshBasicMaterial map={spriteTexture('plane')} transparent alphaTest={0.02} toneMapped={false} side={THREE.DoubleSide} depthWrite={false} />
-      </mesh>
-    </group>
+    <>
+      <group ref={ref}>
+        <mesh raycast={NR}>
+          <planeGeometry args={[s, s]} />
+          <meshBasicMaterial map={spriteTexture('plane')} transparent alphaTest={0.02} toneMapped={false} side={THREE.DoubleSide} depthWrite={false} />
+        </mesh>
+      </group>
+      <Rings pos={pos} s={s} />
+    </>
   )
 }
 
@@ -361,6 +543,7 @@ const PROPS = [
   ['hut', 33.388, 126.80, 0.62], ['hut', 33.33, 126.24, 0.52], ['hut', 33.36, 126.62, 0.52], ['hut', 33.48, 126.85, 0.5],
   ['hare', 33.508, 126.54, 0.62], ['hare', 33.235, 126.50, 0.62], ['hare', 33.43, 126.93, 0.5],
   // 해녀: 바닷가 (마지막 숫자 = 해안에서 안쪽으로 들어오는 거리)
+  ['whelk', 33.5764, 126.7086, 0.6, 0.04], ['whelk', 33.2913, 126.2331, 0.6, 0.04], ['whelk', 33.3387, 126.8316, 0.6, 0.04], ['whelk', 33.2745, 126.6966, 0.6, 0.04], // 뿔소라(해안)
   ['haenyeo', 33.552, 126.82, 0.6, 0.12], ['haenyeo', 33.462, 126.93, 0.58, 0.1], ['haenyeo', 33.205, 126.30, 0.56, 0.1], ['haenyeo', 33.50, 126.30, 0.55, 0.1],
 ]
 // 바다 위 소품 [종류, 위도, 경도, 크기]: 좌표를 해안에 맞추지 않고 물 위에 둥실 띄움
@@ -422,6 +605,7 @@ export default function Props({ wind = 2 }) {
     <>
       {placed.map(({ k, x, z, y, s, i, bob, land }) => <Sprite key={i} kind={k} x={x} y={y} z={z} s={s} wind={land ? 0 : wind} i={i} bob={bob} />)}
       <HoverLabels />
+      <Chatter />
       <CirclePlane rx={7.2} rz={4.7} alt={3.1} s={0.85 * 1.35} i={720} dir={1} period={44} phase={0.8} />
       {PLANES.map((p, j) => <Plane key={j} from={AIRPORT} to={p.to} s={0.85 * 1.35} i={700 + j} offset={p.offset} period={p.period} />)}
       {boats.map((b) => <Boat key={b.i} {...b} />)}
