@@ -117,7 +117,7 @@ function PlaceTabs({ cat }) {
       ) : (
         <div className="cards">
           {list.map((p) => (
-            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} href={p.link} hrefLabel={p.linkKind === 'search' ? '검색으로 알아보기' : '공식 안내 보기'} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.info && <VjInfo p={p} />}{(p.price || p.tel) && <p className="muted small">{p.price && `💰 ${p.price}`}{p.price && p.tel && ' · '}{p.tel && `📞 ${p.tel}`}</p>}</ItemCard>
+            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} noMap={cat.slug === 'food'} placeUrl={p.placeUrl} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} href={p.link} hrefLabel={p.linkKind === 'search' ? '검색으로 알아보기' : '공식 안내 보기'} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.info && <VjInfo p={p} />}{(p.price || p.tel) && <p className="muted small">{p.price && `💰 ${p.price}`}{p.price && p.tel && ' · '}{p.tel && `📞 ${p.tel}`}</p>}</ItemCard>
           ))}
         </div>
       )}

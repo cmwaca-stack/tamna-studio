@@ -12,7 +12,9 @@ export async function withFoodExtra(list) {
   const db = await loadFoodExtra()
   return list.map((p) => {
     const x = db[foodKey(p.title)]
-    if (!x || p.image) return p
-    return { ...p, image: x.img, searched: !!x.img, addr: p.addr || x.addr, lat: p.lat || x.lat, lng: p.lng || x.lng }
+    if (!x) return p
+    // 카카오에서 확인한 식당 위치(좌표·장소 페이지)를 우선 써요 — 공공자료 좌표가 주차장 등을 가리키는 경우가 있어요
+    const place = x.lat ? { lat: x.lat, lng: x.lng, addr: x.addr || p.addr, placeUrl: x.place } : {}
+    return { ...p, ...place, ...(p.image ? {} : { image: x.img, searched: !!x.img, addr: p.addr || x.addr, lat: p.lat || x.lat, lng: p.lng || x.lng, ...place }) }
   })
 }

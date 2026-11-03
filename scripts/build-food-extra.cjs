@@ -24,17 +24,21 @@ const GROUPS = {
   모범: async () => (await get(`${API}/olle?kind=food&src=model`)).map((x) => ({ title: x.title, addr: x.addr })),
 }
 
-async function findOne({ title, addr }) {
+async function findOne({ title, addr }, loose = false) {
   const area = (addr ?? '').split(' ').slice(1, 3).join(' ') // 예: 제주시 애월읍
   const pl = await (await fetch(`https://dapi.kakao.com/v2/local/search/keyword.json?size=5&query=${encodeURIComponent(`제주 ${title.replace(/\(.*?\)/g, '')} ${area}`.trim())}`, { headers: H })).json()
   const key = nameKey(title)
-  const hit = (pl.documents ?? []).find((d) => d.category_group_code === 'FD6' || d.category_group_code === 'CE7') && (pl.documents ?? []).find((d) => {
+  // 음식점·카페만 골라요 (주차장·편의시설 등 같은 이름의 다른 장소는 제외)
+  const hit = (pl.documents ?? []).find((d) => (d.category_group_code === 'FD6' || d.category_group_code === 'CE7') && !/주차장/.test(d.place_name) && /제주|서귀포/.test(d.address_name) && (() => {
     const n = nameKey(d.place_name)
-    return (n.includes(key) || key.includes(n)) && /제주|서귀포/.test(d.address_name)
-  })
-  const place = hit ?? null
+    return n.includes(key) || key.includes(n)
+  })())
+  // 이름이 달라도 같은 도로명 주소의 음식점이면 같은 가게로 봐요
+  const road = (addr ?? "").replace(/(.*?)/g, "").match(/[가-힣0-9]+(로|길)s?d+(-d+)?s*$/)
+  const byAddr = !hit && road ? (pl.documents ?? []).find((d) => (d.category_group_code === "FD6" || d.category_group_code === "CE7") && !/주차장/.test(d.place_name) && (d.road_address_name ?? "").replace(/s/g, "").endsWith(road[0].replace(/s/g, ""))) : null
+  const place = hit ?? byAddr ?? null
   // 그 가게를 소개하는 블로그 글에 실린 사진만 써요 (글을 못 찾으면 사진 없음)
-  const pic = await verifiedPhoto({ headers: H, name: place ? place.place_name : title, area, addr: place ? (place.road_address_name || place.address_name) : addr })
+  const pic = await verifiedPhoto({ headers: H, name: place ? place.place_name : title, area, addr: place ? (place.road_address_name || place.address_name) : addr, loose })
   return {
     ...(place ? { addr: place.road_address_name || place.address_name, lat: place.y, lng: place.x, tel: place.phone, place: place.place_url } : {}),
     ...(pic ? { img: pic.img, thumb: pic.thumb, doc: pic.doc, post: pic.post } : {}),
@@ -51,8 +55,8 @@ async function findOne({ title, addr }) {
     let n = 0
     for (const s of list) {
       const k = nameKey(s.title)
-      if (db[k]) continue
-      try { db[k] = await findOne(s) } catch (e) { console.log('실패', s.title, e.message); continue }
+      if (db[k] && !(process.argv[3] === "보강" && !db[k].img)) continue
+      try { db[k] = await findOne(s, process.argv[3] === "보강") } catch (e) { console.log('실패', s.title, e.message); continue }
       n += 1
       if (n % 20 === 0) { fs.writeFileSync(OUT, JSON.stringify(db)); console.log(' ', n) }
       await sleep(150)
