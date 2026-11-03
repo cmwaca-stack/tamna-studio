@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
 import CctvPlayer from '../components/CctvPlayer'
 import ItemCard from '../components/ItemCard'
@@ -210,7 +210,8 @@ function FlightGuide({ cat }) {
 }
 
 // 청년정책: 공식 사이트로 연결하는 안내 화면
-function PolicyList() {
+function PolicyList({ area, onClearArea }) {
+  const topRef = useRef(null)
   const [scope, setScope] = useState('jeju')
   const [q, setQ] = useState('')
   const [kind, setKind] = useState('전체')
@@ -218,21 +219,30 @@ function PolicyList() {
   const st = useAsync(() => fetchPolicies(scope), [scope])
   const all = st.data ?? []
   const kinds = ['전체', ...new Set(all.map((p) => p.kind.split(',')[0]).filter(Boolean))]
-  const rows = all.filter((p) => (kind === '전체' || p.kind.includes(kind)) && (!q || `${p.title}${p.keywords}${p.desc}`.includes(q)))
+  // 분야 카드를 누르면 그 분야 칸(칩)을 골라 줘요. 이 범위에 그 분야가 없으면 비어 있다고 알려요.
+  const areaKind = area ? kinds.find((k) => k !== '전체' && k.includes(area.match)) : null
+  const shownKind = area ? (areaKind ?? '전체') : kind
+  useEffect(() => {
+    if (area?.n) topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [area?.n])
+  const rows = all.filter((p) => (shownKind === '전체' || p.kind.includes(shownKind)) && (!area || p.kind.includes(area.match)) && (!q || `${p.title}${p.keywords}${p.desc}`.includes(q)))
   return (
-    <section className="kit-block">
+    <section className="kit-block" ref={topRef}>
       <h2><i className="bi bi-list-stars" /> 지금 받을 수 있는 정책</h2>
+      {area && (
+        <p className="notice"><i className="bi bi-funnel" /><b>{area.label}</b> 분야 정책만 보고 있어요. <button type="button" className="link-btn" onClick={onClearArea}>전체 보기</button></p>
+      )}
       <div className="tabs">
-        <button type="button" className={scope === 'jeju' ? 'on' : ''} onClick={() => { setScope('jeju'); setKind('전체') }}>제주 지역</button>
-        <button type="button" className={scope === 'all' ? 'on' : ''} onClick={() => { setScope('all'); setKind('전체') }}>전국 공통</button>
+        <button type="button" className={scope === 'jeju' ? 'on' : ''} onClick={() => { setScope('jeju'); setKind('전체') }}>제주 지역 <small>제주도·제주시·서귀포시</small></button>
+        <button type="button" className={scope === 'all' ? 'on' : ''} onClick={() => { setScope('all'); setKind('전체') }}>전국 공통 <small>중앙부처·전국 기관</small></button>
       </div>
       <input className="input" placeholder="정책 검색 (예: 월세, 취업, 교통)" value={q} onChange={(e) => setQ(e.target.value)} />
       <div className="chips">
-        {kinds.map((k) => <button key={k} type="button" className={`chip${kind === k ? ' on' : ''}`} onClick={() => setKind(k)}>{k}</button>)}
+        {kinds.map((k) => <button key={k} type="button" className={`chip${shownKind === k ? ' on' : ''}`} onClick={() => { onClearArea(); setKind(k) }}>{k}</button>)}
       </div>
       {st.loading && <Loading />}
       {st.error && <ApiError error={st.error} onRetry={st.reload} />}
-      {st.data && (rows.length === 0 ? <Empty text="조건에 맞는 정책이 없어요." /> : (
+      {st.data && (rows.length === 0 ? <Empty text={area ? `이 범위에는 ‘${area.label}’ 분야 정책이 없어요. 위 탭에서 ${scope === 'jeju' ? '전국 공통' : '제주 지역'}을 눌러 보세요.` : '조건에 맞는 정책이 없어요.'} /> : (
         <div className="policies">
           {rows.map((p) => (
             <article key={p.id} className="policy">
@@ -258,18 +268,20 @@ function PolicyList() {
 }
 
 function PolicyGuide({ cat }) {
+  const [area, setArea] = useState(null) // { label, match, n } — n 은 같은 카드를 다시 눌러도 다시 반응하게 하는 번호
   return (
     <div className="page">
       <Head cat={cat} />
-      <PolicyList />
+      <PolicyList area={area} onClearArea={() => setArea(null)} />
 
       <section className="kit-block">
         <h2><i className="bi bi-grid" style={{ color: cat.color }} /> 분야별로 찾아보기</h2>
         <div className="areas">
           {cat.areas.map((a) => (
-            <div key={a.label} className="area" style={{ '--c': cat.color }}>
+            <button key={a.label} type="button" className={`area${area?.label === a.label ? ' on' : ''}`} style={{ '--c': cat.color }}
+              aria-pressed={area?.label === a.label} onClick={() => setArea({ label: a.label, match: a.match ?? a.label, n: (area?.n ?? 0) + 1 })}>
               <i className={`bi bi-${a.icon}`} /><strong>{a.label}</strong><span className="muted">{a.note}</span>
-            </div>
+            </button>
           ))}
         </div>
       </section>

@@ -27,10 +27,14 @@ async function getJson(url) {
   return res.json()
 }
 
+// 위키백과의 "사진을 올려 주세요" 자리표시 그림과 도식(svg)은 사진이 아니라서 없는 것으로 봐요
+const PLACEHOLDER = /Replace_this_image|No[_-]?image|Image_placeholder|\.svg(\.png)?(\?|$)/i
+const real = (src) => (src && !PLACEHOLDER.test(src) ? src : null)
+
 async function summaryImage(title) {
   const j = await getJson(`${BASE}/api/rest_v1/page/summary/${encodeURIComponent(title)}`)
   if (j === undefined) return undefined
-  return j?.thumbnail?.source ?? null
+  return real(j?.thumbnail?.source)
 }
 
 async function searchImage(query) {
@@ -41,25 +45,42 @@ async function searchImage(query) {
   const j = await getJson(`${BASE}/w/api.php?${q}`)
   if (j === undefined) return undefined
   const page = Object.values(j?.query?.pages ?? {})[0]
-  return page?.thumbnail?.source ?? null
+  return real(page?.thumbnail?.source)
+}
+
+// 위키미디어 커먼즈(사진 보관소)에서 사진 파일만 검색해요
+async function commonsImage(query) {
+  const q = new URLSearchParams({
+    action: 'query', format: 'json', origin: '*', generator: 'search', gsrnamespace: '6',
+    gsrsearch: `${query} filetype:bitmap`, gsrlimit: '1', prop: 'imageinfo', iiprop: 'url', iiurlwidth: '500',
+  })
+  const j = await getJson(`https://commons.wikimedia.org/w/api.php?${q}`)
+  if (j === undefined) return undefined
+  const page = Object.values(j?.query?.pages ?? {})[0]
+  return real(page?.imageinfo?.[0]?.thumburl)
 }
 
 // 이름으로 못 찾을 때 대신 보여 줄 대표 종류 사진 (예: 몰래물마을방사탑1호 → 방사탑)
-const KINDS = ['방사탑', '환해장성', '향교', '읍성', '봉수', '연대', '유적']
+const KINDS = ['방사탑', '환해장성', '향교', '읍성', '봉수', '유적']
 
 async function find(name) {
   const clean = name.replace(/\([^)]*\)/g, '').trim()
   const base = clean.replace(/\d+호$/, '').replace(/^제주\s*/, '').replace(/지$/, '')
-  const titles = [...new Set([name, name.replace(/ /g, ''), clean, clean.replace(/ /g, ''), base, base.replace(/ /g, '')])].filter(Boolean)
+  const titles = [...new Set([name, name.replace(/ /g, ''), clean, clean.replace(/ /g, ''), base, base.replace(/ /g, '')])].filter((t) => t && t !== '연대')
   for (const t of titles) {
     const src = await summaryImage(t)
     if (src === undefined) return undefined
     if (src) return src
   }
+  if (base === '연대') return null
   const found = await searchImage(`${base} 제주`)
   if (found !== null) return found
+  const photo = await commonsImage(`${base} 제주`)
+  if (photo !== null) return photo
   const kind = KINDS.find((k) => clean.includes(k))
-  return kind ? summaryImage(kind) : null
+  if (!kind) return null
+  const kindImg = await summaryImage(kind)
+  return kindImg !== null ? kindImg : commonsImage(`${kind} 제주`)
 }
 
 export function wikiImage(name) {

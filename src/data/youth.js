@@ -59,8 +59,8 @@ export const YOUTH = [
       { icon: 'briefcase', label: '일자리', note: '구직·창업·직무 경험' },
       { icon: 'house-heart', label: '주거', note: '월세·전세·청년주택' },
       { icon: 'mortarboard', label: '교육', note: '교육비·역량 강화' },
-      { icon: 'palette', label: '복지·문화', note: '문화패스·활동 지원' },
-      { icon: 'megaphone', label: '참여·권리', note: '청년 참여 기구·공모' },
+      { icon: 'palette', label: '복지·문화', match: '복지', note: '문화패스·활동 지원' },
+      { icon: 'megaphone', label: '참여·권리', match: '참여', note: '청년 참여 기구·공모' },
     ],
     links: [
       { name: '온통청년', url: 'https://www.youthcenter.go.kr', note: '전국 청년정책 통합 검색 · 지역을 ‘제주’로 선택해 찾아보세요' },
