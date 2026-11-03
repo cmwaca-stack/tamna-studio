@@ -60,6 +60,16 @@ export default function Kit() {
         </section>
       )}
 
+      {theme.key === 'history' && (
+        <section className="kit-block">
+          <div className="block-head"><h2><i className="bi bi-chat-quote" />제주어 <small className="muted">제주역사의 한 부분</small></h2></div>
+          <Link to="/jejueo" className="place-row" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <strong>💬 제주어 사전 열기</strong>
+            <span className="muted">제주도청 OpenAPI로 방언사전·생활방언·속담을 찾아보세요. 말에도 제주의 역사가 담겨 있어요.</span>
+          </Link>
+        </section>
+      )}
+
       {spots.length > 0 && (
         <section className="kit-block">
           <div className="block-head"><h2><i className={`bi bi-${theme.icon}`} />대표 {theme.spotLabel ?? theme.label} <small className="muted">{spots.length}곳</small></h2></div>

@@ -5,6 +5,7 @@ import Explore from './pages/Explore'
 import DiscoverDetail from './pages/DiscoverDetail'
 import PlaceInfo from './pages/PlaceInfo'
 import Jejueo from './pages/Jejueo'
+import Tamna from './pages/Tamna'
 import Kit from './pages/Kit'
 import Guide from './pages/Guide'
 import LinkPage from './pages/LinkPage'
@@ -23,6 +24,7 @@ export const router = createBrowserRouter([
       { path: 'explore', element: <Explore /> },
       { path: 'place/:id', element: <PlaceInfo /> },
       { path: 'jejueo', element: <Jejueo /> },
+      { path: 'tamna', element: <Tamna /> },
       { path: 'kit', element: <Kit /> },
       { path: 'guide', element: <Guide /> },
       { path: 'links/:kind', element: <LinkPage /> },

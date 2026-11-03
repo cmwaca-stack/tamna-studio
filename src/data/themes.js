@@ -43,7 +43,9 @@ export const THEMES = [
     ideas: [],
   },
   // 제주어는 3D 핀이 아니라 제주도청 OpenAPI 사전 화면(/jejueo)으로 이동합니다
-  { key: 'jejueo', label: '제주어', icon: 'chat-quote', color: '#ffb703', href: '/jejueo', keyword: '제주어', heritageKeyword: '', blurb: '제주도청 OpenAPI로 방언사전·생활방언·속담을 찾아보세요.', ideas: ['제주어 타이포 굿즈', '일상 제주어 이모티콘', '제주어 낭독 영상'] },
+  { key: 'tamna', label: '탐나는전', icon: 'coin', color: '#ff7b54', href: '/tamna', keyword: '탐나는전', heritageKeyword: '', blurb: '제주 지역화폐 탐나는전을 쓸 수 있는 가맹점을 찾아보세요.', ideas: [] },
+  // 제주어는 제주역사 메뉴 안에서 열어요(메뉴 줄에는 숨김)
+  { key: 'jejueo', hidden: true, label: '제주어', icon: 'chat-quote', color: '#ffb703', href: '/jejueo', keyword: '제주어', heritageKeyword: '', blurb: '제주도청 OpenAPI로 방언사전·생활방언·속담을 찾아보세요.', ideas: ['제주어 타이포 굿즈', '일상 제주어 이모티콘', '제주어 낭독 영상'] },
 ]
 
 // 테마의 고정 핀 묶음. spotSets(여러 묶음)가 없으면 spots 하나를 묶음으로 취급

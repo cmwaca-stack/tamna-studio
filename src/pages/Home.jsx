@@ -21,14 +21,14 @@ const MENU = [
   { id: 'photo', to: '/discover/photo', label: Y('photo').title, icon: Y('photo').icon, color: Y('photo').color },
   { id: 'flight', to: '/discover/flight', label: Y('flight').title, icon: Y('flight').icon, color: Y('flight').color },
   { id: 'traffic', to: '/discover/traffic', label: Y('traffic').title, icon: Y('traffic').icon, color: Y('traffic').color },
-  { id: 'jejueo', to: '/jejueo', label: T('jejueo').label, icon: T('jejueo').icon, color: T('jejueo').color },
+  { id: 'tamna', to: '/tamna', label: T('tamna').label, icon: T('tamna').icon, color: T('tamna').color },
   { id: 'policy', to: '/discover/policy', label: Y('policy').title, icon: Y('policy').icon, color: Y('policy').color },
   { id: 'hospital', to: '/links/hospital', label: '병원', icon: 'hospital', color: '#e0527e' },
   { id: 'life', to: '/discover/life', label: Y('life').title, icon: Y('life').icon, color: Y('life').color },
 ]
 
 // 메뉴 칩 앞에 붙는 귀여운 이모지
-const EMOJI = { oreum: '⛰️', myth: '✨', jeju43: '🌸', history: '🏯', olle: '🥾', weekend: '🎟️', food: '🍜', photo: '📸', flight: '✈️', traffic: '🚦', jejueo: '💬', policy: '💰', hospital: '🏥', life: '🏡' }
+const EMOJI = { oreum: '⛰️', myth: '✨', jeju43: '🌸', history: '🏯', olle: '🥾', weekend: '🎟️', food: '🍜', photo: '📸', flight: '✈️', traffic: '🚦', tamna: '🪙', policy: '💰', hospital: '🏥', life: '🏡' }
 
 export default function Home() {
   const { themeKey, setThemeKey } = useAppStore()

@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import Chips from '../components/Chips'
+import { useAppStore } from '../store/useAppStore'
 import HospitalData from '../components/HospitalData'
 import { LINKPAGES } from '../data/links'
 
@@ -17,6 +19,8 @@ function Logo({ name, url, host: hostOverride, src, skip }) {
 // 제주언론사·제주커뮤니티·공공기관 공통 화면 (data/links.js 의 목록을 그려요)
 export default function LinkPage() {
   const { kind } = useParams()
+  const navigate = useNavigate()
+  const setThemeKey = useAppStore((st) => st.setThemeKey)
   const page = LINKPAGES[kind]
   if (!page) return <Navigate to="/" replace />
   return (
@@ -25,6 +29,7 @@ export default function LinkPage() {
         <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
         <h1><i className={`bi bi-${page.icon}`} style={{ color: page.color }} />{page.title}</h1>
         <p className="muted">{page.desc}</p>
+        {kind === 'hospital' && <Chips value="hospital" onChange={(k) => { setThemeKey(k); navigate('/kit') }} />}
       </header>
       {kind === 'hospital' && <HospitalData />}
       {page.groups.map((g) => (

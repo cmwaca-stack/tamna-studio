@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import Chips from './Chips'
+import { useAppStore } from '../store/useAppStore'
 import AirQuality from './AirQuality'
 import FiveDayMarkets from './FiveDayMarkets'
 import PlaceMap from './PlaceMap'
@@ -46,12 +48,15 @@ function Fuel() {
 // 생활정보: 제주에 사는 사람에게 필요한 일상 정보 모음
 export default function LifeGuide({ cat }) {
   const [tab, setTab] = useState('trash')
+  const navigate = useNavigate()
+  const setThemeKey = useAppStore((st) => st.setThemeKey)
   return (
     <div className="page">
       <header className="page-head" style={{ '--c': cat.color }}>
         <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
         <h1><i className={`bi bi-${cat.icon}`} style={{ color: cat.color }} />{cat.title}</h1>
         <p className="muted">{cat.desc}</p>
+        <Chips value="life" onChange={(k) => { setThemeKey(k); navigate('/kit') }} />
       </header>
       <div className="seg life-tabs" role="tablist">
         {TABS.map((t) => (

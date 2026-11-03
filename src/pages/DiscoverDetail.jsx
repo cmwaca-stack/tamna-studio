@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Link, Navigate, useParams } from 'react-router-dom'
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
+import Chips from '../components/Chips'
+import { useAppStore } from '../store/useAppStore'
 import LifeGuide from '../components/LifeGuide'
 import TrafficMap from '../components/TrafficMap'
 import ItemCard from '../components/ItemCard'
@@ -15,12 +17,17 @@ import { fieldVerdict } from '../lib/weather'
 // 사진이 없는 카드에 보여 줄 이모지
 const PLACE_EMOJI = { food: '🍜', photo: '📸', weekend: '🎟️' }
 
+// 어느 메뉴 화면에서도 위쪽 메뉴 칩 줄을 그대로 보여 줘요 (주제 칩은 주제별 정보 화면으로, 나머지는 그 메뉴로 이동)
 function Head({ cat }) {
+  const navigate = useNavigate()
+  const setThemeKey = useAppStore((st) => st.setThemeKey)
+  const goTheme = (k) => { setThemeKey(k); navigate('/kit') }
   return (
     <header className="page-head" style={{ '--c': cat.color }}>
       <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
       <h1><i className={`bi bi-${cat.icon}`} style={{ color: cat.color }} />{cat.title}</h1>
       <p className="muted">{cat.desc}</p>
+      <Chips value={cat.slug} onChange={goTheme} />
     </header>
   )
 }
@@ -33,6 +40,24 @@ function WeatherLine() {
       <WeatherChip place="제주시" />
       {verdict && <span className={`verdict ${verdict.tone}`}><i className={`bi bi-${verdict.icon}`} />{verdict.text}</span>}
     </div>
+  )
+}
+
+// 맛집 화면 위쪽: 날씨 대신 제주 공공배달앱 먹깨비를 소개해요 (수치는 2025년 4월 언론 보도 기준)
+const MUKKEBI = 'https://www.mukkebi.com/'
+function MukkebiIntro() {
+  const open = () => window.open(MUKKEBI, '_blank', 'noopener,noreferrer')
+  const stop = (e) => e.stopPropagation() // 안의 링크(탐나는전·출처)는 따로 열려요
+  return (
+    <section className="notice calm" style={{ display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer' }} role="link" tabIndex={0} aria-label="먹깨비 배달 안내 — 누르면 먹깨비 사이트로 이동" title="누르면 먹깨비 사이트(mukkebi.com)로 이동해요" onClick={open} onKeyDown={(e) => { if (e.key === 'Enter') open() }}>
+      <img src="/mukkebi.png" alt="먹깨비 캐릭터와 돌하르방" width="112" height="140" style={{ flex: 'none', width: 112, height: 140, objectFit: 'cover', borderRadius: 14 }} />
+      <div style={{ minWidth: 0 }}>
+      <strong>🛵 먹깨비로 배달도 시켜 보세요</strong>
+      <p style={{ margin: '.3rem 0' }}>먹깨비는 제주도가 만든 공공배달앱이에요. 가맹점이 내는 수수료가 1.5%로 민간 배달앱(7~10%)보다 낮고, 입점비·월사용료·광고비가 없어요. 지역화폐 탐나는전과 이어져 결제 혜택도 있었어요(보도 당시 주문금액 15% 페이백). <Link to="/tamna" onClick={stop}>탐나는전 가맹점 보기</Link></p>
+      <p style={{ margin: '.3rem 0', fontWeight: 700 }}><i className="bi bi-box-arrow-up-right" /> 이 안내를 누르면 먹깨비 사이트(mukkebi.com)로 이동해요. 거기서 앱을 설치할 수 있어요.</p>
+      <p className="muted small" style={{ margin: 0 }}>2025년 4월 기준 가맹점 3,906곳 · 보도 자료예요. 아래 가게마다 먹깨비 배달이 되는지는 공개된 자료가 없어 표시하지 못해요. 먹깨비 앱에서 가게 이름으로 확인해 주세요. 출처: <a href="https://m.go.seoul.co.kr/news/2025/04/24/20250424024002" target="_blank" rel="noreferrer" onClick={stop}>서울신문</a></p>
+      </div>
+    </section>
   )
 }
 
@@ -96,7 +121,7 @@ function PlaceTabs({ cat }) {
   return (
     <div className="page">
       <Head cat={cat} />
-      {cat.weather && <WeatherLine />}
+      {cat.slug === 'food' ? <MukkebiIntro /> : cat.weather && <WeatherLine />}
 
       <div className="block-head">
         <div className="seg" role="tablist">

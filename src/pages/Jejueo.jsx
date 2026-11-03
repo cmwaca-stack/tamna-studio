@@ -72,9 +72,9 @@ export default function Jejueo() {
   return (
     <div className="page">
       <header className="page-head">
-        <h1><i className="bi bi-chat-quote" style={{ color: '#ffb703' }} />제주어</h1>
+        <h1><i className="bi bi-chat-quote" style={{ color: '#ffb703' }} />제주어 <small className="muted">· 제주역사</small></h1>
         <p className="muted">제주특별자치도청 OpenAPI로 제주 방언사전·생활방언·속담을 찾아보세요. "혼저 옵서예"를 오늘의 소재로.</p>
-        <Chips value="jejueo" onChange={goTheme} />
+        <Chips value="history" onChange={goTheme} />
       </header>
 
       <div className="block-head">
