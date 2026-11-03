@@ -12,6 +12,8 @@ export const LINKPAGES = {
         { name: '제주의소리', url: 'https://www.jejusori.net', note: '인터넷 언론' },
         { name: '헤드라인제주', url: 'https://www.headlinejeju.co.kr', note: '인터넷 언론' },
         { name: '뉴제주일보', url: 'https://www.newsjeju.net', note: '지역 일간지' },
+        { name: '제주투데이', url: 'https://www.ijejutoday.com', note: '인터넷 언론' },
+        { name: '제주도민일보', url: 'https://www.jejudomin.co.kr', note: '지역 일간지' },
       ] },
       { name: '방송', items: [
         { name: 'KBS 제주', url: 'https://news.kbs.co.kr/news/pc/local/main.do?ncd=jeju', note: '제주 지역 뉴스' },

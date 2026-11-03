@@ -130,7 +130,7 @@ export default function PlaceInfo() {
           {heritage.loading ? <Loading /> : heritage.error ? <ApiError error={heritage.error} onRetry={heritage.reload} /> : !heritage.data?.length ? <Empty text="관련 국가유산이 없어요." /> : (
             <div className="cards">
               {heritage.data.slice(0, 6).map((h) => (
-                <ItemCard key={h.id} title={h.name} subtitle={[h.kind, h.city].filter(Boolean).join(' · ')} badge="국가유산" tone="heritage" onSave={() => addNote({ source: 'heritage', id: String(h.id), title: h.name })} />
+                <ItemCard key={h.id} title={h.name} subtitle={[h.kind, h.city].filter(Boolean).join(' · ')} badge="국가유산" tone="heritage" autoImage onSave={() => addNote({ source: 'heritage', id: String(h.id), title: h.name })} />
               ))}
             </div>
           )}
