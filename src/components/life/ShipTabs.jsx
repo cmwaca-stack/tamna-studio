@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { fetchKomsa } from '../../api/client'
 import { useAsync } from '../../hooks/useAsync'
 import { ApiError, Empty, Loading } from '../Status'
+import CompanyMark from './CompanyMark'
 import LinkCards from './LinkCards'
 import ShipLive from './ShipLive'
 
@@ -14,6 +15,8 @@ function Islands() {
   const list = all.filter((x) => (which === '가파도' ? /가파/.test(x.route) : /마라/.test(x.route)))
   const rows = list.filter((x) => !only || !x.ok)
   const stopped = list.filter((x) => !x.ok).length
+  const fare = st.data?.fares?.[which === '가파도' ? 'gapado' : 'marado']
+  const bluelay = (x) => x.vessel.startsWith('블루레이') // 운진항 선사(원더풀아이스) 배: 요금표가 있어요
   return (
     <>
       <div className="tabs">
@@ -27,12 +30,25 @@ function Islands() {
             <h3 className="sub-title">오늘 {which} 배 {list.length}편 <small className="muted">운항 안 함 {stopped}</small></h3>
             <label className="small"><input type="checkbox" checked={only} onChange={(e) => setOnly(e.target.checked)} /> 운항 안 하는 배만</label>
           </div>
+          {fare && (
+            <p className="notice calm" style={{ display: 'block' }}>
+              💰 {which} 배 요금 (성인): 편도 <b>{fare.one.toLocaleString()}원</b> · 왕복 <b>{fare.round.toLocaleString()}원</b>
+              {fare.park ? <> + 해상공원 입장료 {fare.park.toLocaleString()}원</> : null}
+              {fare.fuel ? <> <small className="muted">(유류할증료 1인당 {fare.fuel.toLocaleString()}원이 따로 적용돼요)</small></> : null}
+              <small className="muted" style={{ display: 'block' }}>운진항 선사(원더풀아이스) 승선 요금표 기준이에요. 제주도민·청소년·경로 할인은 선사 요금표를 확인하세요.</small>
+            </p>
+          )}
           {rows.length === 0 ? <Empty text={only ? '운항하지 않는 배가 없어요.' : '오늘 운항표가 없어요.'} /> : (
             <div className="flights">
               {rows.map((x) => (
                 <div key={`${x.time}-${x.vessel}-${x.route}-${x.dir}`} className={`flight${!x.ok ? ' cancel' : ''}`}>
                   <strong className="ft">{x.time}</strong>
-                  <div className="fm"><b>{x.from} 출발</b><span className="muted small">{x.vessel} · {x.route}</span></div>
+                  <div className="fm">
+                    <b>{x.from} 출발</b>
+                    <span className="fa"><CompanyMark name={bluelay(x) ? '원더풀아이스' : x.vessel} />{x.vessel}</span>
+                    <span className="fno">{x.route}</span>
+                    <span className="fare">{bluelay(x) && fare ? <>💰 성인 편도 {fare.one.toLocaleString()}원</> : <span className="muted">💰 요금은 선사에 문의</span>}</span>
+                  </div>
                   <span className="fs">{x.ok ? '정상' : `운항 안 함${x.reason ? ` (${x.reason})` : ''}`}<small className="muted"> {x.state}</small></span>
                 </div>
               ))}

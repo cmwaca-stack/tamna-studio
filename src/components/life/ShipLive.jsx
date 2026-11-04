@@ -1,7 +1,20 @@
 import { useState } from 'react'
 import { fetchShips } from '../../api/client'
 import { useAsync } from '../../hooks/useAsync'
+import { shipCompany } from '../../data/shipCompanies'
 import { ApiError, Empty, Loading } from '../Status'
+import CompanyMark from './CompanyMark'
+
+// 요금: 터미널 운임 조회에 있으면 대인 최저 요금을, 없으면(씨월드·한일고속 등) 선사 누리집이나 전화로 안내해요
+function Fare({ x }) {
+  if (x.fare) return <span className="fare">💰 대인 {x.fare.from.toLocaleString()}원~ <small className="muted">({x.fare.cls})</small></span>
+  const site = shipCompany(x.company)?.site
+  return (
+    <span className="fare muted">
+      💰 요금은 {site ? <a href={site} target="_blank" rel="noreferrer">선사 누리집 ↗</a> : '선사'}{x.tel ? <> · <a href={`tel:${x.tel.replace(/[^0-9]/g, '')}`}>☎ {x.tel}</a></> : ''}에서 확인
+    </span>
+  )
+}
 
 // 제주항 여객선 오늘 운항표 (한국해운조합 제주여객터미널). 항공편 화면과 같은 모양이에요.
 export default function ShipLive() {
@@ -32,14 +45,20 @@ export default function ShipLive() {
               {rows.map((x) => (
                 <div key={`${x.time}-${x.vessel}-${x.from}-${x.to}`} className={`flight${!x.ok ? ' cancel' : x.delay ? ' late' : ''}`}>
                   <strong className="ft">{x.time}</strong>
-                  <div className="fm"><b>{x.from} → {x.to}</b><span className="muted small">{x.vessel} · {x.company}{x.terminal ? ` · ${x.terminal}` : ''}{x.tel ? ` · ☎ ${x.tel}` : ''}</span></div>
+                  <div className="fm">
+                    <b>{x.from} → {x.to}</b>
+                    <span className="fa"><CompanyMark name={x.company} />{x.company}</span>
+                    <span className="fno">{x.vessel}</span>
+                    {x.terminal && <span className="fg">{x.terminal}</span>}
+                    <Fare x={x} />
+                  </div>
                   <span className="fs">{x.ok ? '정상운항' : x.status || '결항'}{x.delay ? ` (+${x.delay})` : ''}{x.reason ? <small className="muted"> {x.reason}</small> : null}</span>
                 </div>
               ))}
             </div>
           )}
           <p className="muted small">
-            제주항(제주여객터미널)에서 떠나고 닿는 배예요 (완도·목포·삼천포·녹동·진도·추자도 등). 우도·가파도·마라도 배는 이 목록에 없어요.
+            제주항(제주여객터미널)에서 떠나고 닿는 배예요 (완도·목포·삼천포·녹동·진도·추자도 등). 우도·가파도·마라도 배는 이 목록에 없어요. 요금은 대인 가장 낮은 등급 기준이고, 터미널에 요금이 등록된 배만 나와요.
             {st.data.at && ` 자료 기준 ${st.data.at.slice(0, 16)}.`} 바다 날씨에 따라 바뀔 수 있으니 타기 전에 해당 선사에 꼭 확인하세요.
           </p>
         </>

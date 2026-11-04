@@ -239,6 +239,15 @@ function FlightGuide({ cat }) {
       {st.error && <ApiError error={st.error} />}
       {st.data && (
         <section className="kit-block">
+          <div className="fare-box">
+            <b>💰 항공권 가격은 날짜·항공사·예매 시점마다 달라요</b>
+            <span className="muted small">운항정보 자료에는 요금이 없어서, 아래에서 오늘 가격을 비교해 보세요.</span>
+            <span className="fare-links">
+              <a href="https://flight.naver.com" target="_blank" rel="noreferrer">네이버 항공권 ↗</a>
+              <a href="https://www.skyscanner.co.kr" target="_blank" rel="noreferrer">스카이스캐너 ↗</a>
+              <a href="https://www.google.com/travel/flights" target="_blank" rel="noreferrer">구글 항공편 ↗</a>
+            </span>
+          </div>
           <div className="block-head">
             <h2>오늘 {dir === 'depart' ? '출발' : '도착'} {st.data.length}편 <small className="muted">지연 {delayed} · 결항 {cancelled}</small></h2>
             <label className="small"><input type="checkbox" checked={only} onChange={(e) => setOnly(e.target.checked)} /> 지연·결항만</label>
