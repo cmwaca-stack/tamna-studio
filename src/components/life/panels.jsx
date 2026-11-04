@@ -1,7 +1,7 @@
 import LinkCards, { Tip } from './LinkCards'
 import IceRoads from './IceRoads'
 import LiveAlerts from './LiveAlerts'
-import ShipLive from './ShipLive'
+import ShipTabs from './ShipTabs'
 import MoveChecklist from './MoveChecklist'
 import SeaWaves from './SeaWaves'
 import WeatherDays from './WeatherDays'
@@ -48,9 +48,11 @@ export function Snow() {
 export function Ship() {
   return (
     <section className="kit-block">
-      <ShipLive />
+      <ShipTabs />
       <LinkCards items={[
         { emoji: '🚢', name: '제주여객터미널 (한국해운조합)', url: 'http://company.haewoon.co.kr/CompanySite/View.aspx?CompanyID=JEJU', note: '운항표·공지·예매 (공식, 위 목록의 출처)' },
+        { emoji: '🌐', name: '한국해운조합 실시간 운항정보', url: 'https://island.theksa.co.kr/page/ferry_status?lang=', note: '목포·완도·제주 터미널 운항 현황·예매 (공식)' },
+        { emoji: '🧭', name: '여객선 운항정보 조회 (해양교통안전공단)', url: 'https://www.komsa.or.kr/prog/pssgCurState/kor/sub03_0202/list.do', note: '전국 여객선 운항 현황 (공식, 가파도·마라도 목록의 출처)' },
         { emoji: '🌊', name: '지금 바다 파도·해상 특보 보기', url: '/discover/life?tab=sea', note: '배가 뜰지 가늠해 보세요' },
       ]} />
     </section>
