@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LazyScene from '../components/LazyScene'
 import RegionWeather from '../components/RegionWeather'
+import TodayPick from '../components/TodayPick'
 import { THEMES, spotSetsOf, themeOf } from '../data/themes'
 import { YOUTH } from '../data/youth'
 import { useThemePins } from '../hooks/useThemePins'
@@ -41,7 +42,10 @@ export default function Home() {
   const openPin = (p) => navigate(`/place/${p.id}`, { state: { pin: p } })
   const { pins, routes } = useThemePins(theme)
   // 실시간 예보(제주시)로 3D 날씨를 정함. 주소 끝에 ?w=rain|snow|sleet|shower|wind|cloudy|clear 를 붙이면 효과를 미리 볼 수 있어요
-  const wx = sceneWeather(useWeather('제주시').slots[0], new URLSearchParams(window.location.search).get('w'))
+  const wxState = useWeather('제주시')
+  const wx = sceneWeather(wxState.slots[0], new URLSearchParams(window.location.search).get('w'))
+  // 오늘의 추천이 쓰는 날씨 요약: 비·눈이 오거나 바람이 세면 실내 위주로 추천해요
+  const pickWeather = { ready: !wxState.loading, wet: wx.precip !== 'none', windy: wx.wind >= 10, clear: wx.sky === 'clear' }
 
   return (
     <>
@@ -60,6 +64,7 @@ export default function Home() {
           {open && <>
           <p className="hello">오늘 제주, 어떤가요? 🌼</p>
           <p className="lead">대기질·교통·항공·병원·청년정책까지, 제주에서 사는 데 필요한 정보를 한곳에서 확인해요.</p>
+          <TodayPick weather={pickWeather} />
           <p className="chip-label">생활·실시간 정보</p>
           <div className="chips" role="group" aria-label="생활·실시간 정보">
             {LIFE_MENU.map((m) => <Link key={m.id} to={m.to} className="chip on-hover" style={{ '--c': m.color }}>{chipBody(m)}</Link>)}

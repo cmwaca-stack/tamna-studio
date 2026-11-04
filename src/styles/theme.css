@@ -114,7 +114,7 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 /* ── 홈: 3D 스테이지 ── */
 .stage { position: relative; height: calc(100svh - var(--nav-h)); min-height: 560px; overflow: hidden; }
 .stage-canvas { position: absolute; inset: 0; }
-.stage-panel { z-index: 2; position: absolute; left: 24px; top: 24px; width: min(460px, calc(100% - 48px)); padding: 1.4rem; display: grid; gap: .8rem; }
+.stage-panel { z-index: 2; position: absolute; left: 24px; top: 24px; width: min(460px, calc(100% - 48px)); max-height: calc(100% - 48px); overflow-y: auto; padding: 1.4rem; display: grid; gap: .8rem; }
 .stage-panel h1 { background: linear-gradient(90deg, #8a4a36, var(--sea)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .lead { font-size: 1.02rem; }
 .actions { display: flex; flex-wrap: wrap; gap: .5rem; }
@@ -556,3 +556,16 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .alert-block { display: grid; gap: .5rem; }
 .alert-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
 .alert-list li { padding: .6rem .8rem; border-radius: 12px; background: var(--card); border: 1px solid var(--line); font-size: .9rem; }
+
+/* 홈: 오늘의 추천 카드 */
+.today-pick { display: grid; gap: .5rem; padding: .7rem .8rem; border-radius: 16px; background: rgba(255,255,255,.75); border: 1px solid var(--line); }
+.today-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .92rem; }
+.today-again { border: 1px solid var(--line); background: #fff; color: var(--text); padding: .2rem .65rem; border-radius: 999px; font: inherit; font-size: .8rem; cursor: pointer; }
+.today-again:hover { border-color: var(--sea); }
+.today-body { display: flex; gap: .7rem; align-items: center; color: inherit; text-decoration: none; }
+.today-body img { width: 76px; height: 76px; flex: none; border-radius: 12px; object-fit: cover; background: #f3ebe3; }
+.today-text { display: grid; gap: .15rem; min-width: 0; }
+.today-text b { font-size: 1rem; }
+.today-text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.today-reason { font-size: .8rem; font-weight: 700; color: #c2410c; }
+.today-body:hover b { text-decoration: underline; }
