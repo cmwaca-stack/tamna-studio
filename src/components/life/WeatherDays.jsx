@@ -3,11 +3,30 @@ import { ApiError, Loading } from '../Status'
 import { useAsync } from '../../hooks/useAsync'
 
 // 오늘·내일·이번 주(7일) 날씨. 오픈메테오 예보 모델(키 없이 사용)이라 기상청 발표와 조금 다를 수 있어요.
-const CITIES = [
-  { name: '제주시', lat: 33.5, lng: 126.53 },
-  { name: '서귀포', lat: 33.253, lng: 126.56 },
-  { name: '성산', lat: 33.46, lng: 126.93 },
-  { name: '한림', lat: 33.41, lng: 126.26 },
+// 홈 화면 날씨 카드와 같은 20곳(제주시 10곳·서귀포시 10곳, 인구 많은 순) + 시 전체. 위치는 대략적인 동네 중심이에요.
+const REGIONS = [
+  { city: '제주시', name: '제주시', lat: 33.5, lng: 126.53 },
+  { city: '제주시', name: '노형동', lat: 33.485, lng: 126.478 },
+  { city: '제주시', name: '이도2동', lat: 33.5, lng: 126.531 },
+  { city: '제주시', name: '연동', lat: 33.489, lng: 126.493 },
+  { city: '제주시', name: '아라동', lat: 33.466, lng: 126.547 },
+  { city: '제주시', name: '애월읍', lat: 33.464, lng: 126.331 },
+  { city: '제주시', name: '일도2동', lat: 33.509, lng: 126.542 },
+  { city: '제주시', name: '삼양동', lat: 33.524, lng: 126.588 },
+  { city: '제주시', name: '조천읍', lat: 33.544, lng: 126.637 },
+  { city: '제주시', name: '화북동', lat: 33.52, lng: 126.57 },
+  { city: '제주시', name: '한림읍', lat: 33.411, lng: 126.265 },
+  { city: '서귀포시', name: '서귀포시', lat: 33.253, lng: 126.56 },
+  { city: '서귀포시', name: '대정읍', lat: 33.224, lng: 126.251 },
+  { city: '서귀포시', name: '동홍동', lat: 33.256, lng: 126.575 },
+  { city: '서귀포시', name: '남원읍', lat: 33.278, lng: 126.718 },
+  { city: '서귀포시', name: '성산읍', lat: 33.458, lng: 126.93 },
+  { city: '서귀포시', name: '대륜동', lat: 33.24, lng: 126.526 },
+  { city: '서귀포시', name: '대천동', lat: 33.261, lng: 126.493 },
+  { city: '서귀포시', name: '표선면', lat: 33.326, lng: 126.835 },
+  { city: '서귀포시', name: '안덕면', lat: 33.259, lng: 126.364 },
+  { city: '서귀포시', name: '중문동', lat: 33.254, lng: 126.412 },
+  { city: '서귀포시', name: '서홍동', lat: 33.249, lng: 126.556 },
 ]
 const DOW = ['일', '월', '화', '수', '목', '금', '토']
 
@@ -26,7 +45,7 @@ function sky(c) {
 }
 
 async function load(city) {
-  const c = CITIES.find((x) => x.name === city)
+  const c = REGIONS.find((x) => x.name === city)
   const q = new URLSearchParams({
     latitude: c.lat, longitude: c.lng, timezone: 'Asia/Seoul', forecast_days: '7', wind_speed_unit: 'ms',
     current: 'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m',
@@ -113,13 +132,34 @@ function Hours({ data, dateIso, nowTime }) {
 export default function WeatherDays() {
   const [city, setCity] = useState('제주시')
   const [view, setView] = useState('today')
+  const [q, setQ] = useState('')
   const st = useAsync(() => load(city), [city])
   const d = st.data?.daily
+  const word = q.trim()
+  const hits = word ? REGIONS.filter((r) => r.name.includes(word) || `${r.city}${r.name}`.includes(word)) : []
+  const pick = (name) => { setCity(name); setQ('') }
+  const chips = (list) => list.map((r) => (
+    <button key={r.name} type="button" role="tab" aria-selected={city === r.name} className={`chip${city === r.name ? ' on' : ''}`} style={{ '--c': '#1c7ed6' }} onClick={() => pick(r.name)}>{r.name}</button>
+  ))
   return (
     <>
-      <div className="chips" role="tablist" aria-label="지역">
-        {CITIES.map((c) => <button key={c.name} type="button" role="tab" aria-selected={city === c.name} className={`chip${city === c.name ? ' on' : ''}`} style={{ '--c': '#1c7ed6' }} onClick={() => setCity(c.name)}>{c.name}</button>)}
-      </div>
+      <form className="wx-search" role="search" onSubmit={(e) => { e.preventDefault(); if (hits[0]) pick(hits[0].name) }}>
+        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="지역 검색 (예: 애월, 중문, 성산)" aria-label="지역 검색" />
+        <button type="submit" className="btn btn-primary btn-sm"><i className="bi bi-search" /> 지역 검색</button>
+      </form>
+      {word ? (
+        hits.length
+          ? <div className="chips" role="tablist" aria-label="검색 결과">{chips(hits)}</div>
+          : <p className="muted small">‘{word}’에 맞는 지역이 없어요. 홈 화면 날씨 카드의 20곳(동·읍·면)과 제주시·서귀포시 중에서 찾아요.</p>
+      ) : (
+        <>
+          <p className="chip-label">제주시</p>
+          <div className="chips" role="tablist" aria-label="제주시 지역">{chips(REGIONS.filter((r) => r.city === '제주시'))}</div>
+          <p className="chip-label">서귀포시</p>
+          <div className="chips" role="tablist" aria-label="서귀포시 지역">{chips(REGIONS.filter((r) => r.city === '서귀포시'))}</div>
+        </>
+      )}
+      <h3 className="sub-title">📍 {city}{city !== REGIONS.find((r) => r.name === city)?.city && ` (${REGIONS.find((r) => r.name === city)?.city})`} 날씨</h3>
       <div className="seg" role="tablist" aria-label="기간">
         {[['today', '오늘'], ['tomorrow', '내일'], ['week', '이번 주']].map(([k, label]) => (
           <button key={k} type="button" role="tab" aria-selected={view === k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{label}</button>
@@ -150,7 +190,7 @@ export default function WeatherDays() {
               </div>
             </section>
           )}
-          <p className="muted small">예보 모델(Open-Meteo)로 계산한 값이라 기상청 발표와 조금 다를 수 있어요. 공식 예보는 기상청에서 확인하세요.</p>
+          <p className="muted small">예보 모델(Open-Meteo)로 계산한 값이고 지역 위치는 대략적인 동네 중심이라, 기상청 발표와 조금 다를 수 있어요. 공식 예보는 기상청에서 확인하세요.</p>
         </>
       )}
     </>
