@@ -67,11 +67,10 @@ export function Airport() {
 export function Transit() {
   return (
     <section className="kit-block">
-      <LinkCards items={[
-        { emoji: '🚌', name: '제주버스정보', url: 'https://bus.jeju.go.kr', note: '버스 노선·도착 시간 (공식)' },
-        { emoji: '🚦', name: '도로 상황·교통정보', url: '/discover/traffic', note: '날씨별 운전 주의, CCTV' },
-        { emoji: '🚗', name: '제주 교통정보센터', url: 'https://www.jejuits.go.kr', note: '도로 소통·돌발 정보 (공식)' },
-      ]} />
+      <div className="bus-frame">
+        <iframe src="https://bus.jeju.go.kr/search/realTimeBusLocation" title="제주 실시간 버스 위치" loading="lazy" referrerPolicy="no-referrer" />
+      </div>
+      <p className="muted small">제주버스정보(bus.jeju.go.kr)의 실시간 버스 위치 화면이에요. 화면이 안 보이면 <a href="https://bus.jeju.go.kr/search/realTimeBusLocation" target="_blank" rel="noreferrer">새 창에서 열기 ↗</a></p>
     </section>
   )
 }

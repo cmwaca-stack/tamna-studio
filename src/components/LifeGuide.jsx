@@ -19,6 +19,8 @@ const GROUPS = [
     { key: 'ship', label: '배편 운항', emoji: '🚢' },
     { key: 'airport', label: '항공편', emoji: '✈️' },
     { key: 'transit', label: '버스·도로', emoji: '🚌' },
+    { label: '교통정보', emoji: '🚦', to: '/discover/traffic' }, // 누르면 다른 화면으로 가는 버튼 (버스·도로 옆)
+    { label: '교통정보센터', emoji: '🚗', href: 'https://www.jejuits.go.kr' },
     { key: 'fuel', label: '주유소·충전소', emoji: '⛽' },
   ] },
   { key: 'daily', label: '일상', emoji: '🛒', tabs: [
@@ -34,7 +36,7 @@ const GROUPS = [
     { key: 'town', label: '동네 소식', emoji: '📣' },
   ] },
 ]
-const ALL_TABS = GROUPS.flatMap((g) => g.tabs)
+const ALL_TABS = GROUPS.flatMap((g) => g.tabs).filter((t) => t.key)
 
 function Trash() {
   return (
@@ -88,11 +90,16 @@ export default function LifeGuide({ cat }) {
           <div key={g.key} className="life-group">
             <h2><span aria-hidden="true">{g.emoji}</span> {g.label}</h2>
             <div className="life-items" role="tablist">
-              {g.tabs.map((t) => (
-                <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} className={tab === t.key ? 'on' : ''} onClick={() => setParams({ tab: t.key }, { replace: true })}>
-                  <span aria-hidden="true">{t.emoji}</span> {t.label}
-                </button>
-              ))}
+              {g.tabs.map((t) => {
+                const body = <><span aria-hidden="true">{t.emoji}</span> {t.label}{t.href && <i className="bi bi-box-arrow-up-right" />}</>
+                if (t.to) return <Link key={t.label} to={t.to} className="life-link">{body}</Link>
+                if (t.href) return <a key={t.label} href={t.href} target="_blank" rel="noreferrer" className="life-link">{body}</a>
+                return (
+                  <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} className={tab === t.key ? 'on' : ''} onClick={() => setParams({ tab: t.key }, { replace: true })}>
+                    {body}
+                  </button>
+                )
+              })}
             </div>
           </div>
         ))}
