@@ -29,6 +29,11 @@ export const LINKPAGES = {
     title: '제주커뮤니티', icon: 'people', color: '#e8590c', logos: true,
     desc: '제주살이 이야기와 이사·정착 정보를 나누는 곳으로 바로 연결해요.',
     groups: [
+      { name: '동네 이웃 커뮤니티', items: [
+        { name: '당근 · 동네생활', url: 'https://www.daangn.com/kr/community/', note: '우리 동네 이웃들의 질문·모임·가게 소식', logoSrc: '/org/daangn.png' },
+        { name: '다음 카페 · 제주맘', url: 'https://cafe.daum.net/jejumam', note: '제주 지역 맘카페 (다음 카페)', logoSrc: '/org/daumcafe.png' },
+        { name: '네이버 카페 · 제주맘', url: 'https://cafe.naver.com/jejumam', note: '제주 지역 맘카페 (네이버 카페)', logoSrc: '/org/navercafe.png' },
+      ] },
       { name: '이야기·정보 찾기', items: [
         { name: '픽제주', url: 'https://www.picjeju.com/', note: '제주 소식·정보 사이트' },
         { name: '플레이제주', url: 'https://playjeju.co.kr/', note: '제주 소식·정보 사이트' },
