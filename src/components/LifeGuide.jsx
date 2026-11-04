@@ -17,7 +17,7 @@ const GROUPS = [
   ] },
   { key: 'move', label: '이동', emoji: '🚌', tabs: [
     { key: 'ship', label: '배편 운항', emoji: '🚢' },
-    { key: 'airport', label: '공항·주차', emoji: '✈️' },
+    { key: 'airport', label: '항공편', emoji: '✈️' },
     { key: 'transit', label: '버스·도로', emoji: '🚌' },
     { key: 'fuel', label: '주유소·충전소', emoji: '⛽' },
   ] },

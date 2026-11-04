@@ -64,8 +64,6 @@ export function Airport() {
     <section className="kit-block">
       <LinkCards items={[
         { emoji: '✈️', name: '제주공항 항공편 보기', url: '/discover/flight', note: '오늘 출발·도착과 지연·결항' },
-        { emoji: '🅿️', name: '한국공항공사 (주차장 현황)', url: 'https://www.airport.co.kr', note: '제주공항 주차장이 얼마나 찼는지는 여기서 확인해요 (공식)' },
-        { emoji: '🚕', name: '제주공항 이용 안내 검색', url: naver('제주공항 주차 혼잡 렌터카 하차'), note: '렌터카 하우스 위치, 주차 혼잡 시간대 소식' },
       ]} />
     </section>
   )
