@@ -130,19 +130,25 @@ export default function WeatherDays() {
           {view === 'today' && <><Summary d={d} i={0} now={st.data.current} /><Hours data={st.data} dateIso={d.time[0]} nowTime={st.data.current.time} /></>}
           {view === 'tomorrow' && <><Summary d={d} i={1} /><Hours data={st.data} dateIso={d.time[1]} /></>}
           {view === 'week' && (
-            <div className="wx-week">
-              {d.time.map((iso, i) => {
-                const [emoji, text] = sky(d.weather_code[i])
-                return (
-                  <div key={iso} className="wx-day">
-                    <b>{dayLabel(iso, i)} <small className="muted">{md(iso)}</small></b>
-                    <span><span aria-hidden="true">{emoji}</span> {text}</span>
-                    <span className="muted">☔ {d.precipitation_probability_max[i]}%</span>
-                    <span><b>{Math.round(d.temperature_2m_max[i])}°</b> / {Math.round(d.temperature_2m_min[i])}°</span>
-                  </div>
-                )
-              })}
-            </div>
+            <section className="wx-hourly">
+              <h3 className="sub-title">📅 이번 주 날씨 <small className="muted">오늘부터 7일</small></h3>
+              <div className="wx-hours wx-days" role="list">
+                {d.time.map((iso, i) => {
+                  const [emoji, text] = sky(d.weather_code[i])
+                  return (
+                    <div key={iso} className={`wx-hour${i === 0 ? ' today' : ''}`} role="listitem">
+                      <b>{dayLabel(iso, i)}</b>
+                      <small className="muted">{md(iso)}</small>
+                      <span className="wx-h-emoji" aria-hidden="true">{emoji}</span>
+                      <span className="wx-h-text">{text}</span>
+                      <strong>{Math.round(d.temperature_2m_max[i])}° <small className="muted">/ {Math.round(d.temperature_2m_min[i])}°</small></strong>
+                      <small className="muted">☔ {d.precipitation_probability_max[i]}%</small>
+                      <small className="muted">💨 {d.wind_speed_10m_max[i].toFixed(0)}m/s</small>
+                    </div>
+                  )
+                })}
+              </div>
+            </section>
           )}
           <p className="muted small">예보 모델(Open-Meteo)로 계산한 값이라 기상청 발표와 조금 다를 수 있어요. 공식 예보는 기상청에서 확인하세요.</p>
         </>
