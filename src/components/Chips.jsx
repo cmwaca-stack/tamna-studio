@@ -15,7 +15,7 @@ const LINKS = {
   life: { to: '/discover/life', label: Y('life').title, icon: Y('life').icon, color: Y('life').color },
 }
 const theme = (key) => THEMES.find((t) => t.key === key)
-const ORDER = ['oreum', 'myth', 'jeju43', 'history', 'olle', 'weekend', 'food', 'photo', 'flight', 'traffic', 'tamna', 'policy', 'hospital', 'life']
+const ORDER = ['life', 'traffic', 'flight', 'hospital', 'policy', 'tamna', 'food', 'weekend', 'photo', 'oreum', 'myth', 'jeju43', 'history', 'olle'] // 홈 메뉴와 같은 순서: 생활·실시간 → 이야기·답사
 
 // 소재 테마 선택 줄 (store 의 themeKey 와 함께 씁니다). 테마는 3D 지도 핀으로, 나머지 메뉴(맛집·항공편 등)는 해당 화면으로 이동합니다.
 export default function Chips({ value, onChange, children }) {

@@ -1,23 +1,14 @@
 import { ApiError, Empty, Loading } from './Status'
 import { fetchAir } from '../api/client'
 import { useAsync } from '../hooks/useAsync'
+import { grade, LV, PM10, PM25 } from '../lib/airLevel'
 
 const SPOTS = [
   { name: '제주시', lat: 33.5, lng: 126.53 },
   { name: '서귀포시', lat: 33.253, lng: 126.56 },
 ]
-// 환경부 대기환경 기준 등급 (미세먼지 ㎍/㎥, 오존 ppm, 통합지수)
-const grade = (v, cuts) => { if (v == null) return null; const i = cuts.findIndex((c) => v <= c); return i < 0 ? 3 : i }
-const PM25 = [15, 35, 75]
-const PM10 = [30, 80, 150]
 const O3 = [0.03, 0.09, 0.15]
 const KHAI = [50, 100, 250]
-const LV = [
-  { text: '좋음', tone: 'good', emoji: '😊', tip: '환기하고 바깥 활동하기 좋아요' },
-  { text: '보통', tone: 'ok', emoji: '🙂', tip: '민감한 분은 오래 야외 활동은 줄여요' },
-  { text: '나쁨', tone: 'bad', emoji: '😷', tip: '마스크를 쓰고, 환기는 짧게 해요' },
-  { text: '매우나쁨', tone: 'worse', emoji: '🚫', tip: '야외 활동은 피하고 창문을 닫아요' },
-]
 const uvText = (u) => (u < 3 ? '낮음' : u < 6 ? '보통' : u < 8 ? '높음' : u < 11 ? '매우 높음' : '위험')
 const hhmm = (t) => (t ? `${t.slice(5, 7)}월 ${t.slice(8, 10)}일 ${t.slice(11, 16)}` : '')
 

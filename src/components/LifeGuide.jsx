@@ -1,17 +1,39 @@
-import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import Chips from './Chips'
 import { useAppStore } from '../store/useAppStore'
 import AirQuality from './AirQuality'
 import FiveDayMarkets from './FiveDayMarkets'
 import PlaceMap from './PlaceMap'
+import { Airport, Alerts, Bills, Move, Parcel, Pharmacy, Sea, Shop, Ship, Snow, Town, Transit } from './life/panels'
 
-const TABS = [
-  { key: 'trash', label: '쓰레기·분리배출', emoji: '♻️' },
-  { key: 'fuel', label: '주유소·충전소', emoji: '⛽' },
-  { key: 'air', label: '대기질', emoji: '😷' },
-  { key: 'market', label: '오일장', emoji: '🛒' },
+// 생활정보 메뉴: 4개 묶음 안에 항목을 모았어요. 주소 끝에 ?tab=항목키 를 붙이면 그 항목이 바로 열려요.
+const GROUPS = [
+  { key: 'safe', label: '날씨·안전', emoji: '⛈️', tabs: [
+    { key: 'alerts', label: '기상특보·재난문자', emoji: '⚠️' },
+    { key: 'sea', label: '바다 파도', emoji: '🌊' },
+    { key: 'snow', label: '눈·결빙 도로', emoji: '❄️' },
+    { key: 'air', label: '대기질', emoji: '😷' },
+  ] },
+  { key: 'move', label: '이동', emoji: '🚌', tabs: [
+    { key: 'ship', label: '배편 운항', emoji: '🚢' },
+    { key: 'airport', label: '공항·주차', emoji: '✈️' },
+    { key: 'transit', label: '버스·도로', emoji: '🚌' },
+    { key: 'fuel', label: '주유소·충전소', emoji: '⛽' },
+  ] },
+  { key: 'daily', label: '일상', emoji: '🛒', tabs: [
+    { key: 'pharmacy', label: '약국·응급실', emoji: '💊' },
+    { key: 'shop', label: '마트·편의점·세탁', emoji: '🏪' },
+    { key: 'market', label: '오일장', emoji: '🛒' },
+    { key: 'trash', label: '쓰레기·분리배출', emoji: '♻️' },
+  ] },
+  { key: 'living', label: '제주살이', emoji: '🏡', tabs: [
+    { key: 'moving', label: '이사 체크리스트', emoji: '📦' },
+    { key: 'bills', label: '요금·서류', emoji: '📝' },
+    { key: 'parcel', label: '택배·배송', emoji: '📮' },
+    { key: 'town', label: '동네 소식', emoji: '📣' },
+  ] },
 ]
+const ALL_TABS = GROUPS.flatMap((g) => g.tabs)
 
 function Trash() {
   return (
@@ -47,9 +69,11 @@ function Fuel() {
 
 // 생활정보: 제주에 사는 사람에게 필요한 일상 정보 모음
 export default function LifeGuide({ cat }) {
-  const [tab, setTab] = useState('trash')
+  const [params, setParams] = useSearchParams()
+  const tab = ALL_TABS.some((t) => t.key === params.get('tab')) ? params.get('tab') : 'alerts'
   const navigate = useNavigate()
   const setThemeKey = useAppStore((st) => st.setThemeKey)
+  const current = ALL_TABS.find((t) => t.key === tab)
   return (
     <div className="page">
       <header className="page-head" style={{ '--c': cat.color }}>
@@ -58,17 +82,37 @@ export default function LifeGuide({ cat }) {
         <p className="muted">{cat.desc}</p>
         <Chips value="life" onChange={(k) => { setThemeKey(k); navigate('/kit') }} />
       </header>
-      <div className="seg life-tabs" role="tablist">
-        {TABS.map((t) => (
-          <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} className={tab === t.key ? 'on' : ''} onClick={() => setTab(t.key)}>
-            <span aria-hidden="true">{t.emoji}</span> {t.label}
-          </button>
+      <nav className="life-nav" aria-label="생활정보 메뉴">
+        {GROUPS.map((g) => (
+          <div key={g.key} className="life-group">
+            <h2><span aria-hidden="true">{g.emoji}</span> {g.label}</h2>
+            <div className="life-items" role="tablist">
+              {g.tabs.map((t) => (
+                <button key={t.key} type="button" role="tab" aria-selected={tab === t.key} className={tab === t.key ? 'on' : ''} onClick={() => setParams({ tab: t.key }, { replace: true })}>
+                  <span aria-hidden="true">{t.emoji}</span> {t.label}
+                </button>
+              ))}
+            </div>
+          </div>
         ))}
-      </div>
-      {tab === 'trash' && <Trash />}
-      {tab === 'fuel' && <Fuel />}
+      </nav>
+      <h2 className="life-title"><span aria-hidden="true">{current.emoji}</span> {current.label}</h2>
+      {tab === 'alerts' && <Alerts />}
+      {tab === 'sea' && <Sea />}
+      {tab === 'snow' && <Snow />}
       {tab === 'air' && <AirQuality />}
+      {tab === 'ship' && <Ship />}
+      {tab === 'airport' && <Airport />}
+      {tab === 'transit' && <Transit />}
+      {tab === 'fuel' && <Fuel />}
+      {tab === 'pharmacy' && <Pharmacy />}
+      {tab === 'shop' && <Shop />}
       {tab === 'market' && <FiveDayMarkets />}
+      {tab === 'trash' && <Trash />}
+      {tab === 'moving' && <Move />}
+      {tab === 'bills' && <Bills />}
+      {tab === 'parcel' && <Parcel />}
+      {tab === 'town' && <Town />}
     </div>
   )
 }

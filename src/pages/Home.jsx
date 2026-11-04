@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LazyScene from '../components/LazyScene'
+import LiveNow from '../components/LiveNow'
 import RegionWeather from '../components/RegionWeather'
 import { THEMES, spotSetsOf, themeOf } from '../data/themes'
 import { YOUTH } from '../data/youth'
@@ -13,22 +14,24 @@ import { useAppStore } from '../store/useAppStore'
 // 메뉴 순서를 여기서 정해요. 3D 지도 위에 핀을 보여 주는 것은 theme, 다른 화면으로 가는 것은 to
 const T = (key) => THEMES.find((t) => t.key === key)
 const Y = (slug) => YOUTH.find((c) => c.slug === slug)
-const MENU = [
+const toY = (slug) => ({ id: slug, to: `/discover/${slug}`, label: Y(slug).title, icon: Y(slug).icon, color: Y(slug).color })
+// 생활·실시간 정보가 먼저, 이야기·답사(오름·신화·4·3·역사·올레)는 그 아래 줄
+const LIFE_MENU = [
+  toY('life'), toY('traffic'), toY('flight'),
+  { id: 'hospital', to: '/links/hospital', label: '병원', icon: 'hospital', color: '#e0527e' },
+  toY('policy'),
+  { id: 'tamna', to: '/tamna', label: T('tamna').label, icon: T('tamna').icon, color: T('tamna').color },
+  toY('food'), toY('weekend'), toY('photo'),
+]
+const STORY_MENU = [
   ...['oreum', 'myth', 'jeju43', 'history'].map((k) => ({ id: k, theme: k, label: T(k).label, icon: T(k).icon, color: T(k).color, on: true })),
   { id: 'olle', theme: 'olle', label: Y('olle').title, icon: Y('olle').icon, color: Y('olle').color },
-  { id: 'weekend', to: '/discover/weekend', label: Y('weekend').title, icon: Y('weekend').icon, color: Y('weekend').color },
-  { id: 'food', to: '/discover/food', label: Y('food').title, icon: Y('food').icon, color: Y('food').color },
-  { id: 'photo', to: '/discover/photo', label: Y('photo').title, icon: Y('photo').icon, color: Y('photo').color },
-  { id: 'flight', to: '/discover/flight', label: Y('flight').title, icon: Y('flight').icon, color: Y('flight').color },
-  { id: 'traffic', to: '/discover/traffic', label: Y('traffic').title, icon: Y('traffic').icon, color: Y('traffic').color },
-  { id: 'tamna', to: '/tamna', label: T('tamna').label, icon: T('tamna').icon, color: T('tamna').color },
-  { id: 'policy', to: '/discover/policy', label: Y('policy').title, icon: Y('policy').icon, color: Y('policy').color },
-  { id: 'hospital', to: '/links/hospital', label: '병원', icon: 'hospital', color: '#e0527e' },
-  { id: 'life', to: '/discover/life', label: Y('life').title, icon: Y('life').icon, color: Y('life').color },
 ]
 
 // 메뉴 칩 앞에 붙는 귀여운 이모지
 const EMOJI = { oreum: '⛰️', myth: '✨', jeju43: '🌸', history: '🏯', olle: '🥾', weekend: '🎟️', food: '🍜', photo: '📸', flight: '✈️', traffic: '🚦', tamna: '🪙', policy: '💰', hospital: '🏥', life: '🏡' }
+
+const chipBody = (m) => <><span className="emo" aria-hidden="true">{EMOJI[m.id] ?? '🍊'}</span>{m.label}</>
 
 export default function Home() {
   const { themeKey, setThemeKey } = useAppStore()
@@ -56,20 +59,20 @@ export default function Home() {
             </button>
           </div>
           {open && <>
-          <p className="hello">오늘은 제주 어디 갈까요? 🌼</p>
-          <p className="lead">제주살이를 꿈꾸고 있나요? 장소·날씨·생활 정보를 AI 검색으로 쏙쏙 찾아 봐요.</p>
-          {/* 메뉴 줄: 오름·신화·4·3·제주역사·올레길·전시축제행사·교통정보·제주어·청년정책 (한 줄로 이어서) */}
-          <div className="chips" role="tablist" aria-label="메뉴">
-            {MENU.map((m) => {
-              const body = <><span className="emo" aria-hidden="true">{EMOJI[m.id] ?? '🍊'}</span>{m.label}</>
-              const style = { '--c': m.color }
-              if (m.to) return <Link key={m.id} to={m.to} className="chip on-hover" style={style}>{body}</Link>
-              return (
-                <button key={m.id} type="button" role="tab" aria-selected={themeKey === m.theme} className={`chip${themeKey === m.theme ? ' on' : m.on ? '' : ' on-hover'}`} style={style} onClick={() => setThemeKey(m.theme)}>
-                  {body}
-                </button>
-              )
-            })}
+          <p className="hello">오늘 제주, 어떤가요? 🌼</p>
+          <p className="lead">대기질·교통·항공·병원·청년정책까지, 제주에서 사는 데 필요한 정보를 한곳에서 확인해요.</p>
+          <LiveNow />
+          <p className="chip-label">생활·실시간 정보</p>
+          <div className="chips" role="group" aria-label="생활·실시간 정보">
+            {LIFE_MENU.map((m) => <Link key={m.id} to={m.to} className="chip on-hover" style={{ '--c': m.color }}>{chipBody(m)}</Link>)}
+          </div>
+          <p className="chip-label">이야기·답사 (3D 지도에 핀으로 보기)</p>
+          <div className="chips" role="tablist" aria-label="이야기·답사">
+            {STORY_MENU.map((m) => (
+              <button key={m.id} type="button" role="tab" aria-selected={themeKey === m.theme} className={`chip${themeKey === m.theme ? ' on' : m.on ? '' : ' on-hover'}`} style={{ '--c': m.color }} onClick={() => setThemeKey(m.theme)}>
+                {chipBody(m)}
+              </button>
+            ))}
           </div>
           <p className="muted">{theme.blurb}</p>
           {theme.spotNote && <p className="spot-note"><i className="bi bi-geo-alt-fill" style={{ color: spotSetsOf(theme)[0]?.color }} />{theme.spotNote}{!theme.routes && !theme.cctv && <small> (대략적 위치)</small>}</p>}

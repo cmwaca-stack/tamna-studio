@@ -69,7 +69,7 @@ export const YOUTH = [
   {
     slug: 'life', title: '생활정보', icon: 'house-heart', color: '#2b9348', kind: 'life',
     tagline: '제주 사는 사람을 위한 생활 정보',
-    desc: '쓰레기 배출, 주유소·전기차 충전소, 미세먼지, 오일장까지 — 제주에 사는 분들이 자주 찾는 생활 정보를 모았어요.',
+    desc: '기상특보·바다 파도·배편부터 약국·응급실, 쓰레기 배출, 이사·전입신고까지 — 제주에 사는 분들이 자주 찾는 생활 정보를 모았어요.',
   },
   {
     slug: 'policy', title: '청년정책', icon: 'piggy-bank', color: '#0b8f9c', kind: 'links',

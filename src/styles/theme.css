@@ -527,3 +527,39 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .market-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
 .notice.calm { background: #ebfbee; border-color: #b2f2bb; color: #2b8a3e; }
+
+/* 홈 메뉴판: 지금 제주(실시간) + 메뉴 그룹 라벨 */
+.chip-label { margin: .2rem 0 -.3rem; font-size: .78rem; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
+.live-now { display: grid; gap: .4rem; padding: .6rem .8rem; border-radius: 14px; background: rgba(255,255,255,.7); border: 1px solid var(--line); }
+.live-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .9rem; }
+.live-dot { display: inline-block; width: .55rem; height: .55rem; margin-right: .4rem; border-radius: 50%; background: #2b9348; animation: live-pulse 1.8s ease-in-out infinite; }
+.live-more { font-size: .8rem; color: var(--muted); text-decoration: none; }
+.live-more:hover { color: var(--text); }
+.live-air { display: flex; flex-wrap: wrap; gap: .3rem .9rem; font-size: .86rem; }
+.live-air-item b { margin-left: .15rem; }
+.live-air-item.tone-bad b, .live-air-item.tone-worse b { color: #c92a2a; }
+.link-btn { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
+@keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+
+/* 생활정보: 4개 묶음 메뉴 */
+.life-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: .8rem; margin-bottom: 1.2rem; }
+.life-group { padding: .8rem .9rem; border-radius: 18px; background: var(--card); border: 1px solid var(--line); display: grid; gap: .5rem; align-content: start; }
+.life-group h2 { font-size: 1rem; margin: 0; }
+.life-items { display: flex; flex-wrap: wrap; gap: .35rem; }
+.life-items button { border: 1px solid var(--line); background: #fff; color: var(--text); padding: .35rem .7rem; border-radius: 999px; font: inherit; font-size: .84rem; cursor: pointer; transition: background .15s, border-color .15s; }
+.life-items button:hover { border-color: var(--sea); }
+.life-items button.on { background: var(--sea); border-color: var(--sea); color: #fff; font-weight: 700; }
+.life-title { margin: 0 0 .6rem; font-size: 1.25rem; }
+.link-card .emo { margin-right: .45rem; }
+
+/* 이사 체크리스트 */
+.checklist { display: grid; gap: .8rem; }
+.check-progress { margin: 0; display: flex; align-items: center; gap: .6rem; }
+.check-progress .bar { flex: 1; max-width: 220px; height: .6rem; border-radius: 999px; background: #f3e4da; overflow: hidden; }
+.check-progress .bar i { display: block; height: 100%; background: #2b9348; transition: width .25s; }
+.check-group { display: grid; gap: .4rem; padding: .8rem 1rem; border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+.check-group h3 { margin: 0 0 .2rem; font-size: 1rem; }
+.check-item { display: flex; align-items: flex-start; gap: .6rem; padding: .35rem .2rem; cursor: pointer; font-size: .92rem; }
+.check-item input { width: 1.15rem; height: 1.15rem; margin-top: .1rem; accent-color: #2b9348; flex: none; }
+.check-item.done span { color: var(--muted); text-decoration: line-through; }
