@@ -1,4 +1,5 @@
 import LinkCards, { Tip } from './LinkCards'
+import FlightBoard from '../FlightBoard'
 import IceRoads from './IceRoads'
 import LiveAlerts from './LiveAlerts'
 import ShipTabs from './ShipTabs'
@@ -60,13 +61,7 @@ export function Ship() {
 }
 
 export function Airport() {
-  return (
-    <section className="kit-block">
-      <LinkCards items={[
-        { emoji: '✈️', name: '제주공항 항공편 보기', url: '/discover/flight', note: '오늘 출발·도착과 지연·결항' },
-      ]} />
-    </section>
-  )
+  return <section className="kit-block"><FlightBoard /></section>
 }
 
 export function Transit() {
