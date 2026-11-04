@@ -1,5 +1,6 @@
 import LinkCards, { Tip } from './LinkCards'
 import IceRoads from './IceRoads'
+import LiveAlerts from './LiveAlerts'
 import MoveChecklist from './MoveChecklist'
 import SeaWaves from './SeaWaves'
 import PlaceMap from '../PlaceMap'
@@ -10,9 +11,7 @@ const naver = (q) => `https://search.naver.com/search.naver?query=${encodeURICom
 export function Alerts() {
   return (
     <section className="kit-block">
-      <Tip tone="bad" icon="exclamation-triangle" title="태풍·강풍·대설은 비행기와 배가 먼저 멈춰요">
-        출발 전에 특보가 있는지 먼저 확인하세요. 특보가 내려지면 항공편·배편이 바뀔 수 있어요.
-      </Tip>
+      <LiveAlerts />
       <LinkCards items={[
         { emoji: '⚠️', name: '기상청 기상특보', url: 'https://www.weather.go.kr', note: '지금 제주에 내려진 태풍·강풍·호우·대설 특보 (공식)' },
         { emoji: '📱', name: '안전디딤돌 (재난문자)', url: 'https://www.safekorea.go.kr', note: '우리 동네에 온 재난·안전 문자와 행동 요령 (행정안전부)' },

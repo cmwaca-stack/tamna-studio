@@ -553,3 +553,6 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .check-item input { width: 1.15rem; height: 1.15rem; margin-top: .1rem; accent-color: #2b9348; flex: none; }
 .check-item.done span { color: var(--muted); text-decoration: line-through; }
 .sub-title { margin: .4rem 0 0; font-size: 1.05rem; }
+.alert-block { display: grid; gap: .5rem; }
+.alert-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.alert-list li { padding: .6rem .8rem; border-radius: 12px; background: var(--card); border: 1px solid var(--line); font-size: .9rem; }
