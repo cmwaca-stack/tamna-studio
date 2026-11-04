@@ -613,3 +613,9 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .bus-frame { border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #fff; }
 .bus-frame iframe { display: block; width: 100%; height: 78vh; min-height: 560px; border: 0; }
 .bus-go { justify-self: start; }
+.udo-table { display: grid; gap: .6rem; padding: .9rem 1rem; border-radius: 16px; background: var(--card); border: 1px solid var(--line); }
+.udo-times { display: grid; gap: .35rem; }
+.udo-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.udo-time { padding: .2rem .6rem; border-radius: 999px; background: #eef6fd; border: 1px solid #cfe3f7; font-size: .88rem; }
+.udo-time.past { opacity: .45; }
+.udo-time.next { background: #1c7ed6; border-color: #1c7ed6; color: #fff; font-weight: 800; }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { fetchKomsa } from '../../api/client'
+import { JONGDAL, SEONGSAN, UDO_NOTICE, UDO_SOURCE } from '../../data/udoTimetable'
 import { useAsync } from '../../hooks/useAsync'
 import { ApiError, Empty, Loading } from '../Status'
 import CompanyMark from './CompanyMark'
@@ -62,21 +63,60 @@ function Islands() {
   )
 }
 
-// 우도: 운항 현황을 공개 자료로 가져올 수 없어서 선사 연락처와 공식 안내로 연결해요
+// 우도: 실시간 결항 정보는 공개 자료가 없어서, 우도가는배의 정기 시간표(이번 달 기준)를 보여 주고 선사 연락처로 안내해요
+const kstNow = () => new Date(Date.now() + 9 * 3600e3)
+function Times({ title, list, now }) {
+  const nextIdx = list.findIndex((t) => t >= now)
+  return (
+    <div className="udo-times">
+      <b>{title}</b>
+      <div className="udo-chips">
+        {list.map((t, i) => <span key={t} className={`udo-time${t < now ? ' past' : ''}${i === nextIdx ? ' next' : ''}`}>{t}</span>)}
+      </div>
+    </div>
+  )
+}
+
 function Udo() {
+  const [port, setPort] = useState('seongsan')
+  const k = kstNow()
+  const month = k.getUTCMonth() + 1
+  const now = `${String(k.getUTCHours()).padStart(2, '0')}:${String(k.getUTCMinutes()).padStart(2, '0')}`
+  const table = (port === 'seongsan' ? SEONGSAN : JONGDAL).find((x) => x.months.includes(month))
+  const portName = port === 'seongsan' ? '성산' : '종달'
   return (
     <>
-      <p className="notice" style={{ display: 'block' }}>🏝️ <b>우도 배는 실시간 운항표를 가져올 수 있는 공개 자료가 없어요.</b> 성산포항 종합여객터미널에서 우도 선사에 전화로 확인하거나 아래 공식 안내를 보세요.</p>
+      <p className="notice" style={{ display: 'block' }}>🏝️ 우도 배는 <b>실시간 운항·결항 정보를 가져올 수 있는 공개 자료가 없어요.</b> 대신 우도가는배의 <b>정기 시간표</b>를 보여 드려요. 태풍·풍랑주의보·안개 등 날씨가 나쁘면 운항이 중단돼요.</p>
+      <div className="tabs">
+        <button type="button" className={port === 'seongsan' ? 'on' : ''} onClick={() => setPort('seongsan')}><i className="bi bi-tsunami" /> 성산항 ⇄ 우도</button>
+        <button type="button" className={port === 'jongdal' ? 'on' : ''} onClick={() => setPort('jongdal')}><i className="bi bi-tsunami" /> 종달항 ⇄ 우도</button>
+      </div>
+      {table && (
+        <section className="udo-table">
+          <h3 className="sub-title">⛴️ {month}월 시간표 <small className="muted">({table.label} 기준 · 지금 {now})</small></h3>
+          <Times title={`우도 → ${portName} (우도발)`} list={table.udo} now={now} />
+          <Times title={`${portName} → 우도 (${portName}발)`} list={table.port} now={now} />
+          <p className="muted small">
+            {port === 'seongsan'
+              ? '성산항은 대체로 시간표 사이에 추가 운항이 있어요(시간표 기준 10~30분 간격).'
+              : '조석(간만)·기상·물양장 사정으로 시간이 바뀌거나 입출항 포구가 바뀌어 단축 운항될 수 있어요.'}
+            {' '}굵게 표시된 시각이 지금 이후 가장 가까운 배예요.
+          </p>
+        </section>
+      )}
       <div className="links">
-        <a href="tel:0647825671" className="link-card"><strong><span className="emo" aria-hidden="true">📞</span>우도해운<i className="bi bi-telephone" /></strong><span className="muted">064-782-5671</span></a>
+        <a href="tel:0647825670" className="link-card"><strong><span className="emo" aria-hidden="true">📞</span>우도가는배<i className="bi bi-telephone" /></strong><span className="muted">064-782-5670</span></a>
+        <a href="tel:0647825671" className="link-card"><strong><span className="emo" aria-hidden="true">📞</span>우도가는배(우도해운)<i className="bi bi-telephone" /></strong><span className="muted">064-782-5671</span></a>
         <a href="tel:0647842335" className="link-card"><strong><span className="emo" aria-hidden="true">📞</span>우림해운<i className="bi bi-telephone" /></strong><span className="muted">064-784-2335</span></a>
         <a href="tel:0647821989" className="link-card"><strong><span className="emo" aria-hidden="true">📞</span>우도랜드<i className="bi bi-telephone" /></strong><span className="muted">064-782-1989</span></a>
       </div>
       <LinkCards items={[
+        { emoji: '🚢', name: '우도가는배 (시간표 출처)', url: UDO_SOURCE, note: '운항시간표·요금·선박 안내 (선사 공식)' },
+        { emoji: '📢', name: '우도가는배 공지사항', url: UDO_NOTICE, note: '신분증 확인, 차량·전동킥보드 반입 제한, 요금 변경 등 안내' },
         { emoji: '⚓', name: '성산포항종합여객터미널 (비짓제주)', url: 'https://visitjeju.net/kr/detail/view?contentsid=CNTS_000000000022377', note: '우도도항선 대합실·선사 안내 (제주관광공사)' },
         { emoji: '🗺️', name: '성산포항종합여객터미널 (네이버 지도)', url: 'https://m.place.naver.com/place/13542618/home', note: '위치·주차장·연락처' },
       ]} />
-      <p className="muted small">승선권과 해양도립공원료를 함께 내요. 제주도민은 공원 입장료가 무료이니 신분증을 챙기세요. (비짓제주 안내)</p>
+      <p className="muted small">승선권과 해양도립공원료를 함께 내요. 제주도민은 공원 입장료가 무료이니 신분증을 챙기세요. (우도가는배·비짓제주 안내)</p>
     </>
   )
 }
