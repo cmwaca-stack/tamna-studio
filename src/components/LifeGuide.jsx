@@ -5,8 +5,8 @@ import AirQuality from './AirQuality'
 import FiveDayMarkets from './FiveDayMarkets'
 import PlaceMap from './PlaceMap'
 import FuelPrices from './life/FuelPrices'
-import { Bank, Car, Clinic, Housing, Jobs, News, Pet, Sports, TaxInsurance, Welfare } from './life/panels2'
-import { Airport, Alerts, Its, Traffic, Weather, Bills, Move, Parcel, Pharmacy, Sea, Shop, Ship, Snow, Town, Transit } from './life/panels'
+import { Bank, Clinic, Housing, Jobs, News, Pet, Sports, Welfare } from './life/panels2'
+import { Airport, Alerts, Its, Traffic, Weather, Bills, Move, Pharmacy, Sea, Shop, Ship, Snow, Town, Transit } from './life/panels'
 
 // 생활정보 메뉴: 4개 묶음 안에 항목을 모았어요. 주소 끝에 ?tab=항목키 를 붙이면 그 항목이 바로 열려요.
 const GROUPS = [
@@ -41,9 +41,6 @@ const GROUPS = [
     { key: 'bills', label: '요금·서류', emoji: '📝' },
     { key: 'jobs', label: '일자리·창업', emoji: '💼' },
     { key: 'welfare', label: '복지·지원금', emoji: '🤝' },
-    { key: 'tax', label: '세금·보험·연금', emoji: '🧾' },
-    { key: 'car', label: '차량·운전', emoji: '🚗' },
-    { key: 'parcel', label: '택배·배송', emoji: '📮' },
     { key: 'town', label: '동네 소식', emoji: '📣' },
     { key: 'news', label: '오늘의 제주 뉴스', emoji: '📰' },
   ] },
@@ -130,7 +127,6 @@ export default function LifeGuide({ cat }) {
       {tab === 'trash' && <Trash />}
       {tab === 'moving' && <Move />}
       {tab === 'bills' && <Bills />}
-      {tab === 'parcel' && <Parcel />}
       {tab === 'town' && <Town />}
       {tab === 'clinic' && <Clinic />}
       {tab === 'bank' && <Bank />}
@@ -139,8 +135,6 @@ export default function LifeGuide({ cat }) {
       {tab === 'housing' && <Housing />}
       {tab === 'jobs' && <Jobs />}
       {tab === 'welfare' && <Welfare />}
-      {tab === 'tax' && <TaxInsurance />}
-      {tab === 'car' && <Car />}
       {tab === 'news' && <News />}
     </div>
   )

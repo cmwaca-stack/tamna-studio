@@ -9,8 +9,6 @@ import SeaWaves from './SeaWaves'
 import WeatherDays from './WeatherDays'
 import PlaceMap from '../PlaceMap'
 
-const naver = (q) => `https://search.naver.com/search.naver?query=${encodeURIComponent(q)}`
-
 // ── 날씨·안전 ─────────────────────────────────────────
 export function Weather() {
   return <section className="kit-block"><WeatherDays /></section>
@@ -132,24 +130,6 @@ export function Bills() {
         { emoji: '💡', name: '한국전력 사이버지점', url: 'https://cyber.kepco.co.kr', note: '전기 사용 신청, 요금 확인, 이사 정산' },
         { emoji: '🚰', name: '제주특별자치도청', url: 'https://www.jeju.go.kr', note: '수도 요금·하수도 안내 (사이트에서 ‘상하수도’ 검색)' },
         { emoji: '🏢', name: '공공기관 모아보기', url: '/links/public', note: '주민센터·제주시·서귀포시 사이트' },
-      ]} />
-    </section>
-  )
-}
-
-export function Parcel() {
-  return (
-    <section className="kit-block">
-      <Tip tone="maybe" icon="box-seam" title="제주는 택배비가 더 붙는 곳이 많아요">
-        온라인 쇼핑몰은 제주와 섬 지역에 추가 배송비를 받는 경우가 많아요. 값은 가게마다 달라서 결제 전에 상품 페이지의 배송 안내를 꼭 보세요.
-      </Tip>
-      <div className="tips">
-        <Tip icon="calendar-check" title="배송은 육지보다 하루쯤 더 걸려요">배가 못 뜨는 날(태풍·풍랑)에는 더 늦어질 수 있어요.</Tip>
-        <Tip icon="truck" title="큰 짐은 배 운송 일정부터 알아보세요">가구·차량은 배로 보내서 예약이 필요하고 비용도 따로 들어요.</Tip>
-      </div>
-      <LinkCards items={[
-        { emoji: '📮', name: '우체국 택배 조회·접수', url: 'https://service.epost.go.kr', note: '택배 조회, 방문 접수 (공식)' },
-        { emoji: '🚚', name: '제주 이사·화물 선적 검색', url: naver('제주 이사 화물 선적 비용'), note: '배로 보내는 이삿짐·차량 업체 알아보기' },
       ]} />
     </section>
   )

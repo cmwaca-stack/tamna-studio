@@ -96,38 +96,6 @@ export function Welfare() {
   )
 }
 
-export function TaxInsurance() {
-  return (
-    <section className="kit-block">
-      <LinkCards items={[
-        { emoji: '🧾', name: '홈택스', url: 'https://www.hometax.go.kr', note: '소득세·부가세 신고, 연말정산 (국세청)' },
-        { emoji: '🏷️', name: '위택스', url: 'https://www.wetax.go.kr', note: '지방세(자동차세·재산세) 조회·납부' },
-        { emoji: '🏥', name: '국민건강보험', url: 'https://www.nhis.or.kr', note: '자격·보험료 조회, 주소 변경 (공식)' },
-        { emoji: '👴', name: '국민연금', url: 'https://www.nps.or.kr', note: '가입 내역·연금 예상액 조회 (공식)' },
-      ]} />
-    </section>
-  )
-}
-
-export function Car() {
-  return (
-    <section className="kit-block">
-      <div className="tips">
-        <Tip icon="car-front" title="차량도 주소 변경이 필요해요">이사하면 자동차등록증 주소를 바꿔야 해요. 정부24에서 온라인으로 할 수 있어요.</Tip>
-        <Tip tone="maybe" icon="exclamation-triangle" title="눈·결빙이 있는 날은 산간도로를 피하세요">날씨·안전의 눈·결빙 도로에서 지금 상태를 확인하세요.</Tip>
-      </div>
-      <LinkCards items={[
-        { emoji: '🏛️', name: '정부24 (자동차 주소 변경)', url: 'https://www.gov.kr', note: '자동차 등록·변경 민원' },
-        { emoji: '🪪', name: '안전운전 통합민원', url: 'https://www.safedriving.or.kr', note: '운전면허 갱신·재발급·주소 변경 (도로교통공단)' },
-        { emoji: '🛠️', name: '자동차검사 (한국교통안전공단)', url: 'https://www.kotsa.or.kr', note: '검사 일정·검사소 안내' },
-        { emoji: '🚗', name: '자동차365', url: 'https://www.car365.go.kr', note: '자동차 민원·리콜·검사 정보 (국토교통부)' },
-        { emoji: '🔌', name: '무공해차 통합누리집', url: 'https://ev.or.kr', note: '전기차 보조금·충전소' },
-        { emoji: '❄️', name: '눈·결빙 도로 보기', url: '/discover/life?tab=snow', note: '산간도로 눈·결빙 위험' },
-      ]} />
-    </section>
-  )
-}
-
 export function News() {
   return <section className="kit-block"><NewsFeed /></section>
 }
