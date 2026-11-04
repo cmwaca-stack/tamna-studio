@@ -15,7 +15,7 @@ const LINKS = {
   life: { to: '/discover/life', label: Y('life').title, icon: Y('life').icon, color: Y('life').color },
 }
 const theme = (key) => THEMES.find((t) => t.key === key)
-const ORDER = ['life', 'traffic', 'flight', 'hospital', 'policy', 'tamna', 'food', 'weekend', 'photo', 'oreum', 'myth', 'jeju43', 'history', 'olle'] // 홈 메뉴와 같은 순서: 생활·실시간 → 이야기·답사
+const ORDER = ['life', 'traffic', 'flight', 'hospital', 'food', 'weekend', 'photo', 'oreum', 'myth', 'jeju43', 'history', 'olle', 'policy', 'tamna'] // 생활·실시간 → 이야기·답사 → 맨 뒤에 청년정책·탐나는전
 
 const STORY = ['oreum', 'myth', 'jeju43', 'history', 'olle'] // 이야기·답사 칩 (생활정보 화면들에서는 숨겨요)
 

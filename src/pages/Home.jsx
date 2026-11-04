@@ -18,9 +18,9 @@ const toY = (slug) => ({ id: slug, to: `/discover/${slug}`, label: Y(slug).title
 const LIFE_MENU = [
   toY('life'), toY('traffic'), toY('flight'),
   { id: 'hospital', to: '/links/hospital', label: '병원', icon: 'hospital', color: '#e0527e' },
+  toY('food'), toY('weekend'), toY('photo'),
   toY('policy'),
   { id: 'tamna', to: '/tamna', label: T('tamna').label, icon: T('tamna').icon, color: T('tamna').color },
-  toY('food'), toY('weekend'), toY('photo'),
 ]
 const STORY_MENU = [
   ...['oreum', 'myth', 'jeju43', 'history'].map((k) => ({ id: k, theme: k, label: T(k).label, icon: T(k).icon, color: T(k).color, on: true })),
