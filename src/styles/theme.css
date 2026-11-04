@@ -612,3 +612,4 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .flight .fare { font-size: .85rem; }
 .bus-frame { border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: #fff; }
 .bus-frame iframe { display: block; width: 100%; height: 78vh; min-height: 560px; border: 0; }
+.bus-go { justify-self: start; }
