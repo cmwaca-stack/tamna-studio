@@ -30,7 +30,7 @@ async function load(city) {
   const q = new URLSearchParams({
     latitude: c.lat, longitude: c.lng, timezone: 'Asia/Seoul', forecast_days: '7', wind_speed_unit: 'ms',
     current: 'temperature_2m,apparent_temperature,relative_humidity_2m,weather_code,wind_speed_10m',
-    hourly: 'temperature_2m,precipitation_probability,weather_code',
+    hourly: 'temperature_2m,precipitation_probability,weather_code,wind_speed_10m',
     daily: 'weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,uv_index_max',
   })
   const res = await fetch(`https://api.open-meteo.com/v1/forecast?${q}`)
@@ -76,31 +76,37 @@ function Summary({ d, i, now }) {
   )
 }
 
-// 시간별 예보(3시간 간격). 오늘은 지금부터 24시간, 내일은 그날 하루
+// 시간대별 예보(1시간 간격). 오늘은 지금부터 24시간, 내일은 0시~23시
 function Hours({ data, dateIso, nowTime }) {
   const h = data.hourly
   let ks
   if (nowTime) {
     const start = Math.max(0, h.time.findIndex((t) => t.startsWith(nowTime.slice(0, 13))))
-    ks = Array.from({ length: 8 }, (_, n) => start + n * 3).filter((k) => k < h.time.length)
+    ks = Array.from({ length: 24 }, (_, n) => start + n).filter((k) => k < h.time.length)
   } else {
-    ks = h.time.map((t, k) => k).filter((k) => h.time[k].startsWith(dateIso) && Number(h.time[k].slice(11, 13)) % 3 === 0)
+    ks = h.time.map((t, k) => k).filter((k) => h.time[k].startsWith(dateIso))
   }
   return (
-    <div className="wx-hours" role="list">
-      {ks.map((k) => {
-        const t = h.time[k]
-        const nextDay = nowTime && !t.startsWith(nowTime.slice(0, 10))
-        return (
-          <div key={t} className="wx-hour" role="listitem">
-            <b>{nextDay ? '내일 ' : ''}{t.slice(11, 13)}시</b>
-            <span aria-hidden="true">{sky(h.weather_code[k])[0]}</span>
-            <span>{Math.round(h.temperature_2m[k])}°</span>
-            <small className="muted">☔ {h.precipitation_probability[k] ?? 0}%</small>
-          </div>
-        )
-      })}
-    </div>
+    <section className="wx-hourly">
+      <h3 className="sub-title">⏰ 시간대별 날씨 <small className="muted">{nowTime ? '지금부터 24시간' : '하루 동안'}</small></h3>
+      <div className="wx-hours" role="list">
+        {ks.map((k) => {
+          const t = h.time[k]
+          const nextDay = nowTime && !t.startsWith(nowTime.slice(0, 10))
+          const [emoji, text] = sky(h.weather_code[k])
+          return (
+            <div key={t} className={`wx-hour${nextDay ? ' next' : ''}`} role="listitem">
+              <b>{nextDay ? '내일 ' : ''}{t.slice(11, 13)}시</b>
+              <span className="wx-h-emoji" aria-hidden="true">{emoji}</span>
+              <span className="wx-h-text">{text}</span>
+              <strong>{Math.round(h.temperature_2m[k])}°</strong>
+              <small className="muted">☔ {h.precipitation_probability[k] ?? 0}%</small>
+              <small className="muted">💨 {h.wind_speed_10m[k].toFixed(0)}m/s</small>
+            </div>
+          )
+        })}
+      </div>
+    </section>
   )
 }
 
