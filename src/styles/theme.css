@@ -606,8 +606,3 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .wx-search input:focus { outline: 2px solid var(--sea); outline-offset: 1px; }
 .sea-alerts { display: grid; gap: .5rem; }
 .smark { height: 20px; width: auto; max-width: 64px; object-fit: contain; flex: none; }
-.flight .fare { font-size: .85rem; }
-.flight .fare a { text-decoration: underline; }
-.fare-box { display: grid; gap: .3rem; padding: .7rem .9rem; border-radius: 14px; background: #fff7ed; border: 1px solid #fed7aa; }
-.fare-links { display: flex; flex-wrap: wrap; gap: .5rem 1rem; font-size: .88rem; }
-.fare-links a { color: #c2410c; text-decoration: underline; }
