@@ -1,4 +1,5 @@
 import LinkCards, { Tip } from './LinkCards'
+import IceRoads from './IceRoads'
 import MoveChecklist from './MoveChecklist'
 import SeaWaves from './SeaWaves'
 import PlaceMap from '../PlaceMap'
@@ -28,9 +29,7 @@ export function Sea() {
 export function Snow() {
   return (
     <section className="kit-block">
-      <Tip tone="maybe" icon="snow" title="겨울 산간도로는 눈·결빙이 잦아요">
-        1100도로·5.16도로 같은 산간도로는 눈이 오면 통제되거나 체인이 필요할 수 있어요. 출발 전에 CCTV로 확인하세요.
-      </Tip>
+      <IceRoads />
       <LinkCards items={[
         { emoji: '📹', name: '도로 CCTV·교통정보 보기', url: '/discover/traffic', note: '눈 감시 CCTV 위치와 운전 주의 사항' },
         { emoji: '🚦', name: '제주 교통정보센터', url: 'https://www.jejuits.go.kr', note: '도로 CCTV·소통·돌발 정보 (공식)' },
