@@ -31,9 +31,11 @@ export default function RootLayout() {
 
       <main className="main"><Outlet /></main>
 
-      <footer className="footer">
-        제주대 청년도약 부트캠프 1기 · 데이터 출처 한국관광공사 · 기상청 · 국가유산청 (공공데이터포털)
-      </footer>
+      {pathname !== '/' && ( // 홈은 화면을 꽉 채우는 3D 장면이라 하단 문구를 숨겨요 (다른 화면에는 데이터 출처 표기를 남겨요)
+        <footer className="footer">
+          제주대 청년도약 부트캠프 1기 · 데이터 출처 한국관광공사 · 기상청 · 국가유산청 (공공데이터포털)
+        </footer>
+      )}
 
       <div className="toasts" aria-live="polite">
         {toasts.map((t) => (
