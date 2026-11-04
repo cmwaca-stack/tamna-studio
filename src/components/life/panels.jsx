@@ -3,11 +3,16 @@ import IceRoads from './IceRoads'
 import LiveAlerts from './LiveAlerts'
 import MoveChecklist from './MoveChecklist'
 import SeaWaves from './SeaWaves'
+import WeatherDays from './WeatherDays'
 import PlaceMap from '../PlaceMap'
 
 const naver = (q) => `https://search.naver.com/search.naver?query=${encodeURIComponent(q)}`
 
 // ── 날씨·안전 ─────────────────────────────────────────
+export function Weather() {
+  return <section className="kit-block"><WeatherDays /></section>
+}
+
 export function Alerts() {
   return (
     <section className="kit-block">

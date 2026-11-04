@@ -4,15 +4,16 @@ import { useAppStore } from '../store/useAppStore'
 import AirQuality from './AirQuality'
 import FiveDayMarkets from './FiveDayMarkets'
 import PlaceMap from './PlaceMap'
-import { Airport, Alerts, Bills, Move, Parcel, Pharmacy, Sea, Shop, Ship, Snow, Town, Transit } from './life/panels'
+import { Airport, Alerts, Weather, Bills, Move, Parcel, Pharmacy, Sea, Shop, Ship, Snow, Town, Transit } from './life/panels'
 
 // 생활정보 메뉴: 4개 묶음 안에 항목을 모았어요. 주소 끝에 ?tab=항목키 를 붙이면 그 항목이 바로 열려요.
 const GROUPS = [
   { key: 'safe', label: '날씨·안전', emoji: '⛈️', tabs: [
-    { key: 'alerts', label: '기상특보·재난문자', emoji: '⚠️' },
+    { key: 'weather', label: '오늘의 날씨', emoji: '🌤️' },
     { key: 'sea', label: '바다 파도', emoji: '🌊' },
     { key: 'snow', label: '눈·결빙 도로', emoji: '❄️' },
     { key: 'air', label: '대기질', emoji: '😷' },
+    { key: 'alerts', label: '기상특보·재난문자', emoji: '⚠️' },
   ] },
   { key: 'move', label: '이동', emoji: '🚌', tabs: [
     { key: 'ship', label: '배편 운항', emoji: '🚢' },
@@ -70,7 +71,7 @@ function Fuel() {
 // 생활정보: 제주에 사는 사람에게 필요한 일상 정보 모음
 export default function LifeGuide({ cat }) {
   const [params, setParams] = useSearchParams()
-  const tab = ALL_TABS.some((t) => t.key === params.get('tab')) ? params.get('tab') : 'alerts'
+  const tab = ALL_TABS.some((t) => t.key === params.get('tab')) ? params.get('tab') : 'weather'
   const navigate = useNavigate()
   const setThemeKey = useAppStore((st) => st.setThemeKey)
   const current = ALL_TABS.find((t) => t.key === tab)
@@ -97,6 +98,7 @@ export default function LifeGuide({ cat }) {
         ))}
       </nav>
       <h2 className="life-title"><span aria-hidden="true">{current.emoji}</span> {current.label}</h2>
+      {tab === 'weather' && <Weather />}
       {tab === 'alerts' && <Alerts />}
       {tab === 'sea' && <Sea />}
       {tab === 'snow' && <Snow />}

@@ -569,3 +569,21 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .today-text small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .today-reason { font-size: .8rem; font-weight: 700; color: #c2410c; }
 .today-body:hover b { text-decoration: underline; }
+
+/* 생활정보 > 오늘의 날씨 */
+.wx-big { display: grid; gap: .8rem; padding: 1.1rem 1.2rem; border-radius: 22px; background: var(--card); border: 2px solid #cfe3f7; }
+.wx-main { display: flex; align-items: center; gap: 1rem; }
+.wx-emoji { font-size: 3.2rem; line-height: 1; }
+.wx-temp { margin: 0; font-family: 'Jua', Pretendard, sans-serif; font-size: 2.6rem; line-height: 1; }
+.wx-temp small { font-size: 1.2rem; margin-left: 2px; }
+.wx-text { margin: .2rem 0 0; font-weight: 700; }
+.wx-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .5rem; margin: 0; }
+.wx-facts > div { padding: .5rem .7rem; border-radius: 12px; background: #f1f7fd; }
+.wx-facts dt { color: var(--muted); font-size: .8rem; }
+.wx-facts dd { margin: .1rem 0 0; font-weight: 700; }
+.wx-tips { margin: 0; padding: 0; list-style: none; display: grid; gap: .25rem; font-size: .92rem; }
+.wx-hours { display: flex; gap: .5rem; overflow-x: auto; padding-bottom: .3rem; }
+.wx-hour { flex: none; min-width: 78px; display: grid; justify-items: center; gap: .15rem; padding: .6rem .5rem; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+.wx-week { display: grid; gap: .4rem; }
+.wx-day { display: grid; grid-template-columns: 1.2fr 1.4fr .8fr 1fr; align-items: center; gap: .5rem; padding: .65rem .9rem; border-radius: 14px; background: var(--card); border: 1px solid var(--line); font-size: .92rem; }
+@media (max-width: 560px) { .wx-day { grid-template-columns: 1fr 1fr; } }
