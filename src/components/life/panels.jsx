@@ -1,6 +1,7 @@
 import LinkCards, { Tip } from './LinkCards'
 import IceRoads from './IceRoads'
 import LiveAlerts from './LiveAlerts'
+import ShipLive from './ShipLive'
 import MoveChecklist from './MoveChecklist'
 import SeaWaves from './SeaWaves'
 import WeatherDays from './WeatherDays'
@@ -47,15 +48,10 @@ export function Snow() {
 export function Ship() {
   return (
     <section className="kit-block">
-      <Tip tone="maybe" icon="water" title="섬 가는 배는 바람과 파도에 자주 멈춰요">
-        우도·가파도·마라도·추자도는 날씨에 따라 결항이 잦아요. 가기 전날과 당일 아침에 꼭 확인하세요. 운항 정보는 배를 운영하는 회사 사이트가 가장 정확해서, 검색 결과로 연결해 드려요.
-      </Tip>
+      <ShipLive />
       <LinkCards items={[
-        { emoji: '🏝️', name: '우도 배편 운항', url: naver('우도 도항선 운항 현황'), note: '성산항·종달항에서 우도로 가는 배' },
-        { emoji: '🌾', name: '가파도·마라도 배편 운항', url: naver('가파도 마라도 여객선 운항'), note: '운진항에서 가는 배' },
-        { emoji: '🐟', name: '추자도 배편 운항', url: naver('추자도 여객선 운항'), note: '제주항·완도에서 가는 배' },
-        { emoji: '🚢', name: '제주↔육지 배편', url: naver('제주 여객선 운항 시간표'), note: '제주항·화순항에서 육지로 가는 여객선·차량 선적' },
-        { emoji: '🌊', name: '지금 바다 파도 높이 보기', url: '/discover/life?tab=sea', note: '배가 뜰지 가늠해 보세요' },
+        { emoji: '🚢', name: '제주여객터미널 (한국해운조합)', url: 'http://company.haewoon.co.kr/CompanySite/View.aspx?CompanyID=JEJU', note: '운항표·공지·예매 (공식, 위 목록의 출처)' },
+        { emoji: '🌊', name: '지금 바다 파도·해상 특보 보기', url: '/discover/life?tab=sea', note: '배가 뜰지 가늠해 보세요' },
       ]} />
     </section>
   )
@@ -69,7 +65,6 @@ export function Airport() {
         { emoji: '🅿️', name: '한국공항공사 (주차장 현황)', url: 'https://www.airport.co.kr', note: '제주공항 주차장이 얼마나 찼는지는 여기서 확인해요 (공식)' },
         { emoji: '🚕', name: '제주공항 이용 안내 검색', url: naver('제주공항 주차 혼잡 렌터카 하차'), note: '렌터카 하우스 위치, 주차 혼잡 시간대 소식' },
       ]} />
-      <Tip icon="clock" title="성수기·연휴에는 일찍 가세요">주차장이 가득 차면 입구에서 오래 기다릴 수 있어요. 대중교통이나 택시를 함께 생각해 보세요.</Tip>
     </section>
   )
 }

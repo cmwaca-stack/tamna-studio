@@ -19,6 +19,7 @@ export const fetchVjFood = (keyword = '', src = 'vj') => get(`/api/olle?kind=foo
 export const fetchPlacesIn = (q, rect) => get(`/api/olle?kind=places&q=${encodeURIComponent(q)}&rect=${rect}`) // 생활정보 지도: 카카오 장소 검색(지도 범위 안)
 export const fetchAir = () => get('/api/olle?kind=air') // 에어코리아 제주시·서귀포시 실측값 + 경보 기록 (data.go.kr)
 export const fetchAlerts = () => get('/api/olle?kind=alerts') // 제주 기상특보(기상청) + 재난문자(행정안전부, data.go.kr)
+export const fetchShips = () => get('/api/olle?kind=ship') // 제주항 여객선 운항 현황 (한국해운조합 제주여객터미널)
 export const fetchEvStations = () => get('/api/olle?kind=ev') // 한국전력 제주 전기차 충전소 목록(위치·이용 시간, data.go.kr)
 export const fetchHospitalData = (kind) => get(`/api/olle?kind=${kind}`) // 제주 의료기관 자료: emergency 응급 · stats 개소 현황 · public 공공의료기관 (data.go.kr)
 export const fetchWeather = (place = '제주시') => get(`/api/weather?place=${encodeURIComponent(place)}`) //                      ② 기상청
