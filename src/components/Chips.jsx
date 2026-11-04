@@ -17,11 +17,13 @@ const LINKS = {
 const theme = (key) => THEMES.find((t) => t.key === key)
 const ORDER = ['life', 'traffic', 'flight', 'hospital', 'policy', 'tamna', 'food', 'weekend', 'photo', 'oreum', 'myth', 'jeju43', 'history', 'olle'] // 홈 메뉴와 같은 순서: 생활·실시간 → 이야기·답사
 
+const STORY = ['oreum', 'myth', 'jeju43', 'history', 'olle'] // 이야기·답사 칩 (생활정보 화면들에서는 숨겨요)
+
 // 소재 테마 선택 줄 (store 의 themeKey 와 함께 씁니다). 테마는 3D 지도 핀으로, 나머지 메뉴(맛집·항공편 등)는 해당 화면으로 이동합니다.
-export default function Chips({ value, onChange, children }) {
+export default function Chips({ value, onChange, hideStories = false, children }) {
   return (
     <div className="chips" role="tablist" aria-label="소재 테마">
-      {ORDER.map((key) => {
+      {ORDER.filter((key) => !(hideStories && STORY.includes(key) && key !== value)).map((key) => {
         const t = theme(key)
         const link = LINKS[key] ?? (t?.href ? { to: t.href, label: t.label, icon: t.icon, color: t.color } : null)
         if (link) {

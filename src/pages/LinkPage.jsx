@@ -29,7 +29,7 @@ export default function LinkPage() {
         <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
         <h1><i className={`bi bi-${page.icon}`} style={{ color: page.color }} />{page.title}</h1>
         <p className="muted">{page.desc}</p>
-        {kind === 'hospital' && <Chips value="hospital" onChange={(k) => { setThemeKey(k); navigate('/kit') }} />}
+        {kind === 'hospital' && <Chips value="hospital" hideStories onChange={(k) => { setThemeKey(k); navigate('/kit') }} />}
       </header>
       {kind === 'hospital' && <HospitalData />}
       {page.groups.map((g) => (

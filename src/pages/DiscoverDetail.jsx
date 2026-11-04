@@ -27,7 +27,7 @@ function Head({ cat }) {
       <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
       <h1><i className={`bi bi-${cat.icon}`} style={{ color: cat.color }} />{cat.title}</h1>
       <p className="muted">{cat.desc}</p>
-      <Chips value={cat.slug} onChange={goTheme} />
+      <Chips value={cat.slug} hideStories onChange={goTheme} />
     </header>
   )
 }

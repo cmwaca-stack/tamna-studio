@@ -80,7 +80,7 @@ export default function LifeGuide({ cat }) {
         <Link to="/" className="back"><i className="bi bi-arrow-left" />홈</Link>
         <h1><i className={`bi bi-${cat.icon}`} style={{ color: cat.color }} />{cat.title}</h1>
         <p className="muted">{cat.desc}</p>
-        <Chips value="life" onChange={(k) => { setThemeKey(k); navigate('/kit') }} />
+        <Chips value="life" hideStories onChange={(k) => { setThemeKey(k); navigate('/kit') }} />
       </header>
       <nav className="life-nav" aria-label="생활정보 메뉴">
         {GROUPS.map((g) => (

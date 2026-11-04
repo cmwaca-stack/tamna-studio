@@ -60,7 +60,7 @@ export default function Tamna() {
       <header className="page-head">
         <h1><i className="bi bi-coin" style={{ color: '#ff7b54' }} />탐나는전 <small className="muted">· 제주 지역화폐</small></h1>
         <p className="muted">탐나는전을 쓸 수 있는 가맹점을 찾아보세요. 이름이나 동네로 검색하고, 업종·캐시백·QR 결제 여부로 골라 볼 수 있어요.</p>
-        <Chips value="tamna" onChange={goTheme} />
+        <Chips value="tamna" hideStories onChange={goTheme} />
       </header>
 
       <section className="kit-block" aria-label="탐나는전 소개">
