@@ -329,7 +329,13 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .flight.late{border-left-color:#f08c00;background:#fff4e6}
 .flight.cancel{border-left-color:#e03131;background:#fff5f5}
 .flight .ft{font-size:1.05rem}
-.flight .fm{display:flex;flex-direction:column}
+.flight .fm{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px}
+.flight .fm b{font-size:1.02rem}
+.flight .fa{display:inline-flex;align-items:center;gap:6px;font-size:.9rem}
+.flight .fno{font-weight:700;font-size:.9rem;letter-spacing:.02em}
+.flight .fg{font-size:.85rem;color:var(--muted)}
+.amark{width:20px;height:20px;border-radius:5px;object-fit:contain;background:#fff;flex:none}
+.amark-fallback{display:inline-grid;place-items:center;background:var(--sea);color:#fff;font-size:.75rem;font-weight:800}
 .flight .fs{font-weight:700;font-size:.9rem;text-align:right}
 .flight.cancel .fs{color:#e03131}.flight.late .fs{color:#d9480f}
 

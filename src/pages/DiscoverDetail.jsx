@@ -9,6 +9,7 @@ import WeatherChip from '../components/WeatherChip'
 import { ApiError, Empty, Loading } from '../components/Status'
 import { withFoodExtra } from '../lib/foodExtra'
 import { fetchCulture, fetchFlights, fetchPlaces, fetchVjFood, fetchPolicies } from '../api/client'
+import { AIRLINE_LOGO } from '../data/airlines'
 import { TYPE_LABEL, youthOf } from '../data/youth'
 import { useAsync } from '../hooks/useAsync'
 import { useWeather } from '../hooks/useWeather'
@@ -210,6 +211,14 @@ function TrafficGuide({ cat }) {
   )
 }
 
+// 항공사 공식 마크 (없거나 불러오지 못하면 이름 첫 글자)
+function AirlineMark({ name }) {
+  const [broken, setBroken] = useState(false)
+  const src = AIRLINE_LOGO[name]
+  if (!src || broken) return <span className="amark amark-fallback" aria-hidden="true">{String(name ?? '?').charAt(0)}</span>
+  return <img className="amark" src={src} alt="" width="20" height="20" loading="lazy" onError={() => setBroken(true)} />
+}
+
 // 제주공항 항공편: 출발/도착 탭 + 지연·결항 표시
 function FlightGuide({ cat }) {
   const [dir, setDir] = useState('depart')
@@ -239,7 +248,7 @@ function FlightGuide({ cat }) {
               {rows.map((f, i) => (
                 <div key={`${f.no}-${f.plan}-${i}`} className={`flight${f.cancel ? ' cancel' : f.delay ? ' late' : ''}`}>
                   <strong className="ft">{f.plan}</strong>
-                  <div className="fm"><b>{f.place}</b><span className="muted small">{f.airline} {f.no}{f.gate ? ` · 게이트 ${f.gate}` : ''}</span></div>
+                  <div className="fm"><b>{f.place}</b><span className="fa"><AirlineMark name={f.airline} />{f.airline}</span><span className="fno">{f.no}</span><span className="fg">{f.gate ? `게이트 ${f.gate}` : '게이트 미정'}</span></div>
                   <span className="fs">{f.status || '-'}{f.late >= 15 && !f.cancel ? ` (+${f.late}분)` : ''}{f.real && f.real !== f.plan && !f.cancel ? <small className="muted"> {f.real}</small> : null}</span>
                 </div>
               ))}
