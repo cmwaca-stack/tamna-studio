@@ -143,10 +143,6 @@ export default function WeatherDays() {
   ))
   return (
     <>
-      <form className="wx-search" role="search" onSubmit={(e) => { e.preventDefault(); if (hits[0]) pick(hits[0].name) }}>
-        <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="지역 검색 (예: 애월, 중문, 성산)" aria-label="지역 검색" />
-        <button type="submit" className="btn btn-primary btn-sm"><i className="bi bi-search" /> 지역 검색</button>
-      </form>
       {word ? (
         hits.length
           ? <div className="chips" role="tablist" aria-label="검색 결과">{chips(hits)}</div>
@@ -159,7 +155,13 @@ export default function WeatherDays() {
           <div className="chips" role="tablist" aria-label="서귀포시 지역">{chips(REGIONS.filter((r) => r.city === '서귀포시'))}</div>
         </>
       )}
-      <h3 className="sub-title">📍 {city}{city !== REGIONS.find((r) => r.name === city)?.city && ` (${REGIONS.find((r) => r.name === city)?.city})`} 날씨</h3>
+      <div className="wx-title">
+        <h3 className="sub-title">📍 {city}{city !== REGIONS.find((r) => r.name === city)?.city && ` (${REGIONS.find((r) => r.name === city)?.city})`} 날씨</h3>
+        <form className="wx-search" role="search" onSubmit={(e) => { e.preventDefault(); if (hits[0]) pick(hits[0].name) }}>
+          <i className="bi bi-search" aria-hidden="true" />
+          <input type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="지역 검색" aria-label="지역 검색 (예: 애월, 중문, 성산)" />
+        </form>
+      </div>
       <div className="seg" role="tablist" aria-label="기간">
         {[['today', '오늘'], ['tomorrow', '내일'], ['week', '이번 주']].map(([k, label]) => (
           <button key={k} type="button" role="tab" aria-selected={view === k} className={view === k ? 'on' : ''} onClick={() => setView(k)}>{label}</button>

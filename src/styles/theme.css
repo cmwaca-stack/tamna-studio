@@ -592,6 +592,9 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 
 .wx-days { grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); }
 .wx-hour.today { border-color: #1c7ed6; background: #f1f7fd; }
-.wx-search { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }
-.wx-search input { flex: 1 1 220px; min-width: 0; padding: .55rem .9rem; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: inherit; }
+.wx-title { display: flex; align-items: center; justify-content: flex-start; gap: .8rem; flex-wrap: wrap; }
+.wx-title .sub-title { margin: 0; }
+.wx-search { position: relative; display: inline-flex; align-items: center; }
+.wx-search i { position: absolute; left: .7rem; color: var(--muted); font-size: .85rem; pointer-events: none; }
+.wx-search input { width: 9.5rem; padding: .35rem .8rem .35rem 2rem; border-radius: 999px; border: 1px solid var(--line); background: #fff; font: inherit; font-size: .85rem; }
 .wx-search input:focus { outline: 2px solid var(--sea); outline-offset: 1px; }
