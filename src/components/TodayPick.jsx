@@ -4,7 +4,7 @@ import { useAsync } from '../hooks/useAsync'
 import { mapLink, mapSearch } from '../lib/kakaoLink'
 
 // 홈 "오늘 제주, 어떤가요?" 아래 추천 카드.
-//  후보 세 묶음을 섞어서, "다른 곳 추천받기"를 누를 때마다 안 본 곳부터 차례로 보여줘요 (다 보기 전에는 같은 곳이 다시 나오지 않아요).
+//  후보 세 묶음을 섞어서, "다음 추천"를 누를 때마다 안 본 곳부터 차례로 보여줘요 (다 보기 전에는 같은 곳이 다시 나오지 않아요).
 //   ① 날씨에 맞는 곳: 비·눈·강풍이면 전시·문화시설(실내), 아니면 명소 — 한국관광공사, 사진 있는 곳 중 최근 정보가 갱신된 순 200곳
 //   ② 맛집·카페 — 한국관광공사 음식점, 같은 기준 200곳
 //   ③ 지금 열리고 있는 전시·공연·축제 — 제주in놀다 / 한국문화정보원 (오늘이 기간 안에 든 것만)
@@ -74,7 +74,7 @@ export default function TodayPick({ weather }) {
     <div className="today-pick">
       <div className="today-head">
         <strong><span aria-hidden="true">🎲</span> 오늘의 추천</strong>
-        {pick && <button type="button" className="today-again" onClick={again}>다른 곳 추천받기</button>}
+        {pick && <button type="button" className="today-again" onClick={again}>다음 추천</button>}
       </div>
       {!pick
         ? <p className="muted small">{st.error || (st.data && !pick) ? '추천할 곳을 찾지 못했어요.' : '가볼 만한 곳을 고르는 중…'}</p>
