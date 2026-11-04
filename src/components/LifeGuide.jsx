@@ -5,6 +5,7 @@ import AirQuality from './AirQuality'
 import FiveDayMarkets from './FiveDayMarkets'
 import PlaceMap from './PlaceMap'
 import FuelPrices from './life/FuelPrices'
+import { Bank, Car, Clinic, Housing, Jobs, News, Pet, Sports, TaxInsurance, Welfare } from './life/panels2'
 import { Airport, Alerts, Its, Traffic, Weather, Bills, Move, Parcel, Pharmacy, Sea, Shop, Ship, Snow, Town, Transit } from './life/panels'
 
 // 생활정보 메뉴: 4개 묶음 안에 항목을 모았어요. 주소 끝에 ?tab=항목키 를 붙이면 그 항목이 바로 열려요.
@@ -26,15 +27,25 @@ const GROUPS = [
   ] },
   { key: 'daily', label: '일상', emoji: '🛒', tabs: [
     { key: 'pharmacy', label: '약국·응급실', emoji: '💊' },
+    { key: 'clinic', label: '병원·진료과', emoji: '🩺' },
     { key: 'shop', label: '마트·세탁', emoji: '🏪' },
     { key: 'market', label: '오일장', emoji: '🛒' },
     { key: 'trash', label: '쓰레기·분리배출', emoji: '♻️' },
+    { key: 'bank', label: '은행·우체국', emoji: '🏦' },
+    { key: 'sports', label: '도서관·운동', emoji: '📚' },
+    { key: 'pet', label: '반려동물', emoji: '🐶' },
   ] },
   { key: 'living', label: '제주살이', emoji: '🏡', tabs: [
     { key: 'moving', label: '이사 체크리스트', emoji: '📦' },
+    { key: 'housing', label: '집 구하기', emoji: '🏠' },
     { key: 'bills', label: '요금·서류', emoji: '📝' },
+    { key: 'jobs', label: '일자리·창업', emoji: '💼' },
+    { key: 'welfare', label: '복지·지원금', emoji: '🤝' },
+    { key: 'tax', label: '세금·보험·연금', emoji: '🧾' },
+    { key: 'car', label: '차량·운전', emoji: '🚗' },
     { key: 'parcel', label: '택배·배송', emoji: '📮' },
     { key: 'town', label: '동네 소식', emoji: '📣' },
+    { key: 'news', label: '오늘의 제주 뉴스', emoji: '📰' },
   ] },
 ]
 const ALL_TABS = GROUPS.flatMap((g) => g.tabs)
@@ -121,6 +132,16 @@ export default function LifeGuide({ cat }) {
       {tab === 'bills' && <Bills />}
       {tab === 'parcel' && <Parcel />}
       {tab === 'town' && <Town />}
+      {tab === 'clinic' && <Clinic />}
+      {tab === 'bank' && <Bank />}
+      {tab === 'sports' && <Sports />}
+      {tab === 'pet' && <Pet />}
+      {tab === 'housing' && <Housing />}
+      {tab === 'jobs' && <Jobs />}
+      {tab === 'welfare' && <Welfare />}
+      {tab === 'tax' && <TaxInsurance />}
+      {tab === 'car' && <Car />}
+      {tab === 'news' && <News />}
     </div>
   )
 }

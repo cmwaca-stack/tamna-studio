@@ -622,3 +622,7 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .city-block { display: grid; gap: .6rem; margin-top: 1rem; }
 .city-title { margin: 0; font-size: 1.2rem; }
 .city-title i { color: var(--sea); }
+.news-list { list-style: none; margin: 0; padding: 0; display: grid; gap: .45rem; }
+.news-list li { display: grid; gap: .15rem; padding: .65rem .85rem; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
+.news-list a { font-weight: 700; line-height: 1.35; }
+.news-list a:hover { text-decoration: underline; }
