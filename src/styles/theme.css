@@ -528,19 +528,8 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 
 .notice.calm { background: #ebfbee; border-color: #b2f2bb; color: #2b8a3e; }
 
-/* 홈 메뉴판: 지금 제주(실시간) + 메뉴 그룹 라벨 */
+/* 홈 메뉴판: 메뉴 그룹 라벨 */
 .chip-label { margin: .2rem 0 -.3rem; font-size: .78rem; font-weight: 700; color: var(--muted); letter-spacing: .02em; }
-.live-now { display: grid; gap: .4rem; padding: .6rem .8rem; border-radius: 14px; background: rgba(255,255,255,.7); border: 1px solid var(--line); }
-.live-head { display: flex; align-items: center; justify-content: space-between; gap: .5rem; font-size: .9rem; }
-.live-dot { display: inline-block; width: .55rem; height: .55rem; margin-right: .4rem; border-radius: 50%; background: #2b9348; animation: live-pulse 1.8s ease-in-out infinite; }
-.live-more { font-size: .8rem; color: var(--muted); text-decoration: none; }
-.live-more:hover { color: var(--text); }
-.live-air { display: flex; flex-wrap: wrap; gap: .3rem .9rem; font-size: .86rem; }
-.live-air-item b { margin-left: .15rem; }
-.live-air-item.tone-bad b, .live-air-item.tone-worse b { color: #c92a2a; }
-.link-btn { padding: 0; border: 0; background: none; color: inherit; font: inherit; text-decoration: underline; cursor: pointer; }
-@keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
-@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
 
 /* 생활정보: 4개 묶음 메뉴 */
 .life-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: .8rem; margin-bottom: 1.2rem; }
@@ -563,3 +552,4 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .check-item { display: flex; align-items: flex-start; gap: .6rem; padding: .35rem .2rem; cursor: pointer; font-size: .92rem; }
 .check-item input { width: 1.15rem; height: 1.15rem; margin-top: .1rem; accent-color: #2b9348; flex: none; }
 .check-item.done span { color: var(--muted); text-decoration: line-through; }
+.sub-title { margin: .4rem 0 0; font-size: 1.05rem; }

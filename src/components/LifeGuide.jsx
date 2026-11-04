@@ -22,7 +22,7 @@ const GROUPS = [
   ] },
   { key: 'daily', label: '일상', emoji: '🛒', tabs: [
     { key: 'pharmacy', label: '약국·응급실', emoji: '💊' },
-    { key: 'shop', label: '마트·편의점·세탁', emoji: '🏪' },
+    { key: 'shop', label: '마트·세탁', emoji: '🏪' },
     { key: 'market', label: '오일장', emoji: '🛒' },
     { key: 'trash', label: '쓰레기·분리배출', emoji: '♻️' },
   ] },

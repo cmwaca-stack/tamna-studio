@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import LazyScene from '../components/LazyScene'
-import LiveNow from '../components/LiveNow'
 import RegionWeather from '../components/RegionWeather'
 import { THEMES, spotSetsOf, themeOf } from '../data/themes'
 import { YOUTH } from '../data/youth'
@@ -61,7 +60,6 @@ export default function Home() {
           {open && <>
           <p className="hello">오늘 제주, 어떤가요? 🌼</p>
           <p className="lead">대기질·교통·항공·병원·청년정책까지, 제주에서 사는 데 필요한 정보를 한곳에서 확인해요.</p>
-          <LiveNow />
           <p className="chip-label">생활·실시간 정보</p>
           <div className="chips" role="group" aria-label="생활·실시간 정보">
             {LIFE_MENU.map((m) => <Link key={m.id} to={m.to} className="chip on-hover" style={{ '--c': m.color }}>{chipBody(m)}</Link>)}

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import PlaceMap from './PlaceMap'
 
 // 제주 오일장(5일장): 5일 간격으로 열려요. 장날 정보는 여러 안내 자료를 바탕으로 한 것이라 달라질 수 있어요.
 const MARKETS = [
@@ -41,6 +42,7 @@ export default function FiveDayMarkets() {
   const nowCount = list.filter((m) => m.now).length
   return (
     <section className="kit-block">
+      <PlaceMap options={[{ label: '오일시장 위치', keyword: '오일시장' }, { label: '오일장·5일장 더 찾기', keyword: '오일장' }]} />
       <p className="notice" style={{ display: 'block' }}>
         {nowCount ? <>오늘({today.getMonth() + 1}월 {today.getDate()}일)은 <b>{list.filter((m) => m.now).map((m) => m.name).join(', ')}</b>의 장날이에요 🛒</> : <>오늘({today.getMonth() + 1}월 {today.getDate()}일)은 열리는 오일장이 없어요. 아래에서 다음 장날을 확인하세요.</>}
       </p>

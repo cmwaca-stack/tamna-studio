@@ -100,7 +100,7 @@ export function Pharmacy() {
 export function Shop() {
   return (
     <section className="kit-block">
-      <PlaceMap options={[{ label: '대형마트', keyword: '대형마트' }, { label: '하나로마트', keyword: '하나로마트' }, { label: '편의점', keyword: '편의점' }, { label: '빨래방·세탁소', keyword: '세탁소' }, { label: '은행·ATM', keyword: '은행' }]} />
+      <PlaceMap options={[{ label: '대형마트', keyword: '대형마트' }, { label: '하나로마트', keyword: '하나로마트' }, { label: '빨래방·세탁소', keyword: '세탁소' }, { label: '은행·ATM', keyword: '은행' }]} />
       <p className="muted small">지도 범위 안에서 찾아요. 영업시간은 가게마다 달라서 지도 정보를 한 번 더 확인하세요.</p>
     </section>
   )
@@ -149,12 +149,20 @@ export function Parcel() {
 export function Town() {
   return (
     <section className="kit-block">
+      <h3 className="sub-title">🏘️ 이웃들의 동네 이야기</h3>
+      <LinkCards items={[
+        { emoji: '🥕', name: '당근 · 동네생활', url: 'https://www.daangn.com/kr/community/', note: '우리 동네 이웃들의 질문·모임·가게 소식 (동네는 당근 앱에서 설정해요)' },
+        { emoji: '☕', name: '다음 카페 · 제주 맘카페', url: `https://search.daum.net/search?w=cafe&q=${encodeURIComponent('제주 맘카페')}`, note: '제주 지역 맘카페 검색 결과' },
+        { emoji: '🟢', name: '네이버 카페 · 제주 맘카페', url: `https://search.naver.com/search.naver?ssc=tab.cafe.all&query=${encodeURIComponent('제주 맘카페')}`, note: '제주 지역 맘카페 검색 결과' },
+      ]} />
+      <p className="muted small">맘카페는 대부분 가입해야 글을 볼 수 있어요. 검색 결과에서 마음에 드는 카페를 골라 가입하세요.</p>
+      <h3 className="sub-title">📣 공고·뉴스</h3>
       <LinkCards items={[
         { emoji: '🏛️', name: '제주특별자치도청', url: 'https://www.jeju.go.kr', note: '도 전체 공고·모집·행사' },
         { emoji: '🏙️', name: '제주시청', url: 'https://www.jejusi.go.kr', note: '제주시 공고와 행사 안내' },
         { emoji: '🍊', name: '서귀포시청', url: 'https://www.seogwipo.go.kr', note: '서귀포시 공고와 행사 안내' },
         { emoji: '📰', name: '제주언론사 모아보기', url: '/links/press', note: '우리 동네 뉴스를 한곳에서' },
-        { emoji: '💬', name: '제주커뮤니티 모아보기', url: '/links/community', note: '이웃들의 생활 이야기·중고·모임' },
+        { emoji: '💬', name: '제주커뮤니티 모아보기', url: '/links/community', note: '이웃들의 생활 이야기와 정착 정보' },
         { emoji: '💰', name: '청년정책', url: '/discover/policy', note: '놓치기 쉬운 청년 지원 정책' },
       ]} />
     </section>
