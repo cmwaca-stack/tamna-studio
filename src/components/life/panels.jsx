@@ -1,5 +1,6 @@
 import LinkCards, { Tip } from './LinkCards'
 import FlightBoard from '../FlightBoard'
+import TrafficBoard from '../TrafficBoard'
 import IceRoads from './IceRoads'
 import LiveAlerts from './LiveAlerts'
 import ShipTabs from './ShipTabs'
@@ -71,6 +72,21 @@ export function Transit() {
         <iframe src="https://bus.jeju.go.kr/search/realTimeBusLocation" title="제주 실시간 버스 위치" loading="lazy" referrerPolicy="no-referrer" />
       </div>
       <p className="muted small">제주버스정보(bus.jeju.go.kr)의 실시간 버스 위치 화면이에요. 화면이 안 보이면 <a href="https://bus.jeju.go.kr/search/realTimeBusLocation" target="_blank" rel="noreferrer">새 창에서 열기 ↗</a></p>
+    </section>
+  )
+}
+
+export function Traffic() {
+  return <section className="kit-block"><TrafficBoard /></section>
+}
+
+export function Its() {
+  return (
+    <section className="kit-block">
+      <div className="bus-frame">
+        <iframe src="https://www.jejuits.go.kr" title="제주 교통정보센터" loading="lazy" referrerPolicy="no-referrer" />
+      </div>
+      <p className="muted small">제주 교통정보센터(jejuits.go.kr) 화면이에요. 화면이 안 보이면 <a href="https://www.jejuits.go.kr" target="_blank" rel="noreferrer">새 창에서 열기 ↗</a></p>
     </section>
   )
 }
