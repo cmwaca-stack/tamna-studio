@@ -152,10 +152,10 @@ export function Town() {
       <h3 className="sub-title">🏘️ 이웃들의 동네 이야기</h3>
       <LinkCards items={[
         { emoji: '🥕', name: '당근 · 동네생활', url: 'https://www.daangn.com/kr/community/', note: '우리 동네 이웃들의 질문·모임·가게 소식 (동네는 당근 앱에서 설정해요)' },
-        { emoji: '☕', name: '다음 카페 · 제주 맘카페', url: `https://search.daum.net/search?w=cafe&q=${encodeURIComponent('제주 맘카페')}`, note: '제주 지역 맘카페 검색 결과' },
-        { emoji: '🟢', name: '네이버 카페 · 제주 맘카페', url: `https://search.naver.com/search.naver?ssc=tab.cafe.all&query=${encodeURIComponent('제주 맘카페')}`, note: '제주 지역 맘카페 검색 결과' },
+        { emoji: '☕', name: '다음 카페 · 제주맘', url: 'https://cafe.daum.net/jejumam', note: '제주 지역 맘카페 (다음 카페)' },
+        { emoji: '🟢', name: '네이버 카페 · 제주맘', url: 'https://cafe.naver.com/jejumam', note: '제주 지역 맘카페 (네이버 카페)' },
       ]} />
-      <p className="muted small">맘카페는 대부분 가입해야 글을 볼 수 있어요. 검색 결과에서 마음에 드는 카페를 골라 가입하세요.</p>
+      <p className="muted small">맘카페는 가입해야 글을 볼 수 있는 경우가 많아요. 가입 조건은 카페 안내를 확인하세요.</p>
       <h3 className="sub-title">📣 공고·뉴스</h3>
       <LinkCards items={[
         { emoji: '🏛️', name: '제주특별자치도청', url: 'https://www.jeju.go.kr', note: '도 전체 공고·모집·행사' },
