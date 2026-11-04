@@ -9,6 +9,7 @@ import ItemCard from '../components/ItemCard'
 import WeatherChip from '../components/WeatherChip'
 import { ApiError, Empty, Loading } from '../components/Status'
 import { withFoodExtra } from '../lib/foodExtra'
+import { withFoodRating } from '../lib/foodRating'
 import { fetchCulture, fetchPlaces, fetchVjFood, fetchPolicies } from '../api/client'
 import { TYPE_LABEL, youthOf } from '../data/youth'
 import { useAsync } from '../hooks/useAsync'
@@ -107,7 +108,7 @@ function PlaceTabs({ cat }) {
   const tab = cat.tabs[i]
   const isCulture = tab.source === 'culture'
   const isVj = FOOD_SRC.includes(tab.source)
-  const places = useAsync(() => (isCulture ? fetchCulture() : isVj ? foodTab(tab) : tab.type === '39' ? fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '').then(withFoodExtra) : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '', !!tab.event)), [tab.keyword, tab.type, tab.rows, tab.arrange, isCulture, isVj, tab.source, tab.event])
+  const places = useAsync(() => (isCulture ? fetchCulture() : isVj ? foodTab(tab) : tab.type === '39' ? fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '').then(withFoodExtra).then((l) => (tab.minRating ? withFoodRating(l, tab.minRating) : l)) : fetchPlaces(tab.keyword, tab.type, tab.rows ?? 12, tab.arrange ?? '', !!tab.event)), [tab.keyword, tab.type, tab.rows, tab.arrange, tab.minRating, isCulture, isVj, tab.source, tab.event])
   // '기타' 탭(other): 같은 화면의 다른 탭 검색어(흑돼지·횟집·카페 등)에 걸리는 곳을 빼고 나머지만 보여줘요
   const taken = cat.tabs.filter((t) => t.keyword && !t.other).flatMap((t) => t.keyword.split('|').map((w) => w.trim()).filter(Boolean))
   const takenCats = cat.tabs.filter((t) => t.cat3).map((t) => t.cat3) // 업종 분류(예: 카페)로 나눈 탭
@@ -136,13 +137,14 @@ function PlaceTabs({ cat }) {
         </label>
       </div>
 
+      {tab.minRating && <p className="muted small">다음지도(카카오맵) 평점 <b>{tab.minRating.toFixed(1)} 이상</b>인 음식점만 평점 높은 순으로 보여줘요. 평점은 미리 모아 둔 값이라 실제와 조금 다를 수 있고, 평점이 없는 가게는 나오지 않아요.</p>}
       <ApiError error={places.error} onRetry={places.reload} />
       {places.loading ? <Loading /> : places.error ? null : !list?.length ? (
         <Empty text={word ? `‘${q.trim()}’ 검색 결과가 없어요. 다른 검색어를 써 보세요.` : `‘${tab.label}’ 검색 결과가 없어요. 다른 탭을 눌러 보세요.`} />
       ) : (
         <div className="cards">
           {list.map((p) => (
-            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} noMap={cat.slug === 'food'} placeUrl={p.placeUrl} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} href={p.link} hrefLabel={p.linkKind === 'search' ? '검색으로 알아보기' : '공식 안내 보기'} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.info && <VjInfo p={p} />}{(p.price || p.tel) && <p className="muted small">{p.price && `💰 ${p.price}`}{p.price && p.tel && ' · '}{p.tel && `📞 ${p.tel}`}</p>}</ItemCard>
+            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} noMap={cat.slug === 'food'} placeUrl={p.placeUrl} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} href={p.link} hrefLabel={p.linkKind === 'search' ? '검색으로 알아보기' : '공식 안내 보기'} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.rating?.s != null && <p className="small"><b>⭐ 다음지도 평점 {p.rating.s.toFixed(1)}</b> <span className="muted">(리뷰 {p.rating.n}개)</span></p>}{p.info && <VjInfo p={p} />}{(p.price || p.tel) && <p className="muted small">{p.price && `💰 ${p.price}`}{p.price && p.tel && ' · '}{p.tel && `📞 ${p.tel}`}</p>}</ItemCard>
           ))}
         </div>
       )}
