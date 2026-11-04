@@ -40,6 +40,9 @@ function Sky() {
   )
 }
 
+// 읽은 범위를 같이 알려 줘요 (전국 최근 몇 건, 몇 시간 전 것까지)
+const msgEmpty = (m) => (m.scanned ? `최근 ${m.hours}시간 동안 제주에 온 재난문자가 없어요. (전국 최근 ${m.scanned}건 확인)` : '조회된 재난문자가 없어요.')
+
 function Block({ title, res, empty, children }) {
   return (
     <div className="alert-block">
@@ -67,7 +70,7 @@ export default function LiveAlerts() {
             <ul className="alert-list">{st.data.warnings.items.map((w) => <li key={w.at + w.title}><b>{w.time}</b> {w.title}</li>)}</ul>
             <p className="muted small">발표된 기록이에요. 지금도 유효한지(해제됐는지)는 기상청 사이트에서 확인하세요.</p>
           </Block>
-          <Block title="📱 재난문자 (최근 48시간, 행정안전부)" res={st.data.messages} empty="최근 48시간 동안 제주에 온 재난문자가 없어요.">
+          <Block title="📱 재난문자 (행정안전부)" res={st.data.messages} empty={msgEmpty(st.data.messages)}>
             <ul className="alert-list">{st.data.messages.items.map((m) => <li key={m.time + m.msg}><b>{m.time.slice(5, 16).replace('/', '월 ').replace(' ', '일 ')}</b> <span className="muted">{m.where}</span><br />{m.msg}</li>)}</ul>
           </Block>
         </>

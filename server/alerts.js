@@ -21,7 +21,7 @@ function findRows(node, test) {
   return null
 }
 const fmtTmFc = (v) => { const s = String(v); return s.length >= 12 ? `${s.slice(4, 6)}월 ${s.slice(6, 8)}일 ${s.slice(8, 10)}:${s.slice(10, 12)}` : s }
-const wrap = async (fn) => { try { return { ok: true, items: await fn() } } catch (e) { return { ok: false, error: e.message, keyProblem: !!e.keyProblem } } }
+const wrap = async (fn) => { try { const r = await fn(); return Array.isArray(r) ? { ok: true, items: r } : { ok: true, ...r } } catch (e) { return { ok: false, error: e.message, keyProblem: !!e.keyProblem } } }
 
 async function warnings() {
   const now = new Date()
@@ -33,19 +33,35 @@ async function warnings() {
   return toList(json?.response?.body?.items?.item).map((r) => ({ title: String(r.title ?? '').trim(), time: fmtTmFc(r.tmFc), at: String(r.tmFc ?? '') })).filter((r) => r.title)
 }
 
+const MSG_HOURS = 48
+const dayNum = (t) => String(t).replace(/\D/g, '')
+
+// 전국 재난문자를 최신순으로 여러 쪽 읽으며 제주 것만 골라요. 읽은 범위(몇 건, 얼마나 오래된 것까지)도 같이 돌려줘서 "없어요"가 믿을 만한지 화면에서 알 수 있어요.
 async function messages() {
   let lastError
   for (const base of MSG_URLS) {
     try {
-      const url = `${base}?serviceKey=${encodeURIComponent(dataKey())}&pageNo=1&numOfRows=100&type=json&returnType=json`
-      const json = await fetchJson(url, '재난문자')
-      const rows = findRows(json, (x) => x && typeof x === 'object' && 'msg' in x) ?? []
-      const since = ymd(new Date(Date.now() - 48 * 3600e3))
-      return rows
-        .filter((r) => String(r.location_name ?? r.region_name ?? '').includes('제주'))
-        .map((r) => ({ time: String(r.create_date ?? ''), where: String(r.location_name ?? r.region_name ?? ''), msg: String(r.msg ?? '').trim() }))
-        .filter((r) => r.msg && r.time.replace(/\D/g, '').slice(0, 8) >= since)
-        .slice(0, 10)
+      const since = kst(new Date(Date.now() - MSG_HOURS * 3600e3)).toISOString().replace(/\D/g, '').slice(0, 12) // 48시간 전(한국 시각) YYYYMMDDHHmm
+      const items = []
+      let scanned = 0
+      let oldest = ''
+      for (let page = 1; page <= 8; page += 1) {
+        const url = `${base}?serviceKey=${encodeURIComponent(dataKey())}&pageNo=${page}&numOfRows=100&type=json&returnType=json`
+        const json = await fetchJson(url, '재난문자')
+        const rows = findRows(json, (x) => x && typeof x === 'object' && 'msg' in x) ?? []
+        if (!rows.length) break
+        scanned += rows.length
+        for (const r of rows) {
+          const time = String(r.create_date ?? '')
+          if (!oldest || dayNum(time) < dayNum(oldest)) oldest = time
+          const where = String(r.location_name ?? r.region_name ?? '')
+          const msg = String(r.msg ?? '').trim()
+          if (msg && where.includes('제주') && dayNum(time).slice(0, 12) >= since) items.push({ time, where, msg })
+        }
+        if (oldest && dayNum(oldest).slice(0, 12) < since) break // 48시간보다 오래된 것까지 읽었어요
+      }
+      const hours = oldest ? Math.min(MSG_HOURS, Math.max(1, Math.round((Date.now() - new Date(oldest.replace(/\//g, '-').replace(' ', 'T') + '+09:00').getTime()) / 3600e3))) : 0
+      return { items: items.slice(0, 10), scanned, oldest, hours }
     } catch (e) { lastError = e }
   }
   throw lastError
