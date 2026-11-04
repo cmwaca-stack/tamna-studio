@@ -619,3 +619,6 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .udo-time { padding: .2rem .6rem; border-radius: 999px; background: #eef6fd; border: 1px solid #cfe3f7; font-size: .88rem; }
 .udo-time.past { opacity: .45; }
 .udo-time.next { background: #1c7ed6; border-color: #1c7ed6; color: #fff; font-weight: 800; }
+.city-block { display: grid; gap: .6rem; margin-top: 1rem; }
+.city-title { margin: 0; font-size: 1.2rem; }
+.city-title i { color: var(--sea); }

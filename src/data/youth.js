@@ -19,7 +19,7 @@ export const YOUTH = [
     tagline: '제주에서 뭐 먹지?',
     desc: '흑돼지·해산물·고기국수부터 바다 보이는 카페까지, 한국관광공사 정보로 제주 맛집을 모았어요. 비 오는 날은 따뜻한 국물 요리가 좋아요.',
     tabs: [
-      { label: '추천 맛집', type: '39', keyword: '', rows: 500, arrange: 'Q', exceptCats: true, minRating: 4.0 }, // 다음지도 평점 4.0 이상만, 평점 높은 순 (카페는 카페 탭에)
+      { label: '추천 맛집', type: '39', keyword: '', rows: 500, arrange: 'Q', exceptCats: true, minRating: 4.0, byCity: true }, // 다음지도 평점 4.0 이상만, 평점 높은 순 (카페는 카페 탭에)
       { label: '흑돼지', type: '39', keyword: '흑돼지|돼지|오겹|근고기|돔베|제주돈', rows: 40 },
       { label: '해산물·회', type: '39', keyword: '횟집|물회|해물|활어|해산물|전복|갈치|고등어|성게|회센터|해녀|한치|옥돔|어촌|수산', rows: 60 },
       { label: '고기국수·국밥', type: '39', keyword: '고기국수|국수|몸국|국밥|순대|접짝뼈|해장국|보말|칼국수|수제비', rows: 60 },

@@ -101,6 +101,10 @@ function VjInfo({ p }) {
   return lines.length ? <p className="muted small">{lines.map((l) => <span key={l} style={{ display: 'block' }}>{l}</span>)}</p> : null
 }
 
+// 주소로 제주시/서귀포시를 가려요 (byCity 탭): 제주시가 위, 서귀포시가 아래, 어느 쪽도 아니면 맨 아래 '그 밖'
+const CITIES = [{ key: 'jeju', label: '제주시' }, { key: 'seogwipo', label: '서귀포시' }, { key: 'etc', label: '그 밖' }]
+const cityOf = (addr = '') => (/서귀포/.test(addr) ? 'seogwipo' : /제주시/.test(addr) ? 'jeju' : 'etc')
+
 // 전시·축제·행사 · 올레길: 탭마다 TourAPI 를 다른 조건으로 조회
 function PlaceTabs({ cat }) {
   const [i, setI] = useState(0)
@@ -142,11 +146,18 @@ function PlaceTabs({ cat }) {
       {places.loading ? <Loading /> : places.error ? null : !list?.length ? (
         <Empty text={word ? `‘${q.trim()}’ 검색 결과가 없어요. 다른 검색어를 써 보세요.` : `‘${tab.label}’ 검색 결과가 없어요. 다른 탭을 눌러 보세요.`} />
       ) : (
-        <div className="cards">
-          {list.map((p) => (
-            <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} noMap={cat.slug === 'food'} placeUrl={p.placeUrl} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} href={p.link} hrefLabel={p.linkKind === 'search' ? '검색으로 알아보기' : '공식 안내 보기'} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.rating?.s != null && <p className="small"><b>⭐ 다음지도 평점 {p.rating.s.toFixed(1)}</b> <span className="muted">(리뷰 {p.rating.n}개)</span></p>}{p.info && <VjInfo p={p} />}{(p.price || p.tel) && <p className="muted small">{p.price && `💰 ${p.price}`}{p.price && p.tel && ' · '}{p.tel && `📞 ${p.tel}`}</p>}</ItemCard>
+        <>
+          {(tab.byCity ? CITIES.map((c) => ({ ...c, rows: list.filter((p) => cityOf(p.addr) === c.key) })).filter((c) => c.rows.length) : [{ key: 'all', rows: list }]).map((g) => (
+            <section key={g.key} className={tab.byCity ? 'city-block' : undefined}>
+              {tab.byCity && <h2 className="city-title"><i className="bi bi-geo-alt-fill" /> {g.label} <small className="muted">{g.rows.length}곳</small></h2>}
+              <div className="cards">
+                {g.rows.map((p) => (
+                  <ItemCard key={p.id} lat={p.lat} lng={p.lng} emoji={PLACE_EMOJI[cat.slug]} noMap={cat.slug === 'food'} placeUrl={p.placeUrl} title={p.title} subtitle={isCulture ? [p.place || p.area, p.start && `${dot(p.start)} ~ ${dot(p.end)}`].filter(Boolean).join(' · ') : p.addr} image={p.image} imgNote={p.searched ? '검색 이미지' : undefined} href={p.link} hrefLabel={p.linkKind === 'search' ? '검색으로 알아보기' : '공식 안내 보기'} badge={isCulture ? p.kind || '전시·공연' : TYPE_LABEL[p.type] ?? cat.title}>{p.rating?.s != null && <p className="small"><b>⭐ 다음지도 평점 {p.rating.s.toFixed(1)}</b> <span className="muted">(리뷰 {p.rating.n}개)</span></p>}{p.info && <VjInfo p={p} />}{(p.price || p.tel) && <p className="muted small">{p.price && `💰 ${p.price}`}{p.price && p.tel && ' · '}{p.tel && `📞 ${p.tel}`}</p>}</ItemCard>
+                ))}
+              </div>
+            </section>
           ))}
-        </div>
+        </>
       )}
     </div>
   )
