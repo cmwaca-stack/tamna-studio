@@ -626,3 +626,6 @@ code { background: rgba(120,70,50,0.04); padding: 1px 6px; border-radius: 6px; f
 .news-list li { display: grid; gap: .15rem; padding: .65rem .85rem; border-radius: 12px; background: var(--card); border: 1px solid var(--line); }
 .news-list a { font-weight: 700; line-height: 1.35; }
 .news-list a:hover { text-decoration: underline; }
+.news-src { display: inline-flex; align-items: center; gap: .4rem; }
+.pmark { width: 24px; height: 24px; border-radius: 6px; object-fit: contain; background: #fff; border: 1px solid var(--line); flex: none; }
+.pmark-fallback { display: inline-grid; place-items: center; background: var(--sea); color: #fff; font-size: .75rem; font-weight: 800; border: 0; }

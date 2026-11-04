@@ -1,6 +1,15 @@
+import { useState } from 'react'
 import { fetchNews } from '../../api/client'
 import { useAsync } from '../../hooks/useAsync'
 import { ApiError, Empty, Loading } from '../Status'
+
+// 언론사 마크 (각 언론사 누리집의 아이콘, public/press)
+const MARK = { 제주일보: 'jejuilbo', 제민일보: 'jemin', 제주의소리: 'jejusori', 헤드라인제주: 'headline', 뉴제주일보: 'newsjeju', 제주투데이: 'jejutoday' }
+function PressMark({ name }) {
+  const [broken, setBroken] = useState(false)
+  if (!MARK[name] || broken) return <span className="pmark pmark-fallback" aria-hidden="true">{name.charAt(0)}</span>
+  return <img className="pmark" src={`/press/${MARK[name]}.png`} alt="" width="24" height="24" loading="lazy" onError={() => setBroken(true)} />
+}
 
 // 오늘의 제주 뉴스: 제주 지역 언론사 6곳의 공개 RSS 최신 기사 제목. 누르면 해당 언론사 기사로 이동해요.
 const ago = (at) => {
@@ -19,7 +28,7 @@ export default function NewsFeed() {
         {st.data.items.map((n) => (
           <li key={n.link}>
             <a href={n.link} target="_blank" rel="noreferrer">{n.title}</a>
-            <span className="muted small">{n.source}{n.at ? ` · ${ago(n.at)}` : ''}</span>
+            <span className="news-src muted small"><PressMark name={n.source} />{n.source}{n.at ? ` · ${ago(n.at)}` : ''}</span>
           </li>
         ))}
       </ul>
