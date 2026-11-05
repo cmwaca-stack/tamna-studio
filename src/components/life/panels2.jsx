@@ -96,7 +96,7 @@ export function Hiring() {
         { logoSrc: '/org/gov.png', emoji: '🏛️', name: '나라일터 · 공공부문 채용', url: 'https://www.gojobs.go.kr/apmList.do?menuNo=401', note: '공무원·공공부문 채용공고 목록으로 바로 이동' },
         { logoSrc: '/org/gov.png', emoji: '🏛️', name: '나라일터 · 제주 채용정보', url: 'https://www.gojobs.go.kr/apmList.do?menuNo=401&mngrMenuYn=N&selMenuNo=400&upperMenuNo=&wd=1578', note: '제주 관련 공공부문 채용정보 목록으로 바로 이동' },
         { logoSrc: '/org/bokji.png', emoji: '🤝', name: '복지넷 · 사회복지 구인정보', url: 'https://www.bokji.net/job/off/01.bokji', note: '사회복지 일자리 구인정보로 바로 이동' },
-        { logoSrc: '/org/bokji.png', emoji: '📣', name: '복지넷 · 복지시설 채용공고', url: 'https://www.bokji.net/not/ins/01_01.bokji', note: '복지기관·시설 채용공고 게시판으로 바로 이동' },
+        { logoSrc: '/org/bokji.png', emoji: '📣', name: '복지넷 · 채용공고', url: 'https://www.bokji.net/not/ins/01_01.bokji', note: '복지기관·시설 채용공고 게시판 (복지넷 알림·소식)으로 바로 이동' },
         { logoHost: 'www.work24.go.kr', emoji: '📋', name: '고용24 · 채용정보', url: 'https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do', note: '공공·민간 채용공고 검색으로 바로 이동 (고용노동부, 공식)' },
       ]} />
       <p className="muted small">채용 조건과 마감일은 공고마다 달라요. 지원 전에 각 사이트에서 최신 공고를 확인하세요.</p>

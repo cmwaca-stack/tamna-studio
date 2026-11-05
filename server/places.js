@@ -25,10 +25,78 @@ export async function searchPlaces({ q, rect }) {
     const res = await fetch(url, { headers: { Authorization: `KakaoAK ${key}` } })
     const json = await res.json().catch(() => null)
     if (!res.ok) throw new Error(`카카오 장소 검색 오류 (${res.status}) ${json?.message ?? ''}`.trim())
-    out.push(...(json.documents ?? []).map((d) => ({ id: d.id, name: d.place_name, addr: d.road_address_name || d.address_name, phone: d.phone, url: d.place_url, lat: Number(d.y), lng: Number(d.x) })))
+    out.push(...(json.documents ?? []).map((d) => ({ id: d.id, name: d.place_name, addr: d.road_address_name || d.address_name, phone: d.phone, url: d.place_url, lat: Number(d.y), lng: Number(d.x), full: (d.phone ? 2 : 0) + (d.road_address_name ? 1 : 0) })))
     if (json.meta?.is_end) break
   }
-  return out
+  await addRatings(q, out)
+  // 평점(구글, 없으면 카카오)이 있으면 후기 수를 함께 따져 높은 평점 순으로(후기가 적은 곳은 평균 쪽으로 보정), 평점이 없는 곳은 그 뒤에
+  // 정보가 더 갖춰진 곳(전화번호·도로명주소가 있는 곳)을 먼저, 같은 점수끼리는 카카오가 알려 준 관련도 순서를 지켜요.
+  const rank = (p) => (p.rating ? 100 + (p.reviews / (p.reviews + 10)) * p.rating + (10 / (p.reviews + 10)) * 4 : 0) + p.full
+  return out.map((p, i) => ({ p, i })).sort((a, b) => rank(b.p) - rank(a.p) || a.i - b.i).map(({ p: { full, ...rest } }) => rest)
+}
+
+// ── 구글 평점 (Google Places API, 키: GOOGLE_PLACES_KEY). 키가 없으면 평점 없이 동작해요 ──
+// 공공·시설 성격이라 후기가 의미 없는 검색어는 구글에 묻지 않아요 (요금 절약)
+const NO_RATING = new Set(['재활용도움센터', '클린하우스', '주유소', '전기차충전소', 'LPG충전소', '주민센터', '우체국'])
+const gCache = new Map() // 카카오 장소 id → { at, rating, reviews, gurl } (서버가 살아 있는 동안만 보관)
+const WEEK = 7 * 24 * 3600e3
+const norm = (t) => String(t ?? '').replace(/[\s()·\-]/g, '').toLowerCase()
+const meters = (a, b) => {
+  const R = 6371000, rad = (d) => (d * Math.PI) / 180
+  const h = Math.sin(rad(b.lat - a.lat) / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(rad(b.lng - a.lng) / 2) ** 2
+  return 2 * R * Math.asin(Math.sqrt(h))
+}
+
+async function googleRating(key, p) {
+  const hit = gCache.get(p.id)
+  if (hit && Date.now() - hit.at < WEEK) return hit
+  let val = { at: Date.now() }
+  try {
+    const res = await fetch('https://places.googleapis.com/v1/places:searchText', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Goog-Api-Key': key, 'X-Goog-FieldMask': 'places.displayName,places.location,places.rating,places.userRatingCount,places.googleMapsUri' },
+      body: JSON.stringify({ textQuery: `${p.name} ${p.addr}`, languageCode: 'ko', maxResultCount: 1, locationBias: { circle: { center: { latitude: p.lat, longitude: p.lng }, radius: 150 } } }),
+    })
+    if (!res.ok) return { at: 0 } // 오류는 보관하지 않고 다음에 다시 시도
+    const g = (await res.json().catch(() => null))?.places?.[0]
+    if (g?.rating) {
+      const near = meters(p, { lat: g.location?.latitude, lng: g.location?.longitude })
+      const a = norm(p.name), b = norm(g.displayName?.text)
+      if (near < 150 && (near < 40 || a.includes(b) || b.includes(a))) val = { at: Date.now(), rating: g.rating, reviews: g.userRatingCount ?? 0, gurl: g.googleMapsUri }
+    }
+  } catch { return { at: 0 } }
+  gCache.set(p.id, val)
+  return val
+}
+
+// 카카오맵 화면이 쓰는 비공식 주소에서 후기 수·평균 별점을 가져와요 (공식 API가 아니라 예고 없이 바뀌거나 막힐 수 있어요). 구글 평점이 없는 곳의 대체로만 써요.
+const kCache = new Map()
+async function kakaoRating(p) {
+  const hit = kCache.get(p.id)
+  if (hit && Date.now() - hit.at < WEEK) return hit
+  try {
+    const res = await fetch(`https://place-api.map.kakao.com/places/panel3/${encodeURIComponent(p.id)}`, { headers: { Referer: 'https://place.map.kakao.com/', pf: 'PC', 'User-Agent': 'Mozilla/5.0' }, signal: AbortSignal.timeout(4000) })
+    if (!res.ok) return { at: 0 }
+    const sc = (await res.json().catch(() => null))?.kakaomap_review?.score_set
+    const val = sc?.review_count > 0 && sc.average_score > 0 ? { at: Date.now(), rating: sc.average_score, reviews: sc.review_count, src: '카카오' } : { at: Date.now() }
+    kCache.set(p.id, val)
+    return val
+  } catch { return { at: 0 } }
+}
+
+async function addRatings(q, rows) {
+  if (NO_RATING.has(q)) return
+  const key = process.env.GOOGLE_PLACES_KEY?.trim()
+  let next = 0
+  const worker = async () => {
+    while (next < rows.length) {
+      const p = rows[next++]
+      const g = key ? await googleRating(key, p) : {}
+      const r = g.rating ? { ...g, src: '구글' } : await kakaoRating(p)
+      if (r.rating) { p.rating = r.rating; p.reviews = r.reviews; p.rsrc = r.src; if (r.gurl) p.gurl = r.gurl }
+    }
+  }
+  await Promise.all(Array.from({ length: 8 }, worker))
 }
 
 // 한국전력공사 충전소의 위치 및 현황 정보 (data.go.kr 15039545, 기준일 2025-12-31): 제주 전기차 충전소 목록 (이름·주소·좌표·이용 시간·연락처)

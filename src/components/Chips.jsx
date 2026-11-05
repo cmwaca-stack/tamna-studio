@@ -13,9 +13,10 @@ const LINKS = {
   policy: { to: '/discover/policy', label: Y('policy').title, icon: Y('policy').icon, color: Y('policy').color },
   hospital: { to: '/links/hospital', label: '병원', icon: 'hospital', color: '#e0527e' },
   life: { to: '/discover/life', label: Y('life').title, icon: Y('life').icon, color: Y('life').color },
+  hiring: { to: '/discover/life?tab=hiring', label: '채용', icon: 'briefcase', color: '#2f9e8f' },
 }
 const theme = (key) => THEMES.find((t) => t.key === key)
-const ORDER = ['life', 'traffic', 'flight', 'hospital', 'food', 'weekend', 'photo', 'oreum', 'myth', 'jeju43', 'history', 'olle', 'policy', 'tamna'] // 생활·실시간 → 이야기·답사 → 맨 뒤에 청년정책·탐나는전
+const ORDER = ['life', 'traffic', 'flight', 'hospital', 'food', 'weekend', 'photo', 'oreum', 'myth', 'jeju43', 'history', 'olle', 'policy', 'tamna', 'hiring'] // 생활·실시간 → 이야기·답사 → 맨 뒤에 청년정책·탐나는전·채용
 
 const STORY = ['oreum', 'myth', 'jeju43', 'history', 'olle'] // 이야기·답사 칩 (생활정보 화면들에서는 숨겨요)
 

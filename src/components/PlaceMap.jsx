@@ -110,13 +110,14 @@ export default function PlaceMap({ options }) {
       {err && <p className="notice" style={{ display: 'block' }}>{err}</p>}
       {rows && (
         <>
-          <p className="muted small">{busy ? '찾는 중…' : rows.length ? `지도에 보이는 범위에서 ${rows.length}곳을 찾았어요 (최대 45곳). 지도를 옮기거나 확대한 뒤 "다시 찾기"를 눌러 보세요.` : '이 범위에서는 찾지 못했어요. 지도를 옮기거나 다른 지역을 눌러 보세요.'}</p>
+          <p className="muted small">{busy ? '찾는 중…' : rows.length ? `지도에 보이는 범위에서 ${rows.length}곳을 찾았어요 (최대 45곳). 평점·후기(구글, 없으면 카카오)가 있는 곳은 좋은 순으로 먼저 보여줘요. 지도를 옮기거나 확대한 뒤 "다시 찾기"를 눌러 보세요.` : '이 범위에서는 찾지 못했어요. 지도를 옮기거나 다른 지역을 눌러 보세요.'}</p>
           <div className="place-list">
             {rows.map((p) => (
               <div key={p.id} className="place-row">
                 <button type="button" className="place-name" onClick={() => flyTo(p)} title="지도에서 위치 보기">{p.name}</button>
                 <span className="muted small">{p.addr}</span>
                 {p.hours && <span className="muted small">🕘 이용 {p.hours}</span>}
+                {p.rating && <a className="small" href={p.gurl ?? p.url} target="_blank" rel="noreferrer">⭐ {p.rating.toFixed(1)} <span className="muted">({p.rsrc} 후기 {p.reviews.toLocaleString()}개)</span></a>}
                 <span className="place-acts">
                   {p.phone && <a href={`tel:${p.phone.replace(/[^0-9+]/g, '')}`}>📞 {p.phone}</a>}
                   <a href={p.url} target="_blank" rel="noreferrer">카카오맵 ↗</a>
