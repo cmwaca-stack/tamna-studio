@@ -22,6 +22,7 @@ const LIFE_MENU = [
   toY('food'), toY('weekend'), toY('photo'),
   toY('policy'),
   { id: 'tamna', to: '/tamna', label: T('tamna').label, icon: T('tamna').icon, color: T('tamna').color },
+  { id: 'hiring', to: '/discover/life?tab=hiring', label: '채용', icon: 'briefcase', color: '#2f9e8f' },
 ]
 const STORY_MENU = [
   ...['oreum', 'myth', 'jeju43', 'history'].map((k) => ({ id: k, theme: k, label: T(k).label, icon: T(k).icon, color: T(k).color, on: true })),
@@ -29,7 +30,7 @@ const STORY_MENU = [
 ]
 
 // 메뉴 칩 앞에 붙는 귀여운 이모지
-const EMOJI = { oreum: '⛰️', myth: '✨', jeju43: '🌸', history: '🏯', olle: '🥾', weekend: '🎟️', food: '🍜', photo: '📸', flight: '✈️', traffic: '🚦', tamna: '🪙', policy: '💰', hospital: '🏥', life: '🏡' }
+const EMOJI = { oreum: '⛰️', myth: '✨', jeju43: '🌸', history: '🏯', olle: '🥾', weekend: '🎟️', food: '🍜', photo: '📸', flight: '✈️', traffic: '🚦', tamna: '🪙', hiring: '📋', policy: '💰', hospital: '🏥', life: '🏡' }
 
 const chipBody = (m) => <><span className="emo" aria-hidden="true">{EMOJI[m.id] ?? '🍊'}</span>{m.label}</>
 
