@@ -82,6 +82,25 @@ export function Jobs() {
   )
 }
 
+export function Hiring() {
+  return (
+    <section className="kit-block">
+      <LinkCards items={[
+        { emoji: '🔍', name: '잡코리아', url: 'https://www.jobkorea.co.kr', note: '제주 지역 채용공고 검색' },
+        { emoji: '🧑‍💻', name: '인크루트', url: 'https://www.incruit.com', note: '제주 지역 채용공고 검색' },
+        { emoji: '📝', name: '사람인', url: 'https://www.saramin.co.kr', note: '제주 지역 채용공고 검색' },
+        { emoji: '🎓', name: '제주대학교', url: 'https://www.jejunu.ac.kr', note: '대학 채용게시판 (사이트에서 ‘채용’·‘공지사항’ 확인)' },
+        { emoji: '🎓', name: '한라대학교', url: 'https://www.halla.ac.kr', note: '대학 채용게시판 (사이트에서 ‘채용’·‘공지사항’ 확인)' },
+        { emoji: '🏢', name: '잡알리오', url: 'https://job.alio.go.kr', note: '공공기관·공기업 채용정보 통합 (지역을 ‘제주’로)' },
+        { emoji: '🏛️', name: '나라일터', url: 'https://www.gojobs.go.kr', note: '공무원·공공부문 채용 공고 (인사혁신처)' },
+        { emoji: '🏝️', name: '제주특별자치도청', url: 'https://www.jeju.go.kr', note: '도 공무직·기간제·공공기관 채용 공고 (‘채용’ 검색)' },
+        { emoji: '📋', name: '고용24', url: 'https://www.work24.go.kr', note: '공공·민간 채용공고 (고용노동부, 공식)' },
+      ]} />
+      <p className="muted small">채용 조건과 마감일은 공고마다 달라요. 지원 전에 각 사이트에서 최신 공고를 확인하세요.</p>
+    </section>
+  )
+}
+
 export function Welfare() {
   return (
     <section className="kit-block">
