@@ -86,15 +86,18 @@ export function Hiring() {
   return (
     <section className="kit-block">
       <LinkCards items={[
-        { emoji: '🔍', name: '잡코리아', url: 'https://www.jobkorea.co.kr', note: '제주 지역 채용공고 검색' },
-        { emoji: '🧑‍💻', name: '인크루트', url: 'https://www.incruit.com', note: '제주 지역 채용공고 검색' },
-        { emoji: '📝', name: '사람인', url: 'https://www.saramin.co.kr', note: '제주 지역 채용공고 검색' },
-        { emoji: '🎓', name: '제주대학교', url: 'https://www.jejunu.ac.kr', note: '대학 채용게시판 (사이트에서 ‘채용’·‘공지사항’ 확인)' },
-        { emoji: '🎓', name: '한라대학교', url: 'https://www.halla.ac.kr', note: '대학 채용게시판 (사이트에서 ‘채용’·‘공지사항’ 확인)' },
-        { emoji: '🏢', name: '잡알리오', url: 'https://job.alio.go.kr', note: '공공기관·공기업 채용정보 통합 (지역을 ‘제주’로)' },
-        { emoji: '🏛️', name: '나라일터', url: 'https://www.gojobs.go.kr', note: '공무원·공공부문 채용 공고 (인사혁신처)' },
-        { emoji: '🏝️', name: '제주특별자치도청', url: 'https://www.jeju.go.kr', note: '도 공무직·기간제·공공기관 채용 공고 (‘채용’ 검색)' },
-        { emoji: '📋', name: '고용24', url: 'https://www.work24.go.kr', note: '공공·민간 채용공고 (고용노동부, 공식)' },
+        { emoji: '🔍', name: '잡코리아 · 제주 채용공고', url: 'https://www.jobkorea.co.kr/Search/?stext=%EC%A0%9C%EC%A3%BC', note: '‘제주’ 검색 결과로 바로 이동' },
+        { emoji: '🧑‍💻', name: '인크루트 · 제주 채용공고', url: 'https://search.incruit.com/list/search.asp?col=job&kw=%C1%A6%C1%D6', note: '‘제주’ 검색 결과로 바로 이동' },
+        { emoji: '📝', name: '사람인 · 제주 지역 채용정보', url: 'https://www.saramin.co.kr/zf_user/jobs/list/domestic?loc_mcd=116000', note: '제주 지역 채용공고 목록으로 바로 이동' },
+        { emoji: '🎓', name: '제주대학교 · 교직원 채용', url: 'https://www.jejunu.ac.kr/ara/noticesurvey/recruit.htm', note: '대학 교직원 채용 게시판으로 바로 이동' },
+        { emoji: '🔬', name: '제주대학교 산학협력단 · 채용공지', url: 'https://iucf.jejunu.ac.kr/kor/wpbbs/list.php?wpboard=adopt', note: '산학협력단 채용공지 게시판으로 바로 이동' },
+        { emoji: '🎓', name: '제주한라대학교', url: 'https://www.chu.ac.kr/main/', note: '대학 홈페이지로 이동 (채용 게시판 직접 주소는 확인 중)' },
+        { emoji: '🏢', name: '잡알리오 · 공공기관 채용', url: 'https://job.alio.go.kr/recruit.do', note: '공공기관·공기업 채용정보 목록으로 바로 이동 (지역을 ‘제주’로)' },
+        { emoji: '🏛️', name: '나라일터 · 공공부문 채용', url: 'https://www.gojobs.go.kr/apmList.do?menuNo=401', note: '공무원·공공부문 채용공고 목록으로 바로 이동' },
+        { emoji: '🏛️', name: '나라일터 · 제주 채용정보', url: 'https://www.gojobs.go.kr/apmList.do?menuNo=401&mngrMenuYn=N&selMenuNo=400&upperMenuNo=&wd=1578', note: '제주 관련 공공부문 채용정보 목록으로 바로 이동' },
+        { emoji: '🤝', name: '복지넷 · 사회복지 구인정보', url: 'https://www.bokji.net/job/off/01.bokji', note: '사회복지 일자리 구인정보로 바로 이동' },
+        { emoji: '📣', name: '복지넷 · 복지시설 채용공고', url: 'https://www.bokji.net/not/ins/01_01.bokji', note: '복지기관·시설 채용공고 게시판으로 바로 이동' },
+        { emoji: '📋', name: '고용24 · 채용정보', url: 'https://www.work24.go.kr/wk/a/b/1200/retriveDtlEmpSrchList.do', note: '공공·민간 채용공고 검색으로 바로 이동 (고용노동부, 공식)' },
       ]} />
       <p className="muted small">채용 조건과 마감일은 공고마다 달라요. 지원 전에 각 사이트에서 최신 공고를 확인하세요.</p>
     </section>
